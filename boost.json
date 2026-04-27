@@ -1,0 +1,20 @@
+{
+    "agents": [
+        "gemini",
+        "copilot",
+        "claude_code",
+        "opencode",
+        "codex",
+        "amp",
+        "kiro",
+        "junie",
+        "cursor"
+    ],
+    "guidelines": true,
+    "mcp": true,
+    "nightwatch_mcp": false,
+    "sail": false,
+    "skills": [
+        "laravel-best-practices"
+    ]
+}
