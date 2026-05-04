@@ -1,7 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\LoginController;
 Route::get('/', function () {
     return view('welcome');
 });
+// Rute untuk menampilkan halaman login
+Route::get('/login', [LoginController::class, 'index'])->name('login');
+
+// Rute untuk memproses form login (POST)
+Route::post('/login', [LoginController::class, 'login']);
+
+Route::get('/register', [LoginController::class, 'showRegister'])->name('register');
+Route::post('/register', [LoginController::class, 'register']);
