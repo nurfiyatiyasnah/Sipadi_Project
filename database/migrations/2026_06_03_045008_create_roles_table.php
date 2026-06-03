@@ -15,7 +15,7 @@ return new class extends Migration
             $table->timestamps(); // create_at & updated_at
         });
     }
-
+    
     public function down(): void
     {
         Schema::dropIfExists('roles');
