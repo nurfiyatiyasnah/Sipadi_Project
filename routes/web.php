@@ -15,6 +15,7 @@ Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 
 Route::get('/register', [LoginController::class, 'showRegister'])->name('register');
+
 Route::post('/register', [LoginController::class, 'register']);
 
 // Dashboard Routes
@@ -22,3 +23,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
+
+

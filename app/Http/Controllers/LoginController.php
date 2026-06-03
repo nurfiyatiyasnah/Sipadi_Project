@@ -23,16 +23,14 @@ class LoginController extends Controller
     // Memproses data login
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $data = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect()->intended('/dashboard');
+        if (Auth::attempt($data)) {
+            return redirect('/dashboard');
         }
 
-        return back()->withErrors([
-            'email' => 'Kredensial yang diberikan tidak sesuai dengan data kami.',
-        ]);
+        return back()->with('error', 'Login gagal');
+
     }
 
     // Memproses data registrasi (Opsional: siapkan metodenya)
