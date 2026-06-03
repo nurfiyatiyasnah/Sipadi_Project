@@ -96,7 +96,7 @@ Teknologi yang digunakan dalam pengembangan project ini:
 
 * Laravel
 * PHP
-* MySQL / MariaDB
+* PostgreSql
 * HTML
 * CSS
 * JavaScript
@@ -168,7 +168,7 @@ Buat database baru dengan nama:
 sipadi_db
 ```
 
-Database dapat dibuat melalui phpMyAdmin, MySQL Workbench, atau terminal MySQL.
+Database dapat dibuat melalui pgAdmin,dan DBeaver.
 
 ### 8. Jalankan Migration
 
@@ -258,7 +258,7 @@ Struktur menu utama pada sistem terdiri dari:
 Nama database yang digunakan:
 
 ```bash
-sipadi_db
+sipadi
 ```
 
 Beberapa tabel utama yang dapat digunakan dalam sistem:
