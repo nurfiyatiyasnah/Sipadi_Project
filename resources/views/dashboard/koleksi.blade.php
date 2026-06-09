@@ -73,8 +73,8 @@
     <div class="flex flex-col lg:flex-row justify-between gap-4">
 
         <form method="GET"
-              action="{{ route('dashboard.koleksi') }}"
-              class="flex flex-wrap gap-3">
+            action="{{ route('dashboard.koleksi') }}"
+            class="flex flex-wrap gap-3">
 
             <select name="kategori"
                 class="border border-gray-300 rounded-lg px-4 py-2">

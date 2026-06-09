@@ -2,7 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,16 +14,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Seeder bawaan untuk User
-        // User::factory(10)->create();
+        // Seed default roles
+        $adminRole = Role::create(['nama_role' => 'Admin', 'deskripsi' => 'Administrator sistem']);
+        Role::create(['nama_role' => 'Anggota', 'deskripsi' => 'Anggota perpustakaan']);
+        Role::create(['nama_role' => 'Petugas', 'deskripsi' => 'Petugas perpustakaan']);
 
-        // User dummy
-        \App\Models\User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Seed admin user
+        User::create([
+            'name' => 'Admin',
+            'email' => 'admin@sipadi.test',
+            'password' => Hash::make('password'),
+            'role_id' => $adminRole->id,
         ]);
-
-        // Tambahkan BookSeeder agar ikut dijalankan
-        $this->call(BookSeeder::class);
     }
 }
