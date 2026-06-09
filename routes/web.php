@@ -3,25 +3,25 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\BookController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Rute untuk menampilkan halaman login
 Route::get('/login', [LoginController::class, 'index'])->name('login');
-
-// Rute untuk memproses form login (POST)
 Route::post('/login', [LoginController::class, 'login']);
-
 Route::get('/register', [LoginController::class, 'showRegister'])->name('register');
-
 Route::post('/register', [LoginController::class, 'register']);
 
-// Dashboard Routes
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::prefix('dashboard')->group(function () {
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
+        Route::get('/koleksi', [DashboardController::class, 'koleksi'])->name('dashboard.koleksi');
+        Route::resource('books', BookController::class);
+        // Tambahkan ini untuk ekspor laporan
+        Route::get('/koleksi/export', [DashboardController::class, 'export'])->name('dashboard.koleksi.export');
+    });
+
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
-
-
