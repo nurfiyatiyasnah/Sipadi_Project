@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,63 +15,58 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
+    protected $primaryKey = 'id_user';
+
     /**
-     * The attributes that are mass assignable.
-     *
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'id_role',
         'email',
         'password',
-        'role_id',
+        'status_akun',
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
      * @var list<string>
      */
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
      * @return array<string, string>
      */
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'last_login_at' => 'datetime',
         ];
     }
 
     public function role(): BelongsTo
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(Role::class, 'id_role', 'id_role');
     }
 
     public function anggota(): HasOne
     {
-        return $this->hasOne(Anggota::class);
+        return $this->hasOne(Anggota::class, 'id_user', 'id_user');
     }
 
     public function petugas(): HasOne
     {
-        return $this->hasOne(Petugas::class);
+        return $this->hasOne(Petugas::class, 'id_user', 'id_user');
     }
 
     public function notifikasi(): HasMany
     {
-        return $this->hasMany(Notifikasi::class);
+        return $this->hasMany(Notifikasi::class, 'id_user', 'id_user');
     }
 
-    public function logAktivitas(): HasMany
+    public function logPencarianBuku(): HasMany
     {
-        return $this->hasMany(LogAktivitas::class);
+        return $this->hasMany(LogPencarianBuku::class, 'id_user', 'id_user');
     }
 }

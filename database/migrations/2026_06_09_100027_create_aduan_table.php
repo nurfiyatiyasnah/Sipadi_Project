@@ -12,17 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('aduan', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->string('nama_pelapor');
-            $table->string('email_pelapor');
-            $table->string('subjek');
-            $table->text('isi_aduan');
-            $table->enum('status_aduan', ['Baru', 'Diproses', 'Ditanggapi', 'Diarsipkan'])->default('Baru')->index();
-            $table->text('tanggapan')->nullable();
-            $table->foreignId('ditanggapi_oleh')->nullable()->constrained('users')->nullOnDelete();
-            $table->timestamp('ditanggapi_at')->nullable();
+            $table->id('id_aduan');
+            $table->string('kode_aduan', 30)->unique();
+            $table->unsignedBigInteger('id_anggota');
+            $table->string('subjek', 150);
+            $table->text('isi_aduan')->nullable();
+            $table->string('kategori_aduan', 30)->nullable();
+            $table->string('lampiran', 255)->nullable();
+            $table->string('status_aduan', 20)->nullable();
+            $table->string('prioritas', 20)->nullable();
             $table->timestamps();
+
+            $table->foreign('id_anggota')->references('id_anggota')->on('anggota');
         });
     }
 

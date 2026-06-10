@@ -12,12 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('detail_pengembalian', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('pengembalian_id')->constrained('pengembalian')->cascadeOnDelete();
-            $table->foreignId('detail_peminjaman_id')->constrained('detail_peminjaman')->cascadeOnDelete();
-            $table->enum('kondisi_buku', ['Baik', 'Rusak Ringan', 'Rusak Berat', 'Hilang']);
+            $table->id('id_detail_pengembalian');
+            $table->unsignedBigInteger('id_pengembalian');
+            $table->unsignedBigInteger('id_detail_peminjaman');
+            $table->integer('jumlah_dikembalikan')->nullable();
+            $table->string('kondisi_buku', 30)->nullable();
             $table->text('catatan')->nullable();
             $table->timestamps();
+
+            $table->foreign('id_pengembalian')->references('id_pengembalian')->on('pengembalian');
+            $table->foreign('id_detail_peminjaman')->references('id_detail_peminjaman')->on('detail_peminjaman');
         });
     }
 

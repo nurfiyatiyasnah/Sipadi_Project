@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Aduan extends Model
 {
@@ -13,44 +14,31 @@ class Aduan extends Model
 
     protected $table = 'aduan';
 
+    protected $primaryKey = 'id_aduan';
+
     protected $fillable = [
-        'user_id',
-        'nama_pelapor',
-        'email_pelapor',
+        'kode_aduan',
+        'id_anggota',
         'subjek',
         'isi_aduan',
+        'kategori_aduan',
+        'lampiran',
         'status_aduan',
-        'tanggapan',
-        'ditanggapi_oleh',
-        'ditanggapi_at',
+        'prioritas',
     ];
 
-    protected $attributes = [
-        'status_aduan' => 'Baru',
-    ];
-
-    /**
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    public function anggota(): BelongsTo
     {
-        return [
-            'ditanggapi_at' => 'datetime',
-        ];
+        return $this->belongsTo(Anggota::class, 'id_anggota', 'id_anggota');
     }
 
-    public function user(): BelongsTo
+    public function tanggapan(): HasMany
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(TanggapanAduan::class, 'id_aduan', 'id_aduan');
     }
 
-    public function ditanggapiOleh(): BelongsTo
+    public function arsip(): HasOne
     {
-        return $this->belongsTo(User::class, 'ditanggapi_oleh');
-    }
-
-    public function tanggapanAduan(): HasMany
-    {
-        return $this->hasMany(TanggapanAduan::class);
+        return $this->hasOne(ArsipAduan::class, 'id_aduan', 'id_aduan');
     }
 }

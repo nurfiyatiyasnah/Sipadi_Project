@@ -10,6 +10,8 @@ class Role extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'id_role';
+
     protected $fillable = [
         'nama_role',
         'deskripsi',
@@ -17,6 +19,6 @@ class Role extends Model
 
     public function users(): HasMany
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(User::class, 'id_role', 'id_role');
     }
 }

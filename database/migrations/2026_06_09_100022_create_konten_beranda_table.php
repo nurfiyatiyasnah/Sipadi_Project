@@ -12,13 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('konten_beranda', function (Blueprint $table) {
-            $table->id();
-            $table->string('section');
-            $table->string('judul')->nullable();
-            $table->text('konten')->nullable();
-            $table->string('gambar')->nullable();
+            $table->id('id_konten_beranda');
+            $table->string('judul', 150)->nullable();
+            $table->text('isi')->nullable();
+            $table->string('gambar', 255)->nullable();
             $table->integer('urutan')->default(0);
-            $table->boolean('is_active')->default(true);
+            $table->string('status_konten', 20)->nullable();
             $table->timestamps();
         });
     }

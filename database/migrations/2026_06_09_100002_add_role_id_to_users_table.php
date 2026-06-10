@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('role_id')->nullable()->after('id')->constrained('roles')->nullOnDelete();
+            $table->foreign('id_role')->references('id_role')->on('roles');
+            $table->index('id_role', 'fki_id_role');
         });
     }
 
@@ -22,7 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropConstrainedForeignId('role_id');
+            $table->dropForeign(['id_role']);
+            $table->dropIndex('fki_id_role');
         });
     }
 };

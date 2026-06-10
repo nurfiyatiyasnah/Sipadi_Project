@@ -12,11 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('log_pencarian_buku', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->string('kata_kunci');
-            $table->integer('jumlah_hasil');
-            $table->timestamp('created_at')->nullable();
+            $table->id('id_log_pencarian');
+            $table->unsignedBigInteger('id_user')->nullable();
+            $table->string('keyword', 200)->nullable();
+            $table->integer('jumlah_hasil')->default(0);
+            $table->string('ip_address', 50)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->timestamps();
+
+            $table->foreign('id_user')->references('id_user')->on('users');
         });
     }
 

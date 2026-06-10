@@ -12,16 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('berita', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('kategori_id')->constrained('kategori_berita')->cascadeOnDelete();
-            $table->string('judul');
-            $table->string('slug')->unique();
-            $table->text('isi');
-            $table->string('gambar')->nullable();
-            $table->enum('status', ['Draft', 'Terbit', 'Diarsipkan'])->default('Draft')->index();
-            $table->foreignId('author_id')->constrained('users')->cascadeOnDelete();
-            $table->timestamp('tanggal_publish')->nullable()->index();
+            $table->id('id_berita');
+            $table->unsignedBigInteger('id_kategori_berita');
+            $table->unsignedBigInteger('id_petugas')->nullable();
+            $table->string('judul', 150);
+            $table->char('slug', 225)->unique();
+            $table->text('isi')->nullable();
+            $table->string('gambar', 255)->nullable();
+            $table->date('tanggal_terbit')->nullable();
+            $table->string('status_berita', 30)->nullable();
             $table->timestamps();
+
+            $table->foreign('id_kategori_berita')->references('id_kategori_berita')->on('kategori_berita');
+            $table->foreign('id_petugas')->references('id_petugas')->on('petugas');
         });
     }
 

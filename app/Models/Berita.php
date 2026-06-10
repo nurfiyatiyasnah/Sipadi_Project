@@ -12,19 +12,17 @@ class Berita extends Model
 
     protected $table = 'berita';
 
+    protected $primaryKey = 'id_berita';
+
     protected $fillable = [
-        'kategori_id',
+        'id_kategori_berita',
+        'id_petugas',
         'judul',
         'slug',
         'isi',
         'gambar',
-        'status',
-        'author_id',
-        'tanggal_publish',
-    ];
-
-    protected $attributes = [
-        'status' => 'Draft',
+        'tanggal_terbit',
+        'status_berita',
     ];
 
     /**
@@ -33,17 +31,17 @@ class Berita extends Model
     protected function casts(): array
     {
         return [
-            'tanggal_publish' => 'datetime',
+            'tanggal_terbit' => 'date',
         ];
     }
 
-    public function kategori(): BelongsTo
+    public function kategoriBerita(): BelongsTo
     {
-        return $this->belongsTo(KategoriBerita::class, 'kategori_id');
+        return $this->belongsTo(KategoriBerita::class, 'id_kategori_berita', 'id_kategori_berita');
     }
 
-    public function author(): BelongsTo
+    public function petugas(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'author_id');
+        return $this->belongsTo(Petugas::class, 'id_petugas', 'id_petugas');
     }
 }

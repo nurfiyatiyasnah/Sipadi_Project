@@ -12,15 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pengumuman', function (Blueprint $table) {
-            $table->id();
-            $table->string('judul');
-            $table->text('isi');
-            $table->date('tanggal_mulai')->index();
+            $table->id('id_pengumuman');
+            $table->unsignedBigInteger('id_petugas')->nullable();
+            $table->string('judul', 150);
+            $table->text('isi')->nullable();
+            $table->string('gambar', 255)->nullable();
+            $table->string('file_lampiran', 255)->nullable();
+            $table->date('tanggal_mulai')->nullable();
             $table->date('tanggal_selesai')->nullable();
-            $table->enum('status', ['Aktif', 'Nonaktif', 'Kadaluarsa'])->default('Aktif')->index();
-            $table->enum('prioritas', ['Rendah', 'Sedang', 'Tinggi'])->default('Sedang');
-            $table->foreignId('author_id')->constrained('users')->cascadeOnDelete();
+            $table->string('status_pengumuman', 20)->nullable();
             $table->timestamps();
+
+            $table->foreign('id_petugas')->references('id_petugas')->on('petugas');
         });
     }
 

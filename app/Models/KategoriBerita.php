@@ -12,13 +12,15 @@ class KategoriBerita extends Model
 
     protected $table = 'kategori_berita';
 
+    protected $primaryKey = 'id_kategori_berita';
+
     protected $fillable = [
         'nama_kategori',
-        'slug',
+        'deskripsi',
     ];
 
     public function berita(): HasMany
     {
-        return $this->hasMany(Berita::class, 'kategori_id');
+        return $this->hasMany(Berita::class, 'id_kategori_berita', 'id_kategori_berita');
     }
 }

@@ -13,17 +13,19 @@ class Notifikasi extends Model
 
     protected $table = 'notifikasi';
 
-    protected $fillable = [
-        'user_id',
-        'judul',
-        'pesan',
-        'jenis',
-        'is_read',
-        'dibaca_at',
-    ];
+    protected $primaryKey = 'id_notifikasi';
 
-    protected $attributes = [
-        'is_read' => false,
+    protected $fillable = [
+        'id_user',
+        'id_peminjaman',
+        'id_jadwal_pengambalian',
+        'judul',
+        'isi',
+        'jenis_notifikasi',
+        'status_notifikasi',
+        'status_baca',
+        'dikirim_pada',
+        'dibaca_pada',
     ];
 
     /**
@@ -32,18 +34,28 @@ class Notifikasi extends Model
     protected function casts(): array
     {
         return [
-            'is_read' => 'boolean',
-            'dibaca_at' => 'datetime',
+            'dikirim_pada' => 'datetime',
+            'dibaca_pada' => 'datetime',
         ];
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
+    }
+
+    public function peminjaman(): BelongsTo
+    {
+        return $this->belongsTo(Peminjaman::class, 'id_peminjaman', 'id_peminjaman');
+    }
+
+    public function jadwalPengambilan(): BelongsTo
+    {
+        return $this->belongsTo(JadwalPengambilan::class, 'id_jadwal_pengambalian', 'id_jadwal_pengambilan');
     }
 
     public function logPengiriman(): HasMany
     {
-        return $this->hasMany(LogPengirimanNotifikasi::class);
+        return $this->hasMany(LogPengirimanNotifikasi::class, 'id_notifikasi', 'id_notifikasi');
     }
 }

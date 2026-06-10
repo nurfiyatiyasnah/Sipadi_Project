@@ -12,14 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pengembalian', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('peminjaman_id')->constrained('peminjaman')->cascadeOnDelete();
-            $table->date('tanggal_pengembalian');
-            $table->foreignId('diterima_oleh')->nullable()->constrained('users')->nullOnDelete();
-            $table->decimal('denda_keterlambatan', 12, 2)->default(0);
-            $table->enum('status_pengembalian', ['Selesai', 'Sebagian', 'Bermasalah'])->default('Selesai')->index();
+            $table->id('id_pengembalian');
+            $table->unsignedBigInteger('id_peminjaman')->unique();
+            $table->unsignedBigInteger('id_petugas')->nullable();
+            $table->timestamp('tanggal_pengembalian')->nullable();
+            $table->integer('total_hari_terlambat')->default(0);
+            $table->string('status_pengembalian', 20)->nullable();
             $table->text('catatan')->nullable();
             $table->timestamps();
+
+            $table->foreign('id_peminjaman')->references('id_peminjaman')->on('peminjaman');
+            $table->foreign('id_petugas')->references('id_petugas')->on('petugas');
         });
     }
 

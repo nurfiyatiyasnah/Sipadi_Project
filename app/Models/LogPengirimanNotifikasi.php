@@ -2,24 +2,25 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LogPengirimanNotifikasi extends Model
 {
-    public $timestamps = false;
+    use HasFactory;
 
     protected $table = 'log_pengiriman_notifikasi';
 
-    protected $fillable = [
-        'notifikasi_id',
-        'metode',
-        'status',
-        'created_at',
-    ];
+    protected $primaryKey = 'id_pengiriman_notifikasi';
 
-    protected $attributes = [
-        'status' => 'Pending',
+    protected $fillable = [
+        'id_notifikasi',
+        'dikirim_oleh',
+        'via',
+        'status_pengiriman',
+        'pesan_error',
+        'dikirim_pada',
     ];
 
     /**
@@ -28,12 +29,17 @@ class LogPengirimanNotifikasi extends Model
     protected function casts(): array
     {
         return [
-            'created_at' => 'datetime',
+            'dikirim_pada' => 'datetime',
         ];
     }
 
     public function notifikasi(): BelongsTo
     {
-        return $this->belongsTo(Notifikasi::class);
+        return $this->belongsTo(Notifikasi::class, 'id_notifikasi', 'id_notifikasi');
+    }
+
+    public function dikirimOleh(): BelongsTo
+    {
+        return $this->belongsTo(Petugas::class, 'dikirim_oleh', 'id_petugas');
     }
 }

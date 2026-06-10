@@ -12,13 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('keterlambatan', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('peminjaman_id')->constrained('peminjaman')->cascadeOnDelete();
-            $table->integer('jumlah_hari');
-            $table->decimal('denda_per_hari', 10, 2)->default(0);
-            $table->decimal('total_denda', 12, 2)->default(0);
-            $table->enum('status_denda', ['Belum Bayar', 'Lunas', 'Dibebaskan'])->default('Belum Bayar')->index();
+            $table->id('id_keterlambatan');
+            $table->unsignedBigInteger('id_peminjaman')->unique();
+            $table->unsignedBigInteger('id_anggota');
+            $table->date('tanggal_jatuh_tempo')->nullable();
+            $table->date('tanggal_dihitung')->nullable();
+            $table->integer('hari_terlambat')->nullable();
+            $table->string('status_perhitungan', 20)->nullable();
             $table->timestamps();
+
+            $table->foreign('id_peminjaman')->references('id_peminjaman')->on('peminjaman');
+            $table->foreign('id_anggota')->references('id_anggota')->on('anggota');
         });
     }
 

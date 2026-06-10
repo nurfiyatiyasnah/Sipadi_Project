@@ -12,14 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('jadwal_pengambilan', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('peminjaman_id')->constrained('peminjaman')->cascadeOnDelete();
+            $table->id('id_jadwal_pengambilan');
+            $table->unsignedBigInteger('id_peminjaman')->unique();
+            $table->unsignedBigInteger('id_petugas')->nullable();
             $table->date('tanggal_pengambilan');
-            $table->time('waktu_mulai')->nullable();
-            $table->time('waktu_selesai')->nullable();
-            $table->enum('status_pengambilan', ['Dijadwalkan', 'Diambil', 'Tidak Diambil'])->default('Dijadwalkan')->index();
-            $table->text('catatan')->nullable();
+            $table->time('jam_mulai')->nullable();
+            $table->time('jam_selesai')->nullable();
+            $table->string('lokasi_pengambilan', 100)->nullable();
+            $table->text('pesan')->nullable();
+            $table->string('status_jadwal', 20)->nullable();
+            $table->timestamp('dikirim_pada')->nullable();
             $table->timestamps();
+
+            $table->foreign('id_peminjaman')->references('id_peminjaman')->on('peminjaman');
+            $table->foreign('id_petugas')->references('id_petugas')->on('petugas');
         });
     }
 

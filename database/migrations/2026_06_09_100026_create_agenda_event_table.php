@@ -12,16 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('agenda_event', function (Blueprint $table) {
-            $table->id();
-            $table->string('judul');
+            $table->id('id_event');
+            $table->string('judul_event', 150);
+            $table->string('slug', 255)->nullable();
             $table->text('deskripsi')->nullable();
-            $table->dateTime('tanggal_mulai')->index();
-            $table->dateTime('tanggal_selesai')->nullable();
-            $table->string('lokasi')->nullable();
-            $table->string('gambar')->nullable();
-            $table->enum('status', ['Akan Datang', 'Berlangsung', 'Selesai', 'Dibatalkan'])->default('Akan Datang')->index();
-            $table->foreignId('author_id')->constrained('users')->cascadeOnDelete();
+            $table->string('lokasi', 150)->nullable();
+            $table->date('tanggal_mulai')->nullable();
+            $table->date('tanggal_selesai')->nullable();
+            $table->time('jam_mulai')->nullable();
+            $table->time('jam_selesai')->nullable();
+            $table->string('gambar', 255)->nullable();
+            $table->string('status_event', 30)->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamps();
+
+            $table->foreign('created_by')->references('id_petugas')->on('petugas');
         });
     }
 

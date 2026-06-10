@@ -12,14 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('prestasi', function (Blueprint $table) {
-            $table->id();
-            $table->string('judul');
+            $table->id('id_prestasi');
+            $table->string('judul_prestasi', 150);
+            $table->string('slug', 255)->nullable();
             $table->text('deskripsi')->nullable();
-            $table->date('tanggal')->nullable();
-            $table->enum('tingkat', ['Lokal', 'Regional', 'Nasional', 'Internasional'])->nullable();
-            $table->string('gambar')->nullable();
-            $table->string('penyelenggara')->nullable();
+            $table->string('tingkat_prestasi', 50)->nullable();
+            $table->string('penyelenggra', 150)->nullable();
+            $table->date('tanggal_prestasi')->nullable();
+            $table->string('gambar', 255)->nullable();
+            $table->string('file_lampiran', 255)->nullable();
+            $table->string('status_prestasi', 20)->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamps();
+
+            $table->foreign('created_by')->references('id_petugas')->on('petugas');
         });
     }
 

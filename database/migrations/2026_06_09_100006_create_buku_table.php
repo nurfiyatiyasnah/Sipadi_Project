@@ -12,22 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('buku', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('kategori_id')->constrained('kategori_buku')->cascadeOnDelete();
-            $table->string('judul')->index();
-            $table->string('isbn')->unique()->nullable();
-            $table->string('penulis')->index();
-            $table->string('penerbit');
-            $table->year('tahun_terbit')->nullable();
-            $table->string('edisi')->nullable();
-            $table->string('bahasa')->nullable();
-            $table->integer('jumlah_halaman')->nullable();
+            $table->id('id_buku');
+            $table->unsignedBigInteger('id_kategori');
+            $table->string('kode_buku', 30)->unique();
+            $table->string('isbn', 30)->unique()->nullable();
+            $table->string('judul', 200);
+            $table->string('penulis', 150)->nullable();
+            $table->string('penerbit', 150)->nullable();
+            $table->smallInteger('tahun_terbit')->nullable();
             $table->text('deskripsi')->nullable();
-            $table->string('cover')->nullable();
-            $table->string('lokasi_rak')->nullable();
-            $table->integer('stok_total')->default(0);
-            $table->integer('stok_tersedia')->default(0);
+            $table->string('gambar_cover', 255)->nullable();
+            $table->string('status_katalog', 20)->nullable();
             $table->timestamps();
+
+            $table->foreign('id_kategori')->references('id_kategori')->on('kategori_buku');
         });
     }
 

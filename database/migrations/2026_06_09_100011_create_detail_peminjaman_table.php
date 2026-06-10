@@ -12,12 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('detail_peminjaman', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('peminjaman_id')->constrained('peminjaman')->cascadeOnDelete();
-            $table->foreignId('eksemplar_id')->constrained('eksemplar_buku')->cascadeOnDelete();
-            $table->foreignId('buku_id')->constrained('buku')->cascadeOnDelete();
-            $table->enum('status_item', ['Dipinjam', 'Dikembalikan', 'Hilang'])->default('Dipinjam')->index();
+            $table->id('id_detail_peminjaman');
+            $table->unsignedBigInteger('id_peminjaman');
+            $table->unsignedBigInteger('id_buku');
+            $table->integer('jumlah')->nullable();
+            $table->string('status_detail', 20)->nullable();
             $table->timestamps();
+
+            $table->foreign('id_peminjaman')->references('id_peminjaman')->on('peminjaman');
+            $table->foreign('id_buku')->references('id_buku')->on('buku');
         });
     }
 
