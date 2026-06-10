@@ -4,30 +4,24 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateKontenBerandaTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('konten_beranda', function (Blueprint $table) {
-            $table->id();
-            $table->string('section');
-            $table->string('judul')->nullable();
-            $table->text('konten')->nullable();
-            $table->string('gambar')->nullable();
+            $table->bigInteger('id_konten_beranda')->primary();
+            $table->string('judul', 150)->nullable();
+            $table->text('isi')->nullable();
+            $table->string('gambar', 255)->nullable();
             $table->integer('urutan')->default(0);
-            $table->boolean('is_active')->default(true);
-            $table->timestamps();
+            $table->string('status_konten', 20)->nullable();
+            $table->timestamp('created_at', 0)->nullable();
+            $table->timestamp('updated_at', 0)->nullable();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('konten_beranda');
     }
-};
+}

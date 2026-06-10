@@ -4,30 +4,36 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreatePengembalianTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('pengembalian', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('peminjaman_id')->constrained('peminjaman')->cascadeOnDelete();
-            $table->date('tanggal_pengembalian');
-            $table->foreignId('diterima_oleh')->nullable()->constrained('users')->nullOnDelete();
-            $table->decimal('denda_keterlambatan', 12, 2)->default(0);
-            $table->enum('status_pengembalian', ['Selesai', 'Sebagian', 'Bermasalah'])->default('Selesai')->index();
+            $table->bigInteger('id_pengembalian')->primary();
+            $table->bigInteger('id_peminjaman')->nullable();
+            $table->bigInteger('id_petugas')->nullable();
+            $table->timestamp('tanggal_pengembalian', 0)->nullable();
+            $table->integer('total_hari_terlambat')->default(0);
+            $table->string('status_pengembalian', 20)->nullable();
             $table->text('catatan')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at', 0)->nullable();
+            $table->timestamp('updated_at', 0)->nullable();
+            $table->unique('id_peminjaman');
+            $table->foreign('id_peminjaman')
+                ->references('id_peminjaman')
+                ->on('peminjaman')
+                ->restrictOnDelete()
+                ->restrictOnUpdate();
+            $table->foreign('id_petugas')
+                ->references('id_petugas')
+                ->on('petugas')
+                ->restrictOnDelete()
+                ->restrictOnUpdate();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('pengembalian');
     }
-};
+}

@@ -4,38 +4,36 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateBukuTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('buku', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('kategori_id')->constrained('kategori_buku')->cascadeOnDelete();
-            $table->string('judul')->index();
-            $table->string('isbn')->unique()->nullable();
-            $table->string('penulis')->index();
-            $table->string('penerbit');
-            $table->year('tahun_terbit')->nullable();
-            $table->string('edisi')->nullable();
-            $table->string('bahasa')->nullable();
-            $table->integer('jumlah_halaman')->nullable();
+            $table->bigInteger('id_buku')->primary();
+            $table->bigInteger('id_kategori')->nullable();
+            $table->string('kode_buku', 30)->nullable();
+            $table->string('isbn', 30)->nullable();
+            $table->string('judul', 200)->nullable();
+            $table->string('penulis', 150)->nullable();
+            $table->string('penerbit', 150)->nullable();
+            $table->smallInteger('tahun_terbit')->nullable();
             $table->text('deskripsi')->nullable();
-            $table->string('cover')->nullable();
-            $table->string('lokasi_rak')->nullable();
-            $table->integer('stok_total')->default(0);
-            $table->integer('stok_tersedia')->default(0);
-            $table->timestamps();
+            $table->string('gambar_cover', 255)->nullable();
+            $table->string('status_katalog', 20)->nullable();
+            $table->timestamp('created_at ', 0)->nullable();
+            $table->timestamp('updated_at', 0)->nullable();
+            $table->unique('isbn');
+            $table->unique('kode_buku');
+            $table->foreign('id_kategori')
+                ->references('id_kategori')
+                ->on('kategori_buku')
+                ->restrictOnDelete()
+                ->restrictOnUpdate();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('buku');
     }
-};
+}

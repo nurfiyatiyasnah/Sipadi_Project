@@ -4,31 +4,32 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreatePengumumanTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('pengumuman', function (Blueprint $table) {
-            $table->id();
-            $table->string('judul');
-            $table->text('isi');
-            $table->date('tanggal_mulai')->index();
+            $table->bigInteger('id_pengumuman')->primary();
+            $table->bigInteger('id_petugas')->nullable();
+            $table->string('judul', 150)->nullable();
+            $table->text('isi')->nullable();
+            $table->string('gambar', 255)->nullable();
+            $table->string('file_lampiran', 255)->nullable();
+            $table->date('tanggal_mulai')->nullable();
             $table->date('tanggal_selesai')->nullable();
-            $table->enum('status', ['Aktif', 'Nonaktif', 'Kadaluarsa'])->default('Aktif')->index();
-            $table->enum('prioritas', ['Rendah', 'Sedang', 'Tinggi'])->default('Sedang');
-            $table->foreignId('author_id')->constrained('users')->cascadeOnDelete();
-            $table->timestamps();
+            $table->string('status_pengumuman', 20)->nullable();
+            $table->timestamp('created_at', 0)->nullable();
+            $table->timestamp('updated_at', 0)->nullable();
+            $table->foreign('id_petugas')
+                ->references('id_petugas')
+                ->on('petugas')
+                ->restrictOnDelete()
+                ->restrictOnUpdate();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('pengumuman');
     }
-};
+}

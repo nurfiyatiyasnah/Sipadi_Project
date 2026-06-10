@@ -4,27 +4,35 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateLogPengirimanNotifikasiTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('log_pengiriman_notifikasi', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('notifikasi_id')->constrained('notifikasi')->cascadeOnDelete();
-            $table->enum('metode', ['Email', 'WhatsApp', 'Sistem']);
-            $table->enum('status', ['Terkirim', 'Gagal', 'Pending'])->default('Pending');
-            $table->timestamp('created_at')->nullable();
+            $table->bigInteger('id_pengiriman_notifikasi')->primary();
+            $table->bigInteger('id_notifikasi')->nullable();
+            $table->bigInteger('dikirim_oleh')->nullable();
+            $table->string('via', 30)->nullable();
+            $table->string('status_pengiriman', 20)->nullable();
+            $table->text('pesan_error')->nullable();
+            $table->timestamp('dikirim_pada', 0)->nullable();
+            $table->timestamp('created_at', 0)->nullable();
+            $table->timestamp('updated_at', 0)->nullable();
+            $table->foreign('id_notifikasi')
+                ->references('id_notifikasi')
+                ->on('notifikasi')
+                ->restrictOnDelete()
+                ->restrictOnUpdate();
+            $table->foreign('dikirim_oleh')
+                ->references('id_petugas')
+                ->on('petugas')
+                ->restrictOnDelete()
+                ->restrictOnUpdate();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('log_pengiriman_notifikasi');
     }
-};
+}

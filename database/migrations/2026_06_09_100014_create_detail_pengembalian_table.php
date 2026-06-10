@@ -4,28 +4,34 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateDetailPengembalianTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('detail_pengembalian', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('pengembalian_id')->constrained('pengembalian')->cascadeOnDelete();
-            $table->foreignId('detail_peminjaman_id')->constrained('detail_peminjaman')->cascadeOnDelete();
-            $table->enum('kondisi_buku', ['Baik', 'Rusak Ringan', 'Rusak Berat', 'Hilang']);
+            $table->bigInteger('id_detail_pengembalian')->primary();
+            $table->bigInteger('id_pengembalian')->nullable();
+            $table->bigInteger('id_detail_peminjaman')->nullable();
+            $table->integer('jumlah_dikembalikan')->nullable();
+            $table->string('kondisi_buku', 30)->nullable();
             $table->text('catatan')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at', 0)->nullable();
+            $table->timestamp('updated_at', 0)->nullable();
+            $table->foreign('id_pengembalian')
+                ->references('id_pengembalian')
+                ->on('pengembalian')
+                ->restrictOnDelete()
+                ->restrictOnUpdate();
+            $table->foreign('id_detail_peminjaman')
+                ->references('id_detail_peminjaman')
+                ->on('detail_peminjaman')
+                ->restrictOnDelete()
+                ->restrictOnUpdate();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('detail_pengembalian');
     }
-};
+}
