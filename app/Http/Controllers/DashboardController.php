@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Book;
 
@@ -10,10 +11,10 @@ class DashboardController extends Controller
     public function index()
     {
         $stats = [
-            'total_anggota' => 125,
-            'koleksi_buku' => Book::count(),
-            'peminjaman_aktif' => Book::where('status', 'Dipinjam')->count(),
-            'aduan_baru' => 3,
+            'total_anggota'     => 125,
+            'koleksi_buku'      => Book::count(),
+            'peminjaman_aktif'  => Book::where('status', 'Dipinjam')->count(),
+            'aduan_baru'        => 3,
         ];
 
         $aktivitas_terkini = [
@@ -41,21 +42,15 @@ class DashboardController extends Controller
         ];
 
         $aksi_cepat = [
-            ['label' => 'Tambah Buku'],
-            ['label' => 'Tambah Anggota'],
-            ['label' => 'Kelola Peminjaman'],
-            ['label' => 'Kelola Berita'],
-            ['label' => 'Lihat Laporan']
+            ['label' => 'Tambah Buku', 'url' => route('books.create')],
+            ['label' => 'Tambah Anggota', 'url' => '#'],
+            ['label' => 'Kelola Peminjaman', 'url' => '#'],
+            ['label' => 'Kelola Berita', 'url' => '#'],
+            ['label' => 'Lihat Laporan', 'url' => route('admin.dashboard.koleksi.export')],
         ];
 
-        return view(
-            'dashboard.index',
-            compact(
-                'stats',
-                'aktivitas_terkini',
-                'aksi_cepat'
-            )
-        );
+        // sesuai file: resources/views/admin/dashboard.blade.php
+        return view('admin.dashboard', compact('stats','aktivitas_terkini','aksi_cepat'));
     }
 
     public function koleksi(Request $request)
@@ -75,27 +70,14 @@ class DashboardController extends Controller
             'eksemplar' => Book::sum('stok'),
             'dipinjam'  => Book::where('status', 'Dipinjam')->count(),
             'tersedia'  => Book::where('status', 'Tersedia')->count(),
-            'persen'    => round(
-                Book::where('status', 'Tersedia')->count()
-                / max(Book::count(), 1) * 100,
-                1
-            ),
+            'persen'    => round(Book::where('status','Tersedia')->count() / max(Book::count(),1) * 100, 1),
         ];
 
-        $categories = Book::select('kategori')
-            ->distinct()
-            ->pluck('kategori');
-
+        $categories = Book::select('kategori')->distinct()->pluck('kategori');
         $books = $query->paginate(10);
 
-        return view(
-            'dashboard.koleksi',
-            compact(
-                'stats',
-                'categories',
-                'books'
-            )
-        );
+        // sesuai file: resources/views/admin/books/koleksi.blade.php
+        return view('admin.books.koleksi', compact('stats','categories','books'));
     }
 
     public function export()
@@ -115,9 +97,6 @@ class DashboardController extends Controller
 
         return response($csv)
             ->header('Content-Type', 'text/csv')
-            ->header(
-                'Content-Disposition',
-                'attachment; filename="koleksi_buku.csv"'
-            );
+            ->header('Content-Disposition','attachment; filename=\"koleksi_buku.csv\"');
     }
 }

@@ -73,7 +73,7 @@
     <div class="flex flex-col lg:flex-row justify-between gap-4">
 
         <form method="GET"
-              action="{{ route('dashboard.koleksi') }}"
+              action="{{ route('admin.dashboard.koleksi') }}"
               class="flex flex-wrap gap-3">
 
             <select name="kategori"
@@ -104,7 +104,7 @@
 
         <div class="flex gap-3">
 
-            <a href="{{ route('dashboard.koleksi.export') }}"
+            <a href="{{ route('admin.dashboard.koleksi.export') }}"
                 class="px-4 py-2 border rounded-lg hover:bg-gray-50">
                 Ekspor Laporan
             </a>

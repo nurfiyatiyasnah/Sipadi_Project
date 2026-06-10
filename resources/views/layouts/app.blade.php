@@ -25,13 +25,13 @@
             </div>
 
             <!-- Navigation -->
-                <a href="{{ route('dashboard.index') }}" 
+                <a href="{{ route('admin.dashboard') }}" 
                    class="flex items-center gap-3 px-4 py-3 rounded-lg transition 
-                   {{ request()->routeIs('dashboard') ? 'bg-yellow-400 text-gray-900' : 'text-gray-300 hover:bg-gray-700' }}">
+                   {{ request()->routeIs('admin.dashboard') ? 'bg-yellow-400 text-gray-900' : 'text-gray-300 hover:bg-gray-700' }}">
                     <i class="fas fa-th-large w-5"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="{{ route('dashboard.koleksi') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition text-gray-300 hover:bg-gray-700">
+                <a href="{{ route('admin.dashboard.koleksi') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition text-gray-300 hover:bg-gray-700">
                     <i class="fas fa-book-open w-5"></i>
                     <span>Buku</span>
                 </a>

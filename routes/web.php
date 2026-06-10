@@ -14,14 +14,12 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::get('/register', [LoginController::class, 'showRegister'])->name('register');
 Route::post('/register', [LoginController::class, 'register']);
 
-Route::middleware('auth')->group(function () {
-    Route::prefix('dashboard')->group(function () {
-        Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
-        Route::get('/koleksi', [DashboardController::class, 'koleksi'])->name('dashboard.koleksi');
-        Route::resource('books', BookController::class);
-        // Tambahkan ini untuk ekspor laporan
-        Route::get('/koleksi/export', [DashboardController::class, 'export'])->name('dashboard.koleksi.export');
-    });
+Route::middleware('auth')->prefix('admin')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/koleksi', [DashboardController::class, 'koleksi'])->name('admin.dashboard.koleksi');
+    Route::get('/books/export', [DashboardController::class, 'export'])->name('admin.dashboard.koleksi.export');
+
+    Route::resource('books', BookController::class);
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });

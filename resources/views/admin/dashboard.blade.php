@@ -9,7 +9,8 @@
         <!-- Total Anggota -->
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center justify-between mb-4">
-                <div class="text-3xl font-bold text-gray-900">{{ number_format($stats['total_anggota']) }}</div>
+                <div class="text-3xl font-bold text-gray-900"> {{ number_format($stats['total_anggota'] ?? 0) }} </div>
+
                 <span class="text-green-600 text-sm font-semibold flex items-center gap-1">
                     <i class="fas fa-arrow-up"></i> +12%
                 </span>
@@ -27,7 +28,7 @@
         <!-- Koleksi Buku -->
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center justify-between mb-4">
-                <div class="text-3xl font-bold text-gray-900">{{ number_format($stats['koleksi_buku']) }}</div>
+                <div class="text-3xl font-bold text-gray-900">{{ number_format($stats['koleksi_buku'] ?? 0) }}</div>
                 <div class="flex items-center">
                     <i class="fas fa-shield text-gray-400 text-lg"></i>
                 </div>
@@ -46,7 +47,7 @@
         <!-- Peminjaman -->
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center justify-between mb-4">
-                <div class="text-3xl font-bold text-gray-900">{{ number_format($stats['peminjaman_aktif']) }}</div>
+                <div class="text-3xl font-bold text-gray-900">{{ number_format($stats['peminjaman_aktif'] ?? 0) }}</div>
                 <div class="flex items-center">
                     <i class="fas fa-gem text-yellow-400 text-lg"></i>
                 </div>
@@ -64,7 +65,7 @@
         <!-- Aduan Baru -->
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center justify-between mb-4">
-                <div class="text-3xl font-bold text-gray-900">{{ $stats['aduan_baru'] }}</div>
+                <div class="text-3xl font-bold text-gray-900">{{ $stats['aduan_baru'] ?? 0 }}</div>
                 <span class="bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-semibold">URGENT</span>
             </div>
             <div class="flex items-center gap-3">
