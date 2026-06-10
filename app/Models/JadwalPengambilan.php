@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class JadwalPengambilan extends Model
 {
@@ -12,17 +13,18 @@ class JadwalPengambilan extends Model
 
     protected $table = 'jadwal_pengambilan';
 
-    protected $fillable = [
-        'peminjaman_id',
-        'tanggal_pengambilan',
-        'waktu_mulai',
-        'waktu_selesai',
-        'status_pengambilan',
-        'catatan',
-    ];
+    protected $primaryKey = 'id_jadwal_pengambilan';
 
-    protected $attributes = [
-        'status_pengambilan' => 'Dijadwalkan',
+    protected $fillable = [
+        'id_peminjaman',
+        'id_petugas',
+        'tanggal_pengambilan',
+        'jam_mulai',
+        'jam_selesai',
+        'lokasi_pengambilan',
+        'pesan',
+        'status_jadwal',
+        'dikirim_pada',
     ];
 
     /**
@@ -32,11 +34,22 @@ class JadwalPengambilan extends Model
     {
         return [
             'tanggal_pengambilan' => 'date',
+            'dikirim_pada' => 'datetime',
         ];
     }
 
     public function peminjaman(): BelongsTo
     {
-        return $this->belongsTo(Peminjaman::class);
+        return $this->belongsTo(Peminjaman::class, 'id_peminjaman', 'id_peminjaman');
+    }
+
+    public function petugas(): BelongsTo
+    {
+        return $this->belongsTo(Petugas::class, 'id_petugas', 'id_petugas');
+    }
+
+    public function notifikasi(): HasMany
+    {
+        return $this->hasMany(Notifikasi::class, 'id_jadwal_pengambalian', 'id_jadwal_pengambilan');
     }
 }

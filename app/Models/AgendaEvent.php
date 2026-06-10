@@ -12,19 +12,20 @@ class AgendaEvent extends Model
 
     protected $table = 'agenda_event';
 
+    protected $primaryKey = 'id_event';
+
     protected $fillable = [
-        'judul',
+        'judul_event',
+        'slug',
         'deskripsi',
+        'lokasi',
         'tanggal_mulai',
         'tanggal_selesai',
-        'lokasi',
+        'jam_mulai',
+        'jam_selesai',
         'gambar',
-        'status',
-        'author_id',
-    ];
-
-    protected $attributes = [
-        'status' => 'Akan Datang',
+        'status_event',
+        'created_by',
     ];
 
     /**
@@ -33,13 +34,13 @@ class AgendaEvent extends Model
     protected function casts(): array
     {
         return [
-            'tanggal_mulai' => 'datetime',
-            'tanggal_selesai' => 'datetime',
+            'tanggal_mulai' => 'date',
+            'tanggal_selesai' => 'date',
         ];
     }
 
-    public function author(): BelongsTo
+    public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'author_id');
+        return $this->belongsTo(Petugas::class, 'created_by', 'id_petugas');
     }
 }

@@ -13,18 +13,19 @@ class Pengembalian extends Model
 
     protected $table = 'pengembalian';
 
+    protected $primaryKey = 'id_pengembalian';
+
     protected $fillable = [
-        'peminjaman_id',
+        'id_peminjaman',
+        'id_petugas',
         'tanggal_pengembalian',
-        'diterima_oleh',
-        'denda_keterlambatan',
+        'total_hari_terlambat',
         'status_pengembalian',
         'catatan',
     ];
 
     protected $attributes = [
-        'denda_keterlambatan' => 0,
-        'status_pengembalian' => 'Selesai',
+        'total_hari_terlambat' => 0,
     ];
 
     /**
@@ -33,23 +34,22 @@ class Pengembalian extends Model
     protected function casts(): array
     {
         return [
-            'tanggal_pengembalian' => 'date',
-            'denda_keterlambatan' => 'decimal:2',
+            'tanggal_pengembalian' => 'datetime',
         ];
     }
 
     public function peminjaman(): BelongsTo
     {
-        return $this->belongsTo(Peminjaman::class);
+        return $this->belongsTo(Peminjaman::class, 'id_peminjaman', 'id_peminjaman');
     }
 
-    public function diterimaOleh(): BelongsTo
+    public function petugas(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'diterima_oleh');
+        return $this->belongsTo(Petugas::class, 'id_petugas', 'id_petugas');
     }
 
     public function detailPengembalian(): HasMany
     {
-        return $this->hasMany(DetailPengembalian::class);
+        return $this->hasMany(DetailPengembalian::class, 'id_pengembalian', 'id_pengembalian');
     }
 }

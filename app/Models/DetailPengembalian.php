@@ -12,20 +12,23 @@ class DetailPengembalian extends Model
 
     protected $table = 'detail_pengembalian';
 
+    protected $primaryKey = 'id_detail_pengembalian';
+
     protected $fillable = [
-        'pengembalian_id',
-        'detail_peminjaman_id',
+        'id_pengembalian',
+        'id_detail_peminjaman',
+        'jumlah_dikembalikan',
         'kondisi_buku',
         'catatan',
     ];
 
     public function pengembalian(): BelongsTo
     {
-        return $this->belongsTo(Pengembalian::class);
+        return $this->belongsTo(Pengembalian::class, 'id_pengembalian', 'id_pengembalian');
     }
 
     public function detailPeminjaman(): BelongsTo
     {
-        return $this->belongsTo(DetailPeminjaman::class);
+        return $this->belongsTo(DetailPeminjaman::class, 'id_detail_peminjaman', 'id_detail_peminjaman');
     }
 }

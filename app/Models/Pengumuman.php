@@ -12,19 +12,17 @@ class Pengumuman extends Model
 
     protected $table = 'pengumuman';
 
+    protected $primaryKey = 'id_pengumuman';
+
     protected $fillable = [
+        'id_petugas',
         'judul',
         'isi',
+        'gambar',
+        'file_lampiran',
         'tanggal_mulai',
         'tanggal_selesai',
-        'status',
-        'prioritas',
-        'author_id',
-    ];
-
-    protected $attributes = [
-        'status' => 'Aktif',
-        'prioritas' => 'Sedang',
+        'status_pengumuman',
     ];
 
     /**
@@ -38,8 +36,8 @@ class Pengumuman extends Model
         ];
     }
 
-    public function author(): BelongsTo
+    public function petugas(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'author_id');
+        return $this->belongsTo(Petugas::class, 'id_petugas', 'id_petugas');
     }
 }

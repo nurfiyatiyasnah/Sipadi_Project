@@ -12,11 +12,27 @@ class Kunjungan extends Model
 
     protected $table = 'kunjungan';
 
+    protected $primaryKey = 'id_kunjugan';
+
     protected $fillable = [
-        'tanggal',
-        'jumlah_pengunjung',
-        'keterangan',
+        'kode_kunjungan',
+        'id_anggota',
+        'nama_pengunjung',
+        'jenis_pengunjung',
+        'no_identitas',
+        'no_hp',
+        'instansi',
+        'jumlah_kunjungan',
+        'tujuan_kunjungan',
+        'tanggal_kunjungan',
+        'jam_masuk',
+        'jam_keluar',
+        'status_kunjungan',
         'dicatat_oleh',
+    ];
+
+    protected $attributes = [
+        'jumlah_kunjungan' => 1,
     ];
 
     /**
@@ -25,12 +41,17 @@ class Kunjungan extends Model
     protected function casts(): array
     {
         return [
-            'tanggal' => 'date',
+            'tanggal_kunjungan' => 'date',
         ];
+    }
+
+    public function anggota(): BelongsTo
+    {
+        return $this->belongsTo(Anggota::class, 'id_anggota', 'id_anggota');
     }
 
     public function dicatatOleh(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'dicatat_oleh');
+        return $this->belongsTo(Petugas::class, 'dicatat_oleh', 'id_petugas');
     }
 }

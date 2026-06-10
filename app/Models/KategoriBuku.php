@@ -12,6 +12,8 @@ class KategoriBuku extends Model
 
     protected $table = 'kategori_buku';
 
+    protected $primaryKey = 'id_kategori';
+
     protected $fillable = [
         'nama_kategori',
         'deskripsi',
@@ -19,6 +21,6 @@ class KategoriBuku extends Model
 
     public function buku(): HasMany
     {
-        return $this->hasMany(Buku::class, 'kategori_id');
+        return $this->hasMany(Buku::class, 'id_kategori', 'id_kategori');
     }
 }

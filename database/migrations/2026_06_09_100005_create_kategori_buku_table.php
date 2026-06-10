@@ -9,8 +9,10 @@ class CreateKategoriBukuTable extends Migration
     public function up(): void
     {
         Schema::create('kategori_buku', function (Blueprint $table) {
-            $table->bigInteger('id_kategori')->primary();
-            $table->string('nama_kategori', 50)->nullable();
+
+            $table->id('id_kategori');
+            $table->string('nama_kategori', 50)->unique();
+
             $table->text('deskripsi')->nullable();
             $table->timestamp('created_at', 0)->nullable();
             $table->timestamp('updated_at', 0)->nullable();

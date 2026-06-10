@@ -14,17 +14,19 @@ class Peminjaman extends Model
 
     protected $table = 'peminjaman';
 
-    protected $fillable = [
-        'ajukan_peminjaman_id',
-        'anggota_id',
-        'tanggal_pinjam',
-        'tanggal_harus_kembali',
-        'status_peminjaman',
-        'petugas_id',
-    ];
+    protected $primaryKey = 'id_peminjaman';
 
-    protected $attributes = [
-        'status_peminjaman' => 'Aktif',
+    protected $fillable = [
+        'kode_peminjaman',
+        'id_anggota',
+        'id_aturan',
+        'id_petugas',
+        'tanggal_pengajuan',
+        'deskripsi_pengajuan',
+        'tanggal_diambil',
+        'tanggal_jatuh_tempo',
+        'status_peminjaman',
+        'catatan_admin',
     ];
 
     /**
@@ -33,43 +35,54 @@ class Peminjaman extends Model
     protected function casts(): array
     {
         return [
-            'tanggal_pinjam' => 'date',
-            'tanggal_harus_kembali' => 'date',
+            'tanggal_pengajuan' => 'datetime',
+            'tanggal_diambil' => 'datetime',
+            'tanggal_jatuh_tempo' => 'date',
         ];
-    }
-
-    public function ajukanPeminjaman(): BelongsTo
-    {
-        return $this->belongsTo(AjukanPeminjaman::class);
     }
 
     public function anggota(): BelongsTo
     {
-        return $this->belongsTo(Anggota::class);
+        return $this->belongsTo(Anggota::class, 'id_anggota', 'id_anggota');
+    }
+
+    public function aturanPeminjaman(): BelongsTo
+    {
+        return $this->belongsTo(AturanPeminjaman::class, 'id_aturan', 'id_aturan_peminjaman');
     }
 
     public function petugas(): BelongsTo
     {
-        return $this->belongsTo(Petugas::class);
+        return $this->belongsTo(Petugas::class, 'id_petugas', 'id_petugas');
     }
 
     public function detailPeminjaman(): HasMany
     {
-        return $this->hasMany(DetailPeminjaman::class);
+        return $this->hasMany(DetailPeminjaman::class, 'id_peminjaman', 'id_peminjaman');
     }
 
     public function jadwalPengambilan(): HasOne
     {
-        return $this->hasOne(JadwalPengambilan::class);
+        return $this->hasOne(JadwalPengambilan::class, 'id_peminjaman', 'id_peminjaman');
     }
 
     public function pengembalian(): HasOne
     {
-        return $this->hasOne(Pengembalian::class);
+        return $this->hasOne(Pengembalian::class, 'id_peminjaman', 'id_peminjaman');
     }
 
     public function keterlambatan(): HasOne
     {
-        return $this->hasOne(Keterlambatan::class);
+        return $this->hasOne(Keterlambatan::class, 'id_peminjaman', 'id_peminjaman');
+    }
+
+    public function sanksiAnggota(): HasOne
+    {
+        return $this->hasOne(SanksiAnggota::class, 'id_peminjaman', 'id_peminjaman');
+    }
+
+    public function notifikasi(): HasMany
+    {
+        return $this->hasMany(Notifikasi::class, 'id_peminjaman', 'id_peminjaman');
     }
 }

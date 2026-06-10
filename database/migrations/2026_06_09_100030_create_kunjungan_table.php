@@ -9,9 +9,11 @@ class CreateKunjunganTable extends Migration
     public function up(): void
     {
         Schema::create('kunjungan', function (Blueprint $table) {
-            $table->bigInteger('id_kunjugan')->primary();
-            $table->string('kode_kunjungan', 30)->nullable();
-            $table->bigInteger('id_anggota')->nullable();
+
+            $table->id('id_kunjugan');
+            $table->string('kode_kunjungan', 30)->unique();
+            $table->unsignedBigInteger('id_anggota')->nullable();
+
             $table->string('nama_pengunjung', 100)->nullable();
             $table->string('jenis_pengunjung', 30)->nullable();
             $table->string('no_identitas', 50)->nullable();
@@ -20,23 +22,16 @@ class CreateKunjunganTable extends Migration
             $table->integer('jumlah_kunjungan')->default(1);
             $table->string('tujuan_kunjungan', 150)->nullable();
             $table->date('tanggal_kunjungan')->nullable();
-            $table->time('jam_masuk', 0)->nullable();
-            $table->time('jam_keluar', 0)->nullable();
+
+            $table->time('jam_masuk')->nullable();
+            $table->time('jam_keluar')->nullable();
             $table->string('status_kunjungan', 20)->nullable();
-            $table->bigInteger('dicatat_oleh')->nullable();
-            $table->timestamp('created_at', 0)->nullable();
-            $table->timestamp('updated_at', 0)->nullable();
-            $table->unique('kode_kunjungan');
-            $table->foreign('id_anggota')
-                ->references('id_anggota')
-                ->on('anggota')
-                ->restrictOnDelete()
-                ->restrictOnUpdate();
-            $table->foreign('dicatat_oleh')
-                ->references('id_petugas')
-                ->on('petugas')
-                ->restrictOnDelete()
-                ->restrictOnUpdate();
+            $table->unsignedBigInteger('dicatat_oleh')->nullable();
+            $table->timestamps();
+
+            $table->foreign('id_anggota')->references('id_anggota')->on('anggota');
+            $table->foreign('dicatat_oleh')->references('id_petugas')->on('petugas');
+
         });
     }
 

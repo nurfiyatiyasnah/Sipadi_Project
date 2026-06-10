@@ -9,19 +9,19 @@ class CreateLogPencarianBukuTable extends Migration
     public function up(): void
     {
         Schema::create('log_pencarian_buku', function (Blueprint $table) {
-            $table->bigInteger('id_log_pencarian')->primary();
-            $table->bigInteger('id_user')->nullable();
+
+            $table->id('id_log_pencarian');
+            $table->unsignedBigInteger('id_user')->nullable();
+
             $table->string('keyword', 200)->nullable();
             $table->integer('jumlah_hasil')->default(0);
             $table->string('ip_address', 50)->nullable();
             $table->text('user_agent')->nullable();
-            $table->timestamp('created_at', 0)->nullable();
-            $table->timestamp('updated_at', 0)->nullable();
-            $table->foreign('id_user')
-                ->references('id_user')
-                ->on('users')
-                ->restrictOnDelete()
-                ->restrictOnUpdate();
+
+            $table->timestamps();
+
+            $table->foreign('id_user')->references('id_user')->on('users');
+
         });
     }
 

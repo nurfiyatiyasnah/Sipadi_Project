@@ -11,27 +11,17 @@ class KontenBeranda extends Model
 
     protected $table = 'konten_beranda';
 
+    protected $primaryKey = 'id_konten_beranda';
+
     protected $fillable = [
-        'section',
         'judul',
-        'konten',
+        'isi',
         'gambar',
         'urutan',
-        'is_active',
+        'status_konten',
     ];
 
     protected $attributes = [
         'urutan' => 0,
-        'is_active' => true,
     ];
-
-    /**
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'is_active' => 'boolean',
-        ];
-    }
 }

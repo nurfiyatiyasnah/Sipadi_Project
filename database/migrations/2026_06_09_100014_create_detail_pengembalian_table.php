@@ -9,24 +9,18 @@ class CreateDetailPengembalianTable extends Migration
     public function up(): void
     {
         Schema::create('detail_pengembalian', function (Blueprint $table) {
-            $table->bigInteger('id_detail_pengembalian')->primary();
-            $table->bigInteger('id_pengembalian')->nullable();
-            $table->bigInteger('id_detail_peminjaman')->nullable();
+
+            $table->id('id_detail_pengembalian');
+            $table->unsignedBigInteger('id_pengembalian');
+            $table->unsignedBigInteger('id_detail_peminjaman');
             $table->integer('jumlah_dikembalikan')->nullable();
             $table->string('kondisi_buku', 30)->nullable();
             $table->text('catatan')->nullable();
-            $table->timestamp('created_at', 0)->nullable();
-            $table->timestamp('updated_at', 0)->nullable();
-            $table->foreign('id_pengembalian')
-                ->references('id_pengembalian')
-                ->on('pengembalian')
-                ->restrictOnDelete()
-                ->restrictOnUpdate();
-            $table->foreign('id_detail_peminjaman')
-                ->references('id_detail_peminjaman')
-                ->on('detail_peminjaman')
-                ->restrictOnDelete()
-                ->restrictOnUpdate();
+            $table->timestamps();
+
+            $table->foreign('id_pengembalian')->references('id_pengembalian')->on('pengembalian');
+            $table->foreign('id_detail_peminjaman')->references('id_detail_peminjaman')->on('detail_peminjaman');
+
         });
     }
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Fasilitas extends Model
 {
@@ -11,26 +12,21 @@ class Fasilitas extends Model
 
     protected $table = 'fasilitas';
 
+    protected $primaryKey = 'id_fasilitas';
+
     protected $fillable = [
         'nama_fasilitas',
+        'slug',
         'deskripsi',
+        'lokasi',
+        'jumlah_unit',
         'gambar',
-        'is_active',
-        'urutan',
+        'status_fasilitas',
+        'created_by',
     ];
 
-    protected $attributes = [
-        'is_active' => true,
-        'urutan' => 0,
-    ];
-
-    /**
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    public function createdBy(): BelongsTo
     {
-        return [
-            'is_active' => 'boolean',
-        ];
+        return $this->belongsTo(Petugas::class, 'created_by', 'id_petugas');
     }
 }

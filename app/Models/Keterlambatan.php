@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Keterlambatan extends Model
 {
@@ -12,18 +13,15 @@ class Keterlambatan extends Model
 
     protected $table = 'keterlambatan';
 
-    protected $fillable = [
-        'peminjaman_id',
-        'jumlah_hari',
-        'denda_per_hari',
-        'total_denda',
-        'status_denda',
-    ];
+    protected $primaryKey = 'id_keterlambatan';
 
-    protected $attributes = [
-        'denda_per_hari' => 0,
-        'total_denda' => 0,
-        'status_denda' => 'Belum Bayar',
+    protected $fillable = [
+        'id_peminjaman',
+        'id_anggota',
+        'tanggal_jatuh_tempo',
+        'tanggal_dihitung',
+        'hari_terlambat',
+        'status_perhitungan',
     ];
 
     /**
@@ -32,13 +30,23 @@ class Keterlambatan extends Model
     protected function casts(): array
     {
         return [
-            'denda_per_hari' => 'decimal:2',
-            'total_denda' => 'decimal:2',
+            'tanggal_jatuh_tempo' => 'date',
+            'tanggal_dihitung' => 'date',
         ];
     }
 
     public function peminjaman(): BelongsTo
     {
-        return $this->belongsTo(Peminjaman::class);
+        return $this->belongsTo(Peminjaman::class, 'id_peminjaman', 'id_peminjaman');
+    }
+
+    public function anggota(): BelongsTo
+    {
+        return $this->belongsTo(Anggota::class, 'id_anggota', 'id_anggota');
+    }
+
+    public function sanksiAnggota(): HasOne
+    {
+        return $this->hasOne(SanksiAnggota::class, 'id_keterlambatan', 'id_keterlambatan');
     }
 }

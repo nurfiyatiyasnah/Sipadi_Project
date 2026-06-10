@@ -12,21 +12,29 @@ class EksemplarBuku extends Model
 
     protected $table = 'eksemplar_buku';
 
+    protected $primaryKey = 'id_eksemplar_buku';
+
     protected $fillable = [
-        'buku_id',
+        'id_buku',
         'kode_eksemplar',
-        'kondisi',
-        'status',
-        'catatan',
+        'status_eksemplar',
+        'kondisi_eksemplar',
+        'lokasi_rak',
+        'tanggal_masuk',
     ];
 
-    protected $attributes = [
-        'kondisi' => 'Baik',
-        'status' => 'Tersedia',
-    ];
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'tanggal_masuk' => 'date',
+        ];
+    }
 
     public function buku(): BelongsTo
     {
-        return $this->belongsTo(Buku::class);
+        return $this->belongsTo(Buku::class, 'id_buku', 'id_buku');
     }
 }

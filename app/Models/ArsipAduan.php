@@ -6,20 +6,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class TanggapanAduan extends Model
+class ArsipAduan extends Model
 {
     use HasFactory;
 
-    protected $table = 'tanggapan_aduan';
+    protected $table = 'arsip_aduan';
 
-    protected $primaryKey = 'id_tanggapan';
+    protected $primaryKey = 'id_arsip_aduan';
 
     protected $fillable = [
         'id_aduan',
-        'id_petugas',
-        'isi_tanggapan',
-        'status_setelah_respon',
-        'ditanggapi_pada',
+        'diarsipkan_oleh',
+        'alasan_diarsipkan',
+        'diarsipkan_pada',
     ];
 
     /**
@@ -28,7 +27,7 @@ class TanggapanAduan extends Model
     protected function casts(): array
     {
         return [
-            'ditanggapi_pada' => 'datetime',
+            'diarsipkan_pada' => 'datetime',
         ];
     }
 
@@ -37,8 +36,8 @@ class TanggapanAduan extends Model
         return $this->belongsTo(Aduan::class, 'id_aduan', 'id_aduan');
     }
 
-    public function petugas(): BelongsTo
+    public function diarsipkanOleh(): BelongsTo
     {
-        return $this->belongsTo(Petugas::class, 'id_petugas', 'id_petugas');
+        return $this->belongsTo(Petugas::class, 'diarsipkan_oleh', 'id_petugas');
     }
 }

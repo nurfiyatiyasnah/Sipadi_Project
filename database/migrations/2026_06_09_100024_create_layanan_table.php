@@ -9,8 +9,10 @@ class CreateLayananTable extends Migration
     public function up(): void
     {
         Schema::create('layanan', function (Blueprint $table) {
-            $table->bigInteger('id_layanan')->primary();
-            $table->string('nama_layanan', 150)->nullable();
+
+            $table->id('id_layanan');
+            $table->string('nama_layanan', 150);
+
             $table->string('slug', 255)->nullable();
             $table->text('deskripsi')->nullable();
             $table->text('persyaratan')->nullable();
@@ -20,14 +22,12 @@ class CreateLayananTable extends Migration
             $table->string('kontak_layanan', 100)->nullable();
             $table->string('gambar', 255)->nullable();
             $table->string('status_layanan', 20)->nullable();
-            $table->bigInteger('created_by')->nullable();
-            $table->timestamp('created_at', 0)->nullable();
-            $table->timestamp('updated_at', 0)->nullable();
-            $table->foreign('created_by')
-                ->references('id_petugas')
-                ->on('petugas')
-                ->restrictOnDelete()
-                ->restrictOnUpdate();
+
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->timestamps();
+
+            $table->foreign('created_by')->references('id_petugas')->on('petugas');
+
         });
     }
 

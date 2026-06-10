@@ -2,34 +2,32 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LogPencarianBuku extends Model
 {
-    public $timestamps = false;
+    use HasFactory;
 
     protected $table = 'log_pencarian_buku';
 
+    protected $primaryKey = 'id_log_pencarian';
+
     protected $fillable = [
-        'user_id',
-        'kata_kunci',
+        'id_user',
+        'keyword',
         'jumlah_hasil',
-        'created_at',
+        'ip_address',
+        'user_agent',
     ];
 
-    /**
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'created_at' => 'datetime',
-        ];
-    }
+    protected $attributes = [
+        'jumlah_hasil' => 0,
+    ];
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Layanan extends Model
 {
@@ -11,26 +12,24 @@ class Layanan extends Model
 
     protected $table = 'layanan';
 
+    protected $primaryKey = 'id_layanan';
+
     protected $fillable = [
         'nama_layanan',
+        'slug',
         'deskripsi',
-        'ikon',
-        'is_active',
-        'urutan',
+        'persyaratan',
+        'prosedur',
+        'jam_layanan',
+        'biaya',
+        'kontak_layanan',
+        'gambar',
+        'status_layanan',
+        'created_by',
     ];
 
-    protected $attributes = [
-        'is_active' => true,
-        'urutan' => 0,
-    ];
-
-    /**
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    public function createdBy(): BelongsTo
     {
-        return [
-            'is_active' => 'boolean',
-        ];
+        return $this->belongsTo(Petugas::class, 'created_by', 'id_petugas');
     }
 }

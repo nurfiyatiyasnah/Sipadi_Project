@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Prestasi extends Model
 {
@@ -11,13 +12,19 @@ class Prestasi extends Model
 
     protected $table = 'prestasi';
 
+    protected $primaryKey = 'id_prestasi';
+
     protected $fillable = [
-        'judul',
+        'judul_prestasi',
+        'slug',
         'deskripsi',
-        'tanggal',
-        'tingkat',
+        'tingkat_prestasi',
+        'penyelenggra',
+        'tanggal_prestasi',
         'gambar',
-        'penyelenggara',
+        'file_lampiran',
+        'status_prestasi',
+        'created_by',
     ];
 
     /**
@@ -26,7 +33,12 @@ class Prestasi extends Model
     protected function casts(): array
     {
         return [
-            'tanggal' => 'date',
+            'tanggal_prestasi' => 'date',
         ];
+    }
+
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(Petugas::class, 'created_by', 'id_petugas');
     }
 }

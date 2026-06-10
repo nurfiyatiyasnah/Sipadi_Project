@@ -13,40 +13,38 @@ class Buku extends Model
 
     protected $table = 'buku';
 
+    protected $primaryKey = 'id_buku';
+
     protected $fillable = [
-        'kategori_id',
-        'judul',
+        'id_kategori',
+        'kode_buku',
         'isbn',
+        'judul',
         'penulis',
         'penerbit',
         'tahun_terbit',
-        'edisi',
-        'bahasa',
-        'jumlah_halaman',
         'deskripsi',
-        'cover',
-        'lokasi_rak',
-        'stok_total',
-        'stok_tersedia',
-    ];
-
-    protected $attributes = [
-        'stok_total' => 0,
-        'stok_tersedia' => 0,
+        'gambar_cover',
+        'status_katalog',
     ];
 
     public function kategori(): BelongsTo
     {
-        return $this->belongsTo(KategoriBuku::class, 'kategori_id');
+        return $this->belongsTo(KategoriBuku::class, 'id_kategori', 'id_kategori');
     }
 
     public function eksemplar(): HasMany
     {
-        return $this->hasMany(EksemplarBuku::class);
+        return $this->hasMany(EksemplarBuku::class, 'id_buku', 'id_buku');
     }
 
     public function mutasiStok(): HasMany
     {
-        return $this->hasMany(MutasiStokBuku::class);
+        return $this->hasMany(MutasiStokBuku::class, 'id_buku', 'id_buku');
+    }
+
+    public function detailPeminjaman(): HasMany
+    {
+        return $this->hasMany(DetailPeminjaman::class, 'id_buku', 'id_buku');
     }
 }
