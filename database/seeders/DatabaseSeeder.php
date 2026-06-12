@@ -2,29 +2,41 @@
 
 namespace Database\Seeders;
 
+use App\Models\Petugas;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // Seed default roles
-        $adminRole = Role::create(['nama_role' => 'Admin', 'deskripsi' => 'Administrator sistem']);
-        Role::create(['nama_role' => 'Anggota', 'deskripsi' => 'Anggota perpustakaan']);
-        Role::create(['nama_role' => 'Petugas', 'deskripsi' => 'Petugas perpustakaan']);
+        $roleAnggota = Role::updateOrCreate(
+            ['nama_role' => 'Anggota'],
+            ['deskripsi' => 'Pengguna umum yang dapat mengakses layanan perpustakaan']
+        );
 
-        // Seed admin user
-        User::create([
-            'name' => 'Admin',
-            'email' => 'admin@sipadi.test',
-            'password' => Hash::make('password'),
-            'role_id' => $adminRole->id,
-        ]);
+        $rolePetugas = Role::updateOrCreate(
+            ['nama_role' => 'Petugas'],
+            ['deskripsi' => 'Pengelola sistem perpustakaan']
+        );
+
+        $petugasUser = User::updateOrCreate(
+            ['email' => 'petugas@sipadi.test'],
+            [
+                'id_role' => $rolePetugas->id_role,
+                'password' => 'password',
+                'status_akun' => 'aktif',
+            ]
+        );
+
+        Petugas::updateOrCreate(
+            ['id_user' => $petugasUser->id_user],
+            [
+                'nama_petugas' => 'Petugas SIPADI',
+                'jabatan' => 'Petugas Perpustakaan',
+                'no_hp' => null,
+            ]
+        );
     }
 }

@@ -18,7 +18,7 @@ class AturanPeminjaman extends Model
         'nama_aturan',
         'lama_pinjam_hari',
         'maksimal_buku_per_peminjaman',
-        'maksimal_peminjam_aktif',
+        'maksimal_peminjaman_aktif',
         'masa_suspend_per_hari_terlambat',
         'status_aktif',
     ];

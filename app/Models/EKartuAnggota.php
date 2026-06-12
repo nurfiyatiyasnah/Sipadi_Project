@@ -14,12 +14,6 @@ class EKartuAnggota extends Model
 
     protected $primaryKey = 'id_e_kartu_anggota';
 
-    public $timestamps = false;
-
-    const CREATED_AT = 'created_at';
-
-    const UPDATED_AT = 'update_at';
-
     protected $fillable = [
         'id_anggota',
         'no_anggota',

@@ -18,7 +18,7 @@ class Notifikasi extends Model
     protected $fillable = [
         'id_user',
         'id_peminjaman',
-        'id_jadwal_pengambalian',
+        'id_jadwal_pengambilan',
         'judul',
         'isi',
         'jenis_notifikasi',
@@ -51,7 +51,7 @@ class Notifikasi extends Model
 
     public function jadwalPengambilan(): BelongsTo
     {
-        return $this->belongsTo(JadwalPengambilan::class, 'id_jadwal_pengambalian', 'id_jadwal_pengambilan');
+        return $this->belongsTo(JadwalPengambilan::class, 'id_jadwal_pengambilan', 'id_jadwal_pengambilan');
     }
 
     public function logPengiriman(): HasMany

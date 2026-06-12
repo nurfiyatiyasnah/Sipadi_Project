@@ -3,254 +3,101 @@
 @section('title', 'Koleksi Buku')
 
 @section('content')
-
-<!-- Header Halaman -->
-<div class="mb-6">
-    <h2 class="text-3xl font-bold text-gray-800">
-        Koleksi Perpustakaan
-    </h2>
-    <p class="text-gray-500 mt-1">
-        Kelola khazanah literasi Kota Bukittinggi hari ini.
-    </p>
-</div>
-
-<!-- Statistik -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-        <p class="text-sm uppercase tracking-wider text-gray-500">
-            Total Judul
-        </p>
-        <h3 class="text-4xl font-bold text-gray-800 mt-2">
-            {{ $stats['judul'] }}
-        </h3>
-        <span class="text-green-600 text-sm font-medium">
-            +12%
-        </span>
+    <div>
+        <h1 class="text-3xl font-bold text-gray-900">Koleksi Perpustakaan</h1>
+        <p class="mt-1 text-gray-600">Data judul dan eksemplar buku yang tercatat di SIPADI.</p>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-        <p class="text-sm uppercase tracking-wider text-gray-500">
-            Total Eksemplar
-        </p>
-        <h3 class="text-4xl font-bold text-gray-800 mt-2">
-            {{ $stats['eksemplar'] }}
-        </h3>
-        <span class="text-gray-500 text-sm">
-            Stok Aman
-        </span>
+    <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        @foreach ([
+            ['label' => 'Total Judul', 'value' => $stats['judul']],
+            ['label' => 'Total Eksemplar', 'value' => $stats['eksemplar']],
+            ['label' => 'Sedang Dipinjam', 'value' => $stats['dipinjam']],
+            ['label' => 'Tersedia', 'value' => $stats['tersedia']],
+        ] as $stat)
+            <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                <p class="text-sm font-medium uppercase tracking-wide text-gray-500">{{ $stat['label'] }}</p>
+                <p class="mt-2 text-4xl font-bold text-gray-900">{{ number_format($stat['value']) }}</p>
+            </div>
+        @endforeach
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-        <p class="text-sm uppercase tracking-wider text-gray-500">
-            Buku Dipinjam
-        </p>
-        <h3 class="text-4xl font-bold text-yellow-600 mt-2">
-            {{ $stats['dipinjam'] }}
-        </h3>
-        <span class="text-gray-500 text-sm">
-            Bulan Ini
-        </span>
-    </div>
+    <div class="mt-6 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+        <div class="flex flex-col justify-between gap-4 lg:flex-row">
+            <form method="GET" action="{{ route('petugas.koleksi') }}" class="flex flex-col gap-3 sm:flex-row">
+                <select name="kategori" class="rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <option value="">Semua kategori</option>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id_kategori }}" @selected((string) request('kategori') === (string) $category->id_kategori)>
+                            {{ $category->nama_kategori }}
+                        </option>
+                    @endforeach
+                </select>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-        <p class="text-sm uppercase tracking-wider text-gray-500">
-            Buku Tersedia
-        </p>
-        <h3 class="text-4xl font-bold text-gray-800 mt-2">
-            {{ $stats['tersedia'] }}
-        </h3>
-        <span class="text-green-600 text-sm font-medium">
-            {{ $stats['persen'] }}%
-        </span>
-    </div>
+                <select name="status" class="rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <option value="">Semua status katalog</option>
+                    <option value="aktif" @selected(request('status') === 'aktif')>Aktif</option>
+                    <option value="nonaktif" @selected(request('status') === 'nonaktif')>Nonaktif</option>
+                </select>
 
-</div>
+                <button type="submit" class="rounded-lg bg-indigo-600 px-5 py-2 font-semibold text-white hover:bg-indigo-700">
+                    Terapkan Filter
+                </button>
+            </form>
 
-<!-- Toolbar -->
-<div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-6">
-
-    <div class="flex flex-col lg:flex-row justify-between gap-4">
-
-        <form method="GET"
-            action="{{ route('dashboard.koleksi') }}"
-            class="flex flex-wrap gap-3">
-
-            <select name="kategori"
-                class="border border-gray-300 rounded-lg px-4 py-2">
-                <option value="">Semua Kategori</option>
-
-                @foreach($categories as $cat)
-                    <option value="{{ $cat }}">
-                        {{ $cat }}
-                    </option>
-                @endforeach
-            </select>
-
-            <select name="status"
-                class="border border-gray-300 rounded-lg px-4 py-2">
-                <option value="">Semua Status</option>
-                <option value="Tersedia">Tersedia</option>
-                <option value="Dipinjam">Dipinjam</option>
-                <option value="Referensi">Referensi Saja</option>
-            </select>
-
-            <button type="submit"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg">
-                Filter
-            </button>
-
-        </form>
-
-        <div class="flex gap-3">
-
-            <a href="{{ route('dashboard.koleksi.export') }}"
-                class="px-4 py-2 border rounded-lg hover:bg-gray-50">
-                Ekspor Laporan
+            <a href="{{ route('petugas.koleksi.export') }}" class="rounded-lg border border-gray-300 px-5 py-2 text-center font-semibold text-gray-700 hover:bg-gray-50">
+                Ekspor CSV
             </a>
+        </div>
+    </div>
 
-            <a href="{{ route('books.create') }}"
-                class="bg-gray-900 text-white px-5 py-2 rounded-lg hover:bg-gray-800">
-                + Tambah Koleksi Baru
-            </a>
-
+    <div class="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="border-b bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-600">
+                    <tr>
+                        <th class="px-6 py-4">Kode</th>
+                        <th class="px-6 py-4">Judul</th>
+                        <th class="px-6 py-4">Kategori</th>
+                        <th class="px-6 py-4">Eksemplar</th>
+                        <th class="px-6 py-4">Tersedia</th>
+                        <th class="px-6 py-4">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @forelse ($books as $book)
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 font-mono text-sm text-gray-600">{{ $book->kode_buku }}</td>
+                            <td class="px-6 py-4">
+                                <p class="font-semibold text-gray-900">{{ $book->judul }}</p>
+                                <p class="text-sm text-gray-500">{{ $book->penulis ?: 'Penulis belum diisi' }}</p>
+                            </td>
+                            <td class="px-6 py-4 text-gray-700">{{ $book->kategori?->nama_kategori ?? '-' }}</td>
+                            <td class="px-6 py-4 font-semibold text-gray-900">{{ $book->eksemplar_count }}</td>
+                            <td class="px-6 py-4 font-semibold text-emerald-700">{{ $book->eksemplar_tersedia_count }}</td>
+                            <td class="px-6 py-4">
+                                <span class="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
+                                    {{ ucfirst($book->status_katalog ?? 'belum diatur') }}
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                                Belum ada koleksi yang sesuai dengan filter.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
 
+        <div class="border-t px-6 py-4">
+            {{ $books->links() }}
+        </div>
     </div>
 
-</div>
-
-<!-- Tabel -->
-<div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-
-    <div class="overflow-x-auto">
-
-        <table class="w-full">
-
-            <thead class="bg-gray-50 border-b">
-
-                <tr class="text-left text-gray-600 text-sm uppercase">
-
-                    <th class="px-6 py-4">Sampul</th>
-                    <th class="px-6 py-4">Judul Buku</th>
-                    <th class="px-6 py-4">Penulis</th>
-                    <th class="px-6 py-4">Kategori</th>
-                    <th class="px-6 py-4">Stok</th>
-                    <th class="px-6 py-4">Status</th>
-                    <th class="px-6 py-4">Aksi</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-            @foreach($books as $book)
-
-                <tr class="border-b hover:bg-gray-50">
-
-                    <td class="px-6 py-4">
-
-                        <img
-                            src="{{ asset('covers/'.$book->cover) }}"
-                            class="w-14 h-20 object-cover rounded-md">
-
-                    </td>
-
-                    <td class="px-6 py-4">
-
-                        <h4 class="font-semibold text-gray-800">
-                            {{ $book->judul }}
-                        </h4>
-
-                        <p class="text-sm text-gray-500">
-                            ISBN: {{ $book->isbn }}
-                        </p>
-
-                    </td>
-
-                    <td class="px-6 py-4">
-                        {{ $book->penulis }}
-                    </td>
-
-                    <td class="px-6 py-4">
-
-                        <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs">
-                            {{ $book->kategori }}
-                        </span>
-
-                    </td>
-
-                    <td class="px-6 py-4 font-semibold">
-                        {{ $book->stok }}
-                    </td>
-
-                    <td class="px-6 py-4">
-
-                        @if($book->status == 'Tersedia')
-                            <span class="text-green-600 font-medium">
-                                ● Tersedia
-                            </span>
-
-                        @elseif($book->status == 'Dipinjam')
-                            <span class="text-yellow-600 font-medium">
-                                ● Dipinjam
-                            </span>
-
-                        @else
-                            <span class="text-red-600 font-medium">
-                                ● Referensi Saja
-                            </span>
-                        @endif
-
-                    </td>
-
-                    <td class="px-6 py-4">
-
-                        <a href="{{ route('books.show',$book->id) }}"
-                            class="text-blue-600 hover:text-blue-800">
-                            Detail
-                        </a>
-
-                    </td>
-
-                </tr>
-
-            @endforeach
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-    <!-- Pagination -->
-    <div class="flex justify-between items-center px-6 py-4">
-
-        <small class="text-gray-500">
-            Menampilkan
-            {{ $books->firstItem() }}
-            -
-            {{ $books->lastItem() }}
-            dari
-            {{ $books->total() }}
-            buku
-        </small>
-
-        {{ $books->links() }}
-
-    </div>
-
-</div>
-
-<!-- Footer -->
-<div class="mt-8 text-center text-sm text-gray-500">
-
-    © 2024 Dinas Perpustakaan dan Kearsipan Kota Bukittinggi |
-    <a href="#" class="hover:text-blue-600">Kebijakan Privasi</a> |
-    <a href="#" class="hover:text-blue-600">Syarat & Ketentuan</a> |
-    <a href="#" class="hover:text-blue-600">Panduan Admin</a>
-
-</div>
-
+    <p class="mt-6 text-sm text-gray-500">
+        Persentase ketersediaan seluruh eksemplar: {{ $stats['persen'] }}%.
+    </p>
 @endsection
