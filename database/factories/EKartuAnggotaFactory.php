@@ -21,7 +21,7 @@ class EKartuAnggotaFactory extends Factory
     {
         return [
             'id_anggota' => Anggota::factory(),
-            'no_anggota' => 'AGT-'.now()->format('Ymd').'-'.Str::upper(fake()->unique()->bothify('??####')),
+            'no_anggota' => fake()->unique()->numerify('################'),
             'kalangan' => config('sipadi.keanggotaan.kalangan_default'),
             'barcode' => (string) Str::uuid(),
             'masa_berlaku' => now()->addYears((int) config('sipadi.keanggotaan.masa_berlaku_tahun')),

@@ -19,7 +19,7 @@
                                 <dd class="text-lg font-semibold">{{ $anggota->nama_lengkap }}</dd>
                             </div>
                             <div>
-                                <dt class="text-indigo-200">Nomor Anggota</dt>
+                                <dt class="text-indigo-200">Nomor Kartu / NIK</dt>
                                 <dd class="font-mono text-lg">{{ $eKartu->no_anggota }}</dd>
                             </div>
                             <div>
@@ -44,7 +44,7 @@
 
             <div class="mt-6 flex justify-end">
                 <a href="{{ route('anggota.e-kartu.download') }}" class="rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                    Download PDF
+                    Download PNG
                 </a>
             </div>
         </div>

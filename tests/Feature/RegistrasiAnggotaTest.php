@@ -43,7 +43,8 @@ class RegistrasiAnggotaTest extends TestCase
 
         $this->assertAuthenticatedAs($user);
         $this->assertSame('Anggota', $user->role->nama_role);
-        $this->assertSame($anggota->no_anggota, $eKartu->no_anggota);
+        $this->assertSame('1375010101010001', $anggota->no_anggota);
+        $this->assertSame($anggota->nik, $eKartu->no_anggota);
         $response->assertRedirect(route('landing'));
     }
 

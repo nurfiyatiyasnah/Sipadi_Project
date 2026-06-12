@@ -38,7 +38,7 @@ class RegisteredUserController extends Controller
 
             $anggota = Anggota::create([
                 'id_user' => $user->id_user,
-                'no_anggota' => $this->generateNoAnggota(),
+                'no_anggota' => $data['nik'],
                 'nik' => $data['nik'],
                 'nama_lengkap' => $data['nama_lengkap'],
                 'jenis_kelamin' => $data['jenis_kelamin'],
@@ -64,10 +64,5 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         return redirect()->route('landing');
-    }
-
-    private function generateNoAnggota(): string
-    {
-        return 'AGT-'.now()->format('Ymd').'-'.Str::upper(Str::random(8));
     }
 }

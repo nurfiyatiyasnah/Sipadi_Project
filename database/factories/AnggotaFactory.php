@@ -5,7 +5,6 @@ namespace Database\Factories;
 use App\Models\Anggota;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Anggota>
@@ -19,10 +18,12 @@ class AnggotaFactory extends Factory
      */
     public function definition(): array
     {
+        $nik = fake()->unique()->numerify('################');
+
         return [
             'id_user' => User::factory(),
-            'no_anggota' => 'AGT-'.now()->format('Ymd').'-'.Str::upper(fake()->unique()->bothify('??####')),
-            'nik' => fake()->unique()->numerify('################'),
+            'no_anggota' => $nik,
+            'nik' => $nik,
             'nama_lengkap' => fake()->name(),
             'jenis_kelamin' => fake()->randomElement(['Laki-laki', 'Perempuan']),
             'tanggal_lahir' => fake()->dateTimeBetween('-60 years', '-15 years'),

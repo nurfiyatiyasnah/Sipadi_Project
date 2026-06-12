@@ -38,6 +38,7 @@ class RegistrationTest extends TestCase
         $anggota = Anggota::whereBelongsTo($user)->firstOrFail();
 
         $this->assertAuthenticated();
+        $this->assertSame('1375010101010001', $anggota->no_anggota);
         $this->assertModelExists(EKartuAnggota::whereBelongsTo($anggota)->firstOrFail());
         $response->assertRedirect(route('landing', absolute: false));
     }
