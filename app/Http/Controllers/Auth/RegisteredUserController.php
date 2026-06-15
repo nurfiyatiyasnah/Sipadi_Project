@@ -27,7 +27,10 @@ class RegisteredUserController extends Controller
         $data = $request->validated();
 
         $user = DB::transaction(function () use ($data): User {
-            $roleAnggota = Role::where('nama_role', 'Anggota')->firstOrFail();
+            $roleAnggota = Role::firstOrCreate(
+                ['nama_role' => 'Anggota'],
+                ['deskripsi' => 'Pengguna umum yang dapat mengakses layanan perpustakaan']
+            );
 
             $user = User::create([
                 'id_role' => $roleAnggota->id_role,
@@ -63,6 +66,8 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('landing');
+        return redirect()
+            ->route('anggota.e-kartu')
+            ->with('status', 'registration-success');
     }
 }

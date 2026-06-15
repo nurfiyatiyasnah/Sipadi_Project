@@ -24,8 +24,6 @@ class RegistrasiAnggotaTest extends TestCase
 
     public function test_pengunjung_dapat_mendaftar_sebagai_anggota(): void
     {
-        $this->seed();
-
         $response = $this->post(route('register'), [
             'nik' => '1375010101010001',
             'nama_lengkap' => 'Budi Santoso',
@@ -45,7 +43,13 @@ class RegistrasiAnggotaTest extends TestCase
         $this->assertSame('Anggota', $user->role->nama_role);
         $this->assertSame('1375010101010001', $anggota->no_anggota);
         $this->assertSame($anggota->nik, $eKartu->no_anggota);
-        $response->assertRedirect(route('landing'));
+        $response
+            ->assertSessionHas('status', 'registration-success')
+            ->assertRedirect(route('anggota.e-kartu'));
+
+        $this->get(route('anggota.e-kartu'))
+            ->assertOk()
+            ->assertSee('E-Kartu Anggota');
     }
 
     public function test_nik_dan_email_anggota_harus_unik(): void
