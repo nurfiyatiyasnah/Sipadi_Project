@@ -1,30 +1,28 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Dashboard') - Digital Archive</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="bg-gray-50">
-    <div class="flex h-screen">
-        <!-- Sidebar -->
-        <aside class="w-56 bg-gradient-to-b from-gray-900 to-gray-800 text-white flex flex-col">
-            <!-- Logo -->
-            <div class="p-6 border-b border-gray-700">
-                <div class="flex items-center gap-2">
-                    <div class="w-10 h-10 bg-yellow-400 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-archive text-gray-900 font-bold"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-sm font-bold">Digital Archive</h1>
-                        <p class="text-xs text-gray-400">Bukittinggi</p>
-                    </div>
-                </div>
-            </div>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <title>{{ config('app.name', 'Laravel') }}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="font-sans antialiased">
+    <div class="flex h-screen bg-gray-100">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white flex flex-col">
             <!-- Navigation -->
+            <nav class="flex-1 space-y-2 p-4">
                 <a href="{{ route('admin.dashboard') }}" 
                    class="flex items-center gap-3 px-4 py-3 rounded-lg transition 
                    {{ request()->routeIs('admin.dashboard') ? 'bg-yellow-400 text-gray-900' : 'text-gray-300 hover:bg-gray-700' }}">
@@ -35,27 +33,27 @@
                     <i class="fas fa-book-open w-5"></i>
                     <span>Buku</span>
                 </a>
-                <a href="" class="flex items-center gap-3 px-4 py-3 rounded-lg transition text-gray-300 hover:bg-gray-700">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg transition text-gray-300 hover:bg-gray-700">
                     <i class="fas fa-user w-5"></i>
                     <span>Anggota</span>
                 </a>
-                <a href="" class="flex items-center gap-3 px-4 py-3 rounded-lg transition text-gray-300 hover:bg-gray-700">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg transition text-gray-300 hover:bg-gray-700">
                     <i class="fas fa-calendar w-5"></i>
                     <span>Agenda</span>
                 </a>
-                <a href="" class="flex items-center gap-3 px-4 py-3 rounded-lg transition text-gray-300 hover:bg-gray-700">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg transition text-gray-300 hover:bg-gray-700">
                     <i class="fas fa-newspaper w-5"></i>
                     <span>Berita</span>
                 </a>
-                <a href="" class="flex items-center gap-3 px-4 py-3 rounded-lg transition text-gray-300 hover:bg-gray-700">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg transition text-gray-300 hover:bg-gray-700">
                     <i class="fas fa-comment-dots w-5"></i>
                     <span>Aduan</span>
                 </a>
-                <a href="" class="flex items-center gap-3 px-4 py-3 rounded-lg transition text-gray-300 hover:bg-gray-700">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg transition text-gray-300 hover:bg-gray-700">
                     <i class="fas fa-book-reader w-5"></i>
                     <span>Peminjaman</span>
                 </a>
-            
+            </nav>
 
             <!-- Footer Sidebar -->
             <div class="px-3 py-4 border-t border-gray-700 space-y-2">
@@ -107,7 +105,11 @@
 
             <!-- Content -->
             <div class="flex-1 overflow-auto p-8">
-                @yield('content')
+                @isset($slot)
+                    {{ $slot }}
+                @else
+                    @yield('content')
+                @endisset
             </div>
         </main>
     </div>

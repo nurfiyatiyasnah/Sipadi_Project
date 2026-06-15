@@ -73,16 +73,18 @@
     <div class="flex flex-col lg:flex-row justify-between gap-4">
 
         <form method="GET"
-              action="{{ route('admin.dashboard.koleksi') }}"
-              class="flex flex-wrap gap-3">
+
+            action="{{ route('admin.dashboard.koleksi') }}"
+            class="flex flex-wrap gap-3">
+
 
             <select name="kategori"
                 class="border border-gray-300 rounded-lg px-4 py-2">
                 <option value="">Semua Kategori</option>
 
                 @foreach($categories as $cat)
-                    <option value="{{ $cat }}">
-                        {{ $cat }}
+                    <option value="{{ $cat->id_kategori }}" @selected((string) request('kategori') === (string) $cat->id_kategori)>
+                        {{ $cat->nama_kategori }}
                     </option>
                 @endforeach
             </select>
@@ -152,7 +154,7 @@
                     <td class="px-6 py-4">
 
                         <img
-                            src="{{ asset('covers/'.$book->cover) }}"
+                            src="{{ $book->gambar_cover ? asset('storage/'.$book->gambar_cover) : asset('favicon.ico') }}"
                             class="w-14 h-20 object-cover rounded-md">
 
                     </td>
@@ -176,23 +178,23 @@
                     <td class="px-6 py-4">
 
                         <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs">
-                            {{ $book->kategori }}
+                            {{ $book->kategori?->nama_kategori ?? '-' }}
                         </span>
 
                     </td>
 
                     <td class="px-6 py-4 font-semibold">
-                        {{ $book->stok }}
+                        {{ $book->eksemplar_count }}
                     </td>
 
                     <td class="px-6 py-4">
 
-                        @if($book->status == 'Tersedia')
+                        @if($book->status_katalog == 'Tersedia')
                             <span class="text-green-600 font-medium">
                                 ● Tersedia
                             </span>
 
-                        @elseif($book->status == 'Dipinjam')
+                        @elseif($book->status_katalog == 'Dipinjam')
                             <span class="text-yellow-600 font-medium">
                                 ● Dipinjam
                             </span>
@@ -207,7 +209,7 @@
 
                     <td class="px-6 py-4">
 
-                        <a href="{{ route('books.show',$book->id) }}"
+                        <a href="{{ route('books.show', $book) }}"
                             class="text-blue-600 hover:text-blue-800">
                             Detail
                         </a>

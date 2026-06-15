@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Models\Buku;
+use App\Models\EksemplarBuku;
+use App\Models\KategoriBuku;
 use Illuminate\Http\Request;
-use App\Models\Book;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $stats = [
-            'total_anggota'     => 125,
-            'koleksi_buku'      => Book::count(),
-            'peminjaman_aktif'  => Book::where('status', 'Dipinjam')->count(),
-            'aduan_baru'        => 3,
+            'total_anggota' => 125,
+            'koleksi_buku' => Buku::count(),
+            'peminjaman_aktif' => EksemplarBuku::where('status_eksemplar', 'Dipinjam')->count(),
+            'aduan_baru' => 3,
         ];
 
         $aktivitas_terkini = [
@@ -23,22 +25,22 @@ class DashboardController extends Controller
                 'judul' => 'Buku Baru Ditambahkan',
                 'deskripsi' => 'Admin menambahkan koleksi buku baru ke sistem.',
                 'status' => 'Selesai',
-                'waktu' => '5 menit lalu'
+                'waktu' => '5 menit lalu',
             ],
             [
                 'icon' => 'user',
                 'judul' => 'Anggota Baru Terdaftar',
                 'deskripsi' => 'Pendaftaran anggota perpustakaan berhasil.',
                 'status' => null,
-                'waktu' => '30 menit lalu'
+                'waktu' => '30 menit lalu',
             ],
             [
                 'icon' => 'book',
                 'judul' => 'Peminjaman Buku',
                 'deskripsi' => 'Buku berhasil dipinjam oleh anggota.',
                 'status' => 'Diproses',
-                'waktu' => '1 jam lalu'
-            ]
+                'waktu' => '1 jam lalu',
+            ],
         ];
 
         $aksi_cepat = [
@@ -49,54 +51,54 @@ class DashboardController extends Controller
             ['label' => 'Lihat Laporan', 'url' => route('admin.dashboard.koleksi.export')],
         ];
 
-        // sesuai file: resources/views/admin/dashboard.blade.php
-        return view('admin.dashboard', compact('stats','aktivitas_terkini','aksi_cepat'));
+        return view('admin.dashboard', compact('stats', 'aktivitas_terkini', 'aksi_cepat'));
     }
 
-    public function koleksi(Request $request)
+    public function koleksi(Request $request): View
     {
-        $query = Book::query();
+        $query = Buku::query()->with('kategori')->withCount('eksemplar');
 
         if ($request->filled('kategori')) {
-            $query->where('kategori', $request->kategori);
+            $query->where('id_kategori', $request->integer('kategori'));
         }
 
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            $query->where('status_katalog', $request->status);
         }
 
+        $totalBuku = Buku::count();
+        $tersedia = Buku::where('status_katalog', 'Tersedia')->count();
+
         $stats = [
-            'judul'     => Book::count(),
-            'eksemplar' => Book::sum('stok'),
-            'dipinjam'  => Book::where('status', 'Dipinjam')->count(),
-            'tersedia'  => Book::where('status', 'Tersedia')->count(),
-            'persen'    => round(Book::where('status','Tersedia')->count() / max(Book::count(),1) * 100, 1),
+            'judul' => $totalBuku,
+            'eksemplar' => EksemplarBuku::count(),
+            'dipinjam' => EksemplarBuku::where('status_eksemplar', 'Dipinjam')->count(),
+            'tersedia' => $tersedia,
+            'persen' => round($tersedia / max($totalBuku, 1) * 100, 1),
         ];
 
-        $categories = Book::select('kategori')->distinct()->pluck('kategori');
+        $categories = KategoriBuku::orderBy('nama_kategori')->get();
         $books = $query->paginate(10);
 
-        // sesuai file: resources/views/admin/books/koleksi.blade.php
-        return view('admin.books.koleksi', compact('stats','categories','books'));
+        return view('admin.books.koleksi', compact('stats', 'categories', 'books'));
     }
 
     public function export()
     {
-        $books = Book::all();
+        $books = Buku::with('kategori')->get();
 
-        $csv = "Judul,ISBN,Penulis,Kategori,Stok,Status\n";
+        $csv = "Judul,ISBN,Penulis,Kategori,Status\n";
 
         foreach ($books as $book) {
             $csv .= "\"{$book->judul}\",";
             $csv .= "\"{$book->isbn}\",";
             $csv .= "\"{$book->penulis}\",";
-            $csv .= "\"{$book->kategori}\",";
-            $csv .= "\"{$book->stok}\",";
-            $csv .= "\"{$book->status}\"\n";
+            $csv .= '"'.($book->kategori?->nama_kategori ?? '').'",';
+            $csv .= "\"{$book->status_katalog}\"\n";
         }
 
         return response($csv)
             ->header('Content-Type', 'text/csv')
-            ->header('Content-Disposition','attachment; filename=\"koleksi_buku.csv\"');
+            ->header('Content-Disposition', 'attachment; filename="koleksi_buku.csv"');
     }
 }
