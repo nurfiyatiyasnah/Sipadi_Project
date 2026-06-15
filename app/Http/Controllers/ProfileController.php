@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -17,7 +19,7 @@ class ProfileController extends Controller
     public function edit(Request $request): View
     {
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $request->user()->load(['anggota', 'petugas']),
         ]);
     }
 
@@ -26,13 +28,22 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $data = $request->validated();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
+        DB::transaction(function () use ($request, $data): void {
+            /** @var User $user */
+            $user = $request->user();
+            $user->fill(['email' => $data['email']]);
 
-        $request->user()->save();
+            if ($user->isDirty('email')) {
+                $user->email_verified_at = null;
+            }
+
+            $user->save();
+
+            $user->anggota?->update(['nama_lengkap' => $data['name']]);
+            $user->petugas?->update(['nama_petugas' => $data['name']]);
+        });
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
@@ -46,11 +57,17 @@ class ProfileController extends Controller
             'password' => ['required', 'current_password'],
         ]);
 
+        /** @var User $user */
         $user = $request->user();
 
         Auth::logout();
 
-        $user->delete();
+        DB::transaction(function () use ($user): void {
+            $user->anggota?->eKartuAnggota()->delete();
+            $user->anggota?->delete();
+            $user->petugas?->delete();
+            $user->delete();
+        });
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

@@ -19,7 +19,7 @@ class Prestasi extends Model
         'slug',
         'deskripsi',
         'tingkat_prestasi',
-        'penyelenggra',
+        'penyelenggara',
         'tanggal_prestasi',
         'gambar',
         'file_lampiran',
