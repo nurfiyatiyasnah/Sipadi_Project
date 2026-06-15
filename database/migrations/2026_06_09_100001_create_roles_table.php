@@ -16,7 +16,7 @@ class CreateRolesTable extends Migration
             $table->text('deskripsi')->nullable();
             $table->timestamp('created_at ', 0)->nullable();
             $table->timestamp('updated_at ', 0)->nullable();
-            $table->unique('nama_role');
+            $table->timestamp('deleted_at ', 0)->nullable();
         });
     }
 
