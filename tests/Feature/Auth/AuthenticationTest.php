@@ -27,7 +27,8 @@ class AuthenticationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $this->assertNotNull($user->fresh()->last_login_at);
+        $response->assertRedirect(route('landing', absolute: false));
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void
@@ -50,5 +51,18 @@ class AuthenticationTest extends TestCase
 
         $this->assertGuest();
         $response->assertRedirect('/');
+    }
+
+    public function test_inactive_users_can_not_authenticate(): void
+    {
+        $user = User::factory()->create(['status_akun' => 'nonaktif']);
+
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertGuest();
+        $response->assertSessionHasErrors('email');
     }
 }
