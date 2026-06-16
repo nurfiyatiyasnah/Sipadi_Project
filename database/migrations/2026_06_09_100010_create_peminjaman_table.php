@@ -4,14 +4,12 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreatePeminjamanTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('peminjaman', function (Blueprint $table) {
+
             $table->id('id_peminjaman');
             $table->string('kode_peminjaman', 50)->unique();
             $table->unsignedBigInteger('id_anggota');
@@ -28,14 +26,12 @@ return new class extends Migration
             $table->foreign('id_anggota')->references('id_anggota')->on('anggota');
             $table->foreign('id_aturan')->references('id_aturan_peminjaman')->on('aturan_peminjaman');
             $table->foreign('id_petugas')->references('id_petugas')->on('petugas');
+
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('peminjaman');
     }
-};
+}

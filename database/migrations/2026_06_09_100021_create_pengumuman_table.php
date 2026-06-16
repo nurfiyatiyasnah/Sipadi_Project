@@ -4,34 +4,32 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreatePengumumanTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('pengumuman', function (Blueprint $table) {
+
             $table->id('id_pengumuman');
             $table->unsignedBigInteger('id_petugas')->nullable();
             $table->string('judul', 150);
+
             $table->text('isi')->nullable();
             $table->string('gambar', 255)->nullable();
             $table->string('file_lampiran', 255)->nullable();
             $table->date('tanggal_mulai')->nullable();
             $table->date('tanggal_selesai')->nullable();
             $table->string('status_pengumuman', 20)->nullable();
+
             $table->timestamps();
 
             $table->foreign('id_petugas')->references('id_petugas')->on('petugas');
+
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('pengumuman');
     }
-};
+}
