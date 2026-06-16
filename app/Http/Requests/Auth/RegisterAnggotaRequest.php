@@ -23,7 +23,9 @@ class RegisterAnggotaRequest extends FormRequest
             'tanggal_lahir' => ['required', 'date', 'before:today'],
             'alamat' => ['required', 'string', 'max:1000'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:50', Rule::unique(User::class)],
+            'foto' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
             'password' => ['required', 'confirmed', Password::defaults()],
+            'terms' => ['accepted'],
         ];
     }
 }

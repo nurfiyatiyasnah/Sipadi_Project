@@ -1,182 +1,167 @@
-@extends('layouts.app')
-
-@section('title', 'Dashboard')
+@extends('layouts.petugas')
+@section('title', 'Dashboard Admin')
 
 @section('content')
-<div class="space-y-6">
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Total Anggota -->
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center justify-between mb-4">
-                <div class="text-3xl font-bold text-gray-900">{{ number_format($stats['total_anggota']) }}</div>
-                <span class="text-green-600 text-sm font-semibold flex items-center gap-1">
-                    <i class="fas fa-arrow-up"></i> +12%
+<div class="mx-auto max-w-[1180px] space-y-8">
+    <section class="overflow-hidden rounded-3xl bg-[#142b3d] text-white shadow-sm">
+        <div class="grid gap-8 p-8 lg:grid-cols-[1fr_320px]">
+            <div>
+                <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-[#ffdc7c]">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Panel Operasional Admin
                 </span>
-            </div>
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-users text-blue-600 text-xl"></i>
+                <h2 class="mt-5 font-serif text-4xl font-bold leading-tight">Selamat Pagi, Administrator</h2>
+                <p class="mt-3 max-w-2xl text-lg text-slate-200">
+                    Pantau layanan anggota, koleksi buku, peminjaman, dan aduan masyarakat dari satu dashboard SIPADI.
+                </p>
+
+                <div class="mt-8 grid max-w-2xl gap-4 sm:grid-cols-3">
+                    <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+                        <p class="text-xs font-bold uppercase tracking-widest text-slate-300">Anggota</p>
+                        <p class="mt-2 text-2xl font-bold">{{ number_format($stats['total_anggota']) }}</p>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+                        <p class="text-xs font-bold uppercase tracking-widest text-slate-300">Koleksi</p>
+                        <p class="mt-2 text-2xl font-bold">{{ number_format($stats['koleksi_buku']) }}</p>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+                        <p class="text-xs font-bold uppercase tracking-widest text-slate-300">Aduan Baru</p>
+                        <p class="mt-2 text-2xl font-bold">{{ number_format($stats['aduan_baru']) }}</p>
+                    </div>
                 </div>
-                <div>
-                    <p class="text-gray-600 text-sm">TOTAL ANGGOTA</p>
+            </div>
+
+            <div class="rounded-3xl bg-white p-6 text-[#071426]">
+                <div class="flex items-center gap-4">
+                    <span class="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#ffdc7c] text-2xl">
+                        <i class="fa-regular fa-calendar"></i>
+                    </span>
+                    <div>
+                        <p class="text-sm font-bold uppercase tracking-widest text-slate-500">Hari Ini</p>
+                        <p class="text-lg font-bold">{{ now()->locale('id')->translatedFormat('l, d F Y') }}</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 rounded-2xl bg-[#f6f5d8] p-5">
+                    <p class="text-sm font-bold uppercase tracking-widest text-slate-600">Status Sistem</p>
+                    <div class="mt-3 flex items-center gap-3">
+                        <span class="h-3 w-3 rounded-full bg-emerald-500"></span>
+                        <p class="font-bold text-emerald-700">Operasional</p>
+                    </div>
+                    <p class="mt-2 text-sm text-slate-600">Semua layanan utama siap digunakan admin.</p>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- Koleksi Buku -->
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center justify-between mb-4">
-                <div class="text-3xl font-bold text-gray-900">{{ number_format($stats['koleksi_buku']) }}</div>
-                <div class="flex items-center">
-                    <i class="fas fa-shield text-gray-400 text-lg"></i>
+    <section class="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+        @foreach ([
+            ['Total Anggota', $stats['total_anggota'], 'fa-solid fa-users', 'bg-blue-50 text-blue-700', 'Aktif'],
+            ['Koleksi Buku', $stats['koleksi_buku'], 'fa-solid fa-book-open', 'bg-violet-50 text-violet-700', 'Terverifikasi'],
+            ['Peminjaman Aktif', $stats['peminjaman_aktif'], 'fa-solid fa-handshake', 'bg-amber-50 text-amber-700', 'Berjalan'],
+            ['Aduan Baru', $stats['aduan_baru'], 'fa-solid fa-triangle-exclamation', $stats['aduan_baru'] > 0 ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700', $stats['aduan_baru'] > 0 ? 'Perlu Ditinjau' : 'Aman'],
+        ] as [$label, $value, $icon, $tone, $badge])
+            <article class="rounded-3xl bg-white p-6 shadow-sm">
+                <div class="flex items-start justify-between gap-4">
+                    <span class="flex h-12 w-12 items-center justify-center rounded-2xl {{ $tone }}">
+                        <i class="{{ $icon }} text-xl"></i>
+                    </span>
+                    <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">{{ $badge }}</span>
                 </div>
-            </div>
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-book text-purple-600 text-xl"></i>
-                </div>
+                <p class="mt-6 text-sm font-bold uppercase tracking-[0.18em] text-slate-500">{{ $label }}</p>
+                <p class="mt-3 font-serif text-4xl font-bold">{{ number_format($value) }}</p>
+            </article>
+        @endforeach
+    </section>
+
+    <section class="grid gap-8 xl:grid-cols-[1fr_340px]">
+        <article class="rounded-3xl bg-white shadow-sm">
+            <header class="flex h-20 items-center justify-between border-b border-slate-100 px-8">
                 <div>
-                    <p class="text-gray-600 text-sm">KOLEKSI BUKU</p>
-                    <p class="text-xs text-gray-500">Terverifikasi</p>
+                    <h3 class="text-xl font-bold">Aktivitas Terkini</h3>
+                    <p class="text-sm text-slate-500">Pergerakan data terbaru dari layanan SIPADI.</p>
                 </div>
-            </div>
-        </div>
+                <a href="#" class="text-sm font-bold text-[#806800]">Lihat Semua</a>
+            </header>
 
-        <!-- Peminjaman -->
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center justify-between mb-4">
-                <div class="text-3xl font-bold text-gray-900">{{ number_format($stats['peminjaman_aktif']) }}</div>
-                <div class="flex items-center">
-                    <i class="fas fa-gem text-yellow-400 text-lg"></i>
-                </div>
-            </div>
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-handshake text-yellow-600 text-xl"></i>
-                </div>
-                <div>
-                    <p class="text-gray-600 text-sm">PEMINJAMAN</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Aduan Baru -->
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center justify-between mb-4">
-                <div class="text-3xl font-bold text-gray-900">{{ $stats['aduan_baru'] }}</div>
-                <span class="bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-semibold">URGENT</span>
-            </div>
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-exclamation text-red-600 text-xl"></i>
-                </div>
-                <div>
-                    <p class="text-gray-600 text-sm">ADUAN BARU</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Content Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Aktivitas Terkini -->
-        <div class="lg:col-span-2">
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-bold text-gray-900">Aktivitas Terkini</h3>
-                    <a href="#" class="text-yellow-500 hover:text-yellow-600 text-sm font-semibold flex items-center gap-1">
-                        Lihat Semua
-                        <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
-
-                <div class="space-y-4">
-                    @foreach ($aktivitas_terkini as $aktivitas)
-                        <div class="flex gap-4 pb-4 border-b border-gray-200 last:border-b-0">
-                            <div class="flex-shrink-0 w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                                @if ($aktivitas['icon'] === 'book')
-                                    <i class="fas fa-book text-gray-600"></i>
-                                @elseif ($aktivitas['icon'] === 'user')
-                                    <i class="fas fa-user text-gray-600"></i>
-                                @else
-                                    <i class="fas fa-box text-gray-600"></i>
-                                @endif
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="font-semibold text-gray-900 text-sm">{{ $aktivitas['judul'] }}</p>
-                                <p class="text-xs text-gray-500 mt-1">{{ $aktivitas['deskripsi'] }}</p>
-                                @if ($aktivitas['status'])
-                                    <span class="inline-block mt-2 px-2 py-1 bg-green-100 text-green-700 text-xs rounded font-medium">
-                                        {{ $aktivitas['status'] }}
-                                    </span>
-                                @endif
-                                <p class="text-xs text-gray-400 mt-2">{{ $aktivitas['waktu'] }}</p>
-                            </div>
+            <div class="px-8 py-7">
+                @foreach ($aktivitas_terkini as $aktivitas)
+                    <div class="grid grid-cols-[48px_1fr_150px] gap-5">
+                        <div class="flex flex-col items-center">
+                            <span class="flex h-11 w-11 items-center justify-center rounded-2xl {{ $loop->first ? 'bg-[#ffdc7c]' : 'bg-[#142b3d] text-white' }}">
+                                <i class="{{ $aktivitas['icon'] }}"></i>
+                            </span>
+                            @unless ($loop->last)
+                                <span class="h-16 w-px bg-slate-200"></span>
+                            @endunless
                         </div>
-                    @endforeach
-                </div>
+                        <div class="pb-6">
+                            <h4 class="font-bold">{{ $aktivitas['judul'] }}</h4>
+                            <p class="mt-1 text-slate-600">{{ $aktivitas['deskripsi'] }}</p>
+                            @if ($aktivitas['status'])
+                                <span class="mt-3 inline-flex rounded-full border border-slate-200 bg-slate-50 px-4 py-1 text-sm font-semibold text-slate-600">{{ $aktivitas['status'] }}</span>
+                            @endif
+                        </div>
+                        <em class="text-right text-sm text-slate-500">{{ $aktivitas['waktu'] }}</em>
+                    </div>
+                @endforeach
             </div>
-        </div>
+        </article>
 
-        <!-- Aksi Cepat & Tren -->
-        <div class="space-y-6">
-            <!-- Aksi Cepat -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-lg font-bold text-gray-900 mb-6">Aksi Cepat</h3>
-                <div class="space-y-3">
+        <div class="space-y-8">
+            <article class="rounded-3xl bg-white p-6 shadow-sm">
+                <h3 class="text-xl font-bold">Aksi Cepat</h3>
+                <p class="mt-1 text-sm text-slate-500">Pintasan pekerjaan admin yang sering digunakan.</p>
+
+                <div class="mt-6 grid grid-cols-2 gap-4">
                     @foreach ($aksi_cepat as $aksi)
-                        <button class="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition group">
-                            <span class="text-gray-900 font-medium text-sm">{{ $aksi['label'] }}</span>
-                            <i class="fas fa-arrow-right text-gray-400 group-hover:text-gray-600"></i>
+                        <button class="flex h-[112px] flex-col items-center justify-center rounded-2xl border border-slate-200 font-bold transition hover:border-[#ffdc7c] hover:bg-[#ffdc7c]/20">
+                            <i class="{{ $aksi['icon'] }} mb-3 text-3xl"></i>
+                            <span class="text-center leading-tight">{{ $aksi['label'] }}</span>
                         </button>
                     @endforeach
                 </div>
-            </div>
+            </article>
 
-            <!-- Tren Peminjaman -->
-            <div class="bg-gray-900 text-white rounded-lg shadow p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="font-bold">Tren Peminjaman</h3>
-                    <i class="fas fa-chart-line text-yellow-400"></i>
+            <article class="rounded-3xl bg-white p-6 shadow-sm">
+                <h3 class="text-xl font-bold">Status Layanan</h3>
+                <div class="mt-5 space-y-4">
+                    @foreach ($status_layanan as $layanan)
+                        <div class="flex items-center justify-between gap-4 rounded-2xl border border-slate-100 p-4">
+                            <div class="flex items-center gap-3">
+                                <span class="flex h-10 w-10 items-center justify-center rounded-xl {{ $layanan['tone'] }}">
+                                    <i class="{{ $layanan['icon'] }}"></i>
+                                </span>
+                                <p class="font-semibold">{{ $layanan['label'] }}</p>
+                            </div>
+                            <span class="rounded-full px-3 py-1 text-xs font-bold {{ $layanan['tone'] }}">{{ $layanan['value'] }}</span>
+                        </div>
+                    @endforeach
                 </div>
-                <p class="text-xs text-gray-400 mb-4">7 Hari Terakhir</p>
-                <div class="flex items-end justify-between h-24 gap-2">
-                    <div class="flex-1 bg-yellow-400 rounded-t h-12 opacity-75"></div>
-                    <div class="flex-1 bg-yellow-400 rounded-t h-16 opacity-85"></div>
-                    <div class="flex-1 bg-yellow-400 rounded-t h-14 opacity-75"></div>
-                    <div class="flex-1 bg-yellow-400 rounded-t h-20"></div>
-                    <div class="flex-1 bg-yellow-400 rounded-t h-12 opacity-75"></div>
-                    <div class="flex-1 bg-yellow-400 rounded-t h-18 opacity-80"></div>
-                    <div class="flex-1 bg-yellow-400 rounded-t h-10 opacity-70"></div>
-                </div>
-                <div class="flex justify-between text-xs text-gray-400 mt-2">
-                    <span>SEN</span>
-                    <span>SEL</span>
-                    <span>RAB</span>
-                    <span>KAM</span>
-                    <span>JUM</span>
-                    <span>SAB</span>
-                    <span>MIN</span>
-                </div>
-            </div>
+            </article>
         </div>
-    </div>
+    </section>
 
-    <!-- Program Prioritas -->
-    <div class="bg-gradient-to-r from-gray-800 to-gray-900 rounded-lg shadow overflow-hidden">
-        <div class="flex flex-col md:flex-row items-stretch">
-            <div class="flex-1 p-8 text-white">
-                <span class="inline-block px-3 py-1 bg-yellow-400 text-gray-900 text-xs font-bold rounded mb-4">
-                    PROGRAM PRIORITAS
-                </span>
-                <h3 class="text-2xl font-bold mb-2">Digitalisasi Manuskript Kuno Bukittinggi</h3>
-                <p class="text-gray-300 text-sm">
-                    Mendokumentasikan sejarah kota untuk generasi mendatang. Proyek ini akan membantu pelestarian warisan budaya lokal.
-                </p>
+    <section class="grid gap-8 xl:grid-cols-[360px_1fr]">
+        <article class="rounded-3xl bg-[#ffdc7c] p-7 text-[#071426] shadow-sm">
+            <p class="text-sm font-bold uppercase tracking-widest">Prioritas Hari Ini</p>
+            <h3 class="mt-3 font-serif text-3xl font-bold">Fokus pekerjaan admin</h3>
+            <p class="mt-3 text-slate-700">Gunakan daftar ini sebagai pengingat operasional utama sebelum menutup sesi kerja.</p>
+        </article>
+
+        <article class="rounded-3xl bg-white p-6 shadow-sm">
+            <div class="grid gap-4 md:grid-cols-3">
+                @foreach ($prioritas_hari_ini as $prioritas)
+                    <div class="rounded-2xl border border-slate-100 p-5">
+                        <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-[#142b3d] text-white">
+                            <i class="{{ $prioritas['icon'] }}"></i>
+                        </span>
+                        <h4 class="mt-4 font-bold">{{ $prioritas['title'] }}</h4>
+                        <p class="mt-2 text-sm text-slate-600">{{ $prioritas['description'] }}</p>
+                    </div>
+                @endforeach
             </div>
-            <div class="hidden md:block w-80 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400&h=300&fit=crop'); opacity: 0.8;"></div>
-        </div>
-    </div>
+        </article>
+    </section>
 </div>
 @endsection
