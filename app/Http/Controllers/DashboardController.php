@@ -2,21 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Aduan;
+use App\Models\Anggota;
 use App\Models\Buku;
 use App\Models\EksemplarBuku;
 use App\Models\KategoriBuku;
+use App\Models\Peminjaman;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DashboardController extends Controller
 {
     public function index(): View
     {
         $stats = [
-            'total_anggota' => 125,
+            'total_anggota' => Anggota::count(),
             'koleksi_buku' => Buku::count(),
-            'peminjaman_aktif' => EksemplarBuku::where('status_eksemplar', 'Dipinjam')->count(),
-            'aduan_baru' => 3,
+            'peminjaman_aktif' => Peminjaman::where('status_peminjaman', 'aktif')->count(),
+            'aduan_baru' => Aduan::where('status_aduan', 'baru')->count(),
+
         ];
 
         $aktivitas_terkini = [
@@ -44,11 +49,12 @@ class DashboardController extends Controller
         ];
 
         $aksi_cepat = [
-            ['label' => 'Tambah Buku', 'url' => route('books.create')],
-            ['label' => 'Tambah Anggota', 'url' => '#'],
-            ['label' => 'Kelola Peminjaman', 'url' => '#'],
-            ['label' => 'Kelola Berita', 'url' => '#'],
-            ['label' => 'Lihat Laporan', 'url' => route('admin.dashboard.koleksi.export')],
+
+            ['label' => 'Tambah Buku'],
+            ['label' => 'Tambah Anggota'],
+            ['label' => 'Kelola Peminjaman'],
+            ['label' => 'Kelola Berita'],
+            ['label' => 'Lihat Laporan'],
         ];
 
         return view('admin.dashboard', compact('stats', 'aktivitas_terkini', 'aksi_cepat'));
@@ -56,10 +62,16 @@ class DashboardController extends Controller
 
     public function koleksi(Request $request): View
     {
-        $query = Buku::query()->with('kategori')->withCount('eksemplar');
+        $query = Buku::query()
+            ->with('kategori')
+            ->withCount('eksemplar')
+            ->withCount([
+                'eksemplar as eksemplar_tersedia_count' => fn ($query) => $query
+                    ->whereIn('status_eksemplar', ['tersedia', 'Tersedia']),
+            ]);
 
         if ($request->filled('kategori')) {
-            $query->where('id_kategori', $request->integer('kategori'));
+            $query->where('id_kategori', $request->kategori);
         }
 
         if ($request->filled('status')) {
@@ -70,35 +82,50 @@ class DashboardController extends Controller
         $tersedia = Buku::where('status_katalog', 'Tersedia')->count();
 
         $stats = [
-            'judul' => $totalBuku,
+            'judul' => Buku::count(),
             'eksemplar' => EksemplarBuku::count(),
-            'dipinjam' => EksemplarBuku::where('status_eksemplar', 'Dipinjam')->count(),
-            'tersedia' => $tersedia,
-            'persen' => round($tersedia / max($totalBuku, 1) * 100, 1),
+            'dipinjam' => EksemplarBuku::whereIn('status_eksemplar', ['dipinjam', 'Dipinjam'])->count(),
+            'tersedia' => EksemplarBuku::whereIn('status_eksemplar', ['tersedia', 'Tersedia'])->count(),
         ];
+        $stats['persen'] = round($stats['tersedia'] / max($stats['eksemplar'], 1) * 100, 1);
 
-        $categories = KategoriBuku::orderBy('nama_kategori')->get();
-        $books = $query->paginate(10);
+        $categories = KategoriBuku::query()
+            ->orderBy('nama_kategori')
+            ->get(['id_kategori', 'nama_kategori']);
+        $books = $query->latest('id_buku')->paginate(10)->withQueryString();
+
 
         return view('admin.books.koleksi', compact('stats', 'categories', 'books'));
     }
 
-    public function export()
+    public function export(): StreamedResponse
     {
-        $books = Buku::with('kategori')->get();
+        return response()->streamDownload(function (): void {
+            $output = fopen('php://output', 'w');
+            fputcsv($output, ['Kode', 'Judul', 'ISBN', 'Penulis', 'Kategori', 'Total Eksemplar', 'Tersedia', 'Status Katalog']);
 
-        $csv = "Judul,ISBN,Penulis,Kategori,Status\n";
+            Buku::query()
+                ->with('kategori')
+                ->withCount('eksemplar')
+                ->withCount([
+                    'eksemplar as eksemplar_tersedia_count' => fn ($query) => $query
+                        ->whereIn('status_eksemplar', ['tersedia', 'Tersedia']),
+                ])
+                ->orderBy('id_buku')
+                ->each(function (Buku $buku) use ($output): void {
+                    fputcsv($output, [
+                        $buku->kode_buku,
+                        $buku->judul,
+                        $buku->isbn,
+                        $buku->penulis,
+                        $buku->kategori?->nama_kategori,
+                        $buku->eksemplar_count,
+                        $buku->eksemplar_tersedia_count,
+                        $buku->status_katalog,
+                    ]);
+                });
 
-        foreach ($books as $book) {
-            $csv .= "\"{$book->judul}\",";
-            $csv .= "\"{$book->isbn}\",";
-            $csv .= "\"{$book->penulis}\",";
-            $csv .= '"'.($book->kategori?->nama_kategori ?? '').'",';
-            $csv .= "\"{$book->status_katalog}\"\n";
-        }
-
-        return response($csv)
-            ->header('Content-Type', 'text/csv')
-            ->header('Content-Disposition', 'attachment; filename="koleksi_buku.csv"');
+            fclose($output);
+        }, 'koleksi_buku.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
     }
 }

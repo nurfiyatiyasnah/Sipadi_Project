@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -50,6 +51,23 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        /** @var User $user */
+        $user = Auth::user();
+
+        if ($user->status_akun !== 'aktif') {
+            Auth::logout();
+
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => 'Akun Anda belum aktif atau telah dinonaktifkan.',
+            ]);
+        }
+
+        $user->forceFill([
+            'last_login_at' => now(),
+        ])->save();
+
         RateLimiter::clear($this->throttleKey());
     }
 
@@ -81,6 +99,8 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(
+            Str::lower($this->string('email')).'|'.$this->ip()
+        );
     }
 }

@@ -50,6 +50,6 @@ class JadwalPengambilan extends Model
 
     public function notifikasi(): HasMany
     {
-        return $this->hasMany(Notifikasi::class, 'id_jadwal_pengambalian', 'id_jadwal_pengambilan');
+        return $this->hasMany(Notifikasi::class, 'id_jadwal_pengambilan', 'id_jadwal_pengambilan');
     }
 }
