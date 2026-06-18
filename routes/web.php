@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EKartuController;
 use App\Http\Controllers\ProfileController;
@@ -36,6 +37,21 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
 
     Route::get('/koleksi/export', [DashboardController::class, 'export'])
         ->name('koleksi.export');
+
+    Route::get('/berita', [BeritaController::class, 'index'])
+        ->name('berita.index');
+    Route::get('/berita/tambah', [BeritaController::class, 'create'])
+        ->name('berita.create');
+    Route::post('/berita', [BeritaController::class, 'store'])
+        ->name('berita.store');
+    Route::get('/berita/{berita}/edit', [BeritaController::class, 'edit'])
+        ->name('berita.edit');
+    Route::put('/berita/{berita}', [BeritaController::class, 'update'])
+        ->name('berita.update');
+    Route::patch('/berita/{berita}/publish', [BeritaController::class, 'publish'])
+        ->name('berita.publish');
+    Route::delete('/berita/{berita}', [BeritaController::class, 'destroy'])
+        ->name('berita.destroy');
 });
 
 Route::middleware('auth')->group(function () {

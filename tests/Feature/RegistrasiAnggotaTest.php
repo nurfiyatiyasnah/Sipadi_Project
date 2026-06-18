@@ -160,4 +160,58 @@ class RegistrasiAnggotaTest extends TestCase
             ->assertSessionHasErrors(['email'])
             ->assertRedirect(route('register.akun'));
     }
+
+    public function test_registrasi_dapat_dilanjutkan_setelah_kegagalan_transaksi_atau_validasi_akun(): void
+    {
+        Storage::fake('public');
+
+        // Step 1: Upload foto profil
+        $this->post(route('register.data.store'), [
+            'nik' => '1375010101010004',
+            'nama_lengkap' => 'Test Gagal',
+            'jenis_kelamin' => 'Laki-laki',
+            'tanggal_lahir' => '2000-01-01',
+            'alamat' => 'Bukittinggi',
+            'foto' => UploadedFile::fake()->create('profil.png', 100),
+        ])->assertRedirect(route('register.akun'));
+
+        $fotoTempPath = session('registration.foto_path');
+        $this->assertNotNull($fotoTempPath);
+        Storage::disk('public')->assertExists($fotoTempPath);
+
+        // Buat email yang bertabrakan untuk memicu kegagalan validasi / keunikan email di Step 2
+        User::factory()->create(['email' => 'tabrakan@example.com']);
+
+        // Step 2: Coba buat akun dengan email yang sudah ada (akan gagal)
+        $response = $this->from(route('register.akun'))->post(route('register.akun.store'), [
+            'email' => 'tabrakan@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+            'terms' => '1',
+        ]);
+
+        $response->assertSessionHasErrors(['email']);
+        $response->assertRedirect(route('register.akun'));
+
+        // Pastikan file temporer MASIH ADA setelah kegagalan
+        Storage::disk('public')->assertExists($fotoTempPath);
+
+        // Step 2: Coba lagi dengan email yang valid dan unik (harus berhasil)
+        $response = $this->post(route('register.akun.store'), [
+            'email' => 'sukses@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+            'terms' => '1',
+        ]);
+
+        $response->assertRedirect(route('anggota.e-kartu'));
+
+        // Cek database
+        $anggota = Anggota::where('nik', '1375010101010004')->firstOrFail();
+        $this->assertNotNull($anggota->foto);
+
+        // Pastikan file di folder permanen ADA, dan file temporer TELAH DIHAPUS
+        Storage::disk('public')->assertExists($anggota->foto);
+        Storage::disk('public')->assertMissing($fotoTempPath);
+    }
 }

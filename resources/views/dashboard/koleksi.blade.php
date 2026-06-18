@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.petugas')
 
 @section('title', 'Koleksi Buku')
 

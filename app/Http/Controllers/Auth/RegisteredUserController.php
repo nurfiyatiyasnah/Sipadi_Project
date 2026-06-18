@@ -76,7 +76,7 @@ class RegisteredUserController extends Controller
         try {
             if ($fotoTempPath) {
                 $fotoPath = 'anggota/foto/'.basename($fotoTempPath);
-                Storage::disk('public')->move($fotoTempPath, $fotoPath);
+                Storage::disk('public')->copy($fotoTempPath, $fotoPath);
             }
 
             $user = DB::transaction(function () use ($data, $fotoPath): User {
@@ -118,8 +118,6 @@ class RegisteredUserController extends Controller
         } catch (Throwable $exception) {
             if ($fotoPath) {
                 Storage::disk('public')->delete($fotoPath);
-            } elseif ($fotoTempPath) {
-                Storage::disk('public')->delete($fotoTempPath);
             }
 
             throw $exception;
@@ -129,6 +127,10 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
         session()->forget('registration');
+
+        if ($fotoTempPath) {
+            Storage::disk('public')->delete($fotoTempPath);
+        }
 
         return redirect()
             ->route('anggota.e-kartu')

@@ -23,20 +23,29 @@
             </div>
         </div>
 
+        @php
+            $navigationItems = [
+                ['Dashboard', 'fa-border-all', 'petugas.dashboard', 'petugas.dashboard'],
+                ['Anggota', 'fa-users', null, null],
+                ['Buku', 'fa-book-open', 'petugas.koleksi', 'petugas.koleksi'],
+                ['Agenda', 'fa-calendar-days', null, null],
+                ['Berita', 'fa-newspaper', 'petugas.berita.index', 'petugas.berita.*'],
+                ['Aduan', 'fa-message', null, null],
+                ['Peminjaman', 'fa-handshake', null, null],
+                ['Jadwal', 'fa-calendar-check', null, null],
+                ['Organisasi', 'fa-sitemap', null, null],
+                ['Laporan', 'fa-chart-column', null, null],
+            ];
+        @endphp
+
         <nav class="space-y-1">
-            @foreach ([
-                ['Dashboard', 'fa-border-all', true],
-                ['Members', 'fa-users', false],
-                ['Books', 'fa-book-open', false],
-                ['Agenda', 'fa-calendar-days', false],
-                ['News', 'fa-newspaper', false],
-                ['Complaints', 'fa-message', false],
-                ['Loans', 'fa-handshake', false],
-                ['Schedule', 'fa-calendar-check', false],
-                ['Organization', 'fa-sitemap', false],
-                ['Reports', 'fa-chart-column', false],
-            ] as [$label, $icon, $active])
-                <a href="#" class="flex h-12 items-center gap-4 border-l-4 px-8 text-[17px] {{ $active ? 'border-[#ffdc7c] bg-white/10 text-[#ffdc7c]' : 'border-transparent hover:bg-white/5' }}">
+            @foreach ($navigationItems as [$label, $icon, $routeName, $activePattern])
+                @php
+                    $active = $activePattern && request()->routeIs($activePattern);
+                    $href = $routeName && Route::has($routeName) ? route($routeName) : '#';
+                @endphp
+
+                <a href="{{ $href }}" class="flex h-12 items-center gap-4 border-l-4 px-8 text-[17px] {{ $active ? 'border-[#ffdc7c] bg-white/10 text-[#ffdc7c]' : 'border-transparent hover:bg-white/5' }}">
                     <i class="fa-solid {{ $icon }} w-5"></i>
                     <span>{{ $label }}</span>
                 </a>
