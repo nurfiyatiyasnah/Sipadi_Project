@@ -4,14 +4,12 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateLogPengirimanNotifikasiTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('log_pengiriman_notifikasi', function (Blueprint $table) {
+
             $table->id('id_pengiriman_notifikasi');
             $table->unsignedBigInteger('id_notifikasi');
             $table->unsignedBigInteger('dikirim_oleh')->nullable();
@@ -23,14 +21,12 @@ return new class extends Migration
 
             $table->foreign('id_notifikasi')->references('id_notifikasi')->on('notifikasi');
             $table->foreign('dikirim_oleh')->references('id_petugas')->on('petugas');
+
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('log_pengiriman_notifikasi');
     }
-};
+}
