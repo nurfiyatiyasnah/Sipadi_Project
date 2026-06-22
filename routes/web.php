@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnggotaController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EKartuController;
@@ -31,6 +32,11 @@ Route::middleware(['auth', 'role:Anggota'])->group(function () {
 Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
+
+    Route::get('/anggota', [AnggotaController::class, 'index'])->name('anggota.index');
+    Route::get('/anggota/{anggota}', [AnggotaController::class, 'show'])->name('anggota.show');
+    Route::get('/anggota/{anggota}/edit', [AnggotaController::class, 'edit'])->name('anggota.edit');
+    Route::put('/anggota/{anggota}', [AnggotaController::class, 'update'])->name('anggota.update');
 
     Route::get('/koleksi', [DashboardController::class, 'koleksi'])
         ->name('koleksi');

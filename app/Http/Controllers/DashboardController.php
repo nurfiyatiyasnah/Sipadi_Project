@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Aduan;
+use App\Models\AgendaEvent;
 use App\Models\Anggota;
 use App\Models\Buku;
 use App\Models\EksemplarBuku;
@@ -23,6 +24,9 @@ class DashboardController extends Controller
         $status_layanan = $this->serviceStatuses($stats);
         $prioritas_hari_ini = $this->todayPriorities($stats);
 
+        $peminjaman_terbaru = $this->getPeminjamanTerbaru();
+        $agenda_terdekat = $this->getAgendaTerdekat();
+
         return view(
             'dashboard.index',
             compact(
@@ -30,13 +34,15 @@ class DashboardController extends Controller
                 'aktivitas_terkini',
                 'aksi_cepat',
                 'status_layanan',
-                'prioritas_hari_ini'
+                'prioritas_hari_ini',
+                'peminjaman_terbaru',
+                'agenda_terdekat'
             )
         );
     }
 
     /**
-     * @return array{total_anggota: int, koleksi_buku: int, peminjaman_aktif: int, aduan_baru: int}
+     * @return array{total_anggota: int, koleksi_buku: int, peminjaman_aktif: int, pengajuan_peminjaman: int, buku_terlambat: int, aduan_baru: int}
      */
     private function dashboardStats(): array
     {
@@ -44,8 +50,110 @@ class DashboardController extends Controller
             'total_anggota' => Anggota::count(),
             'koleksi_buku' => Buku::count(),
             'peminjaman_aktif' => Peminjaman::where('status_peminjaman', 'aktif')->count(),
+            'pengajuan_peminjaman' => Peminjaman::whereIn('status_peminjaman', ['pengajuan', 'pending', 'diajukan'])->count(),
+            'buku_terlambat' => Peminjaman::where('status_peminjaman', 'terlambat')->count(),
             'aduan_baru' => Aduan::where('status_aduan', 'baru')->count(),
         ];
+    }
+
+    /**
+     * Get latest borrowing activities.
+     *
+     * @return array<int, array{nama_anggota: string, judul_buku: string, tanggal_pinjam: string, status: string}>
+     */
+    private function getPeminjamanTerbaru(): array
+    {
+        $records = Peminjaman::with(['anggota', 'detailPeminjaman.buku'])
+            ->latest('id_peminjaman')
+            ->limit(4)
+            ->get();
+
+        return $records->map(function ($peminjaman) {
+            $tanggal = $peminjaman->tanggal_diambil
+                ? $peminjaman->tanggal_diambil->locale('id')->translatedFormat('d M Y')
+                : ($peminjaman->tanggal_pengajuan
+                    ? $peminjaman->tanggal_pengajuan->locale('id')->translatedFormat('d M Y')
+                    : $peminjaman->created_at->locale('id')->translatedFormat('d M Y'));
+
+            return [
+                'nama_anggota' => $peminjaman->anggota?->nama_lengkap ?? 'Anggota',
+                'judul_buku' => $peminjaman->detailPeminjaman->first()?->buku?->judul ?? 'Buku',
+                'tanggal_pinjam' => $tanggal,
+                'status' => strtolower($peminjaman->status_peminjaman ?? 'pending'),
+            ];
+        })->all();
+    }
+
+    /**
+     * Get nearest agenda events.
+     *
+     * @return array<int, array{bulan: string, tanggal: string, judul: string, waktu: string, lokasi: string}>
+     */
+    private function getAgendaTerdekat(): array
+    {
+        $records = AgendaEvent::query()
+            ->where('tanggal_mulai', '>=', now())
+            ->orderBy('tanggal_mulai', 'asc')
+            ->limit(3)
+            ->get();
+
+        if ($records->isEmpty()) {
+            $records = AgendaEvent::query()
+                ->orderBy('tanggal_mulai', 'desc')
+                ->limit(3)
+                ->get();
+        }
+
+        if ($records->isEmpty()) {
+            return [
+                [
+                    'bulan' => 'Okt',
+                    'tanggal' => '20',
+                    'judul' => 'Webinar Literasi Digital',
+                    'waktu' => '09:00 - 11:00 WIB',
+                    'lokasi' => 'Zoom Meeting',
+                ],
+                [
+                    'bulan' => 'Okt',
+                    'tanggal' => '25',
+                    'judul' => 'Rapat Evaluasi Bulanan',
+                    'waktu' => '13:00 - 15:00 WIB',
+                    'lokasi' => 'Ruang Rapat Utama',
+                ],
+                [
+                    'bulan' => 'Nov',
+                    'tanggal' => '02',
+                    'judul' => 'Penerimaan Buku Baru',
+                    'waktu' => '08:00 WIB',
+                    'lokasi' => 'Gudang Perpustakaan',
+                ],
+            ];
+        }
+
+        return $records->map(function ($event) {
+            $start = $event->tanggal_mulai;
+            $bulan = $start ? $start->locale('id')->translatedFormat('M') : 'Okt';
+            $tanggal = $start ? $start->format('d') : '20';
+
+            $waktu = '';
+            if ($event->jam_mulai) {
+                $waktu .= substr($event->jam_mulai, 0, 5);
+                if ($event->jam_selesai) {
+                    $waktu .= ' - '.substr($event->jam_selesai, 0, 5);
+                }
+                $waktu .= ' WIB';
+            } else {
+                $waktu = '08:00 WIB';
+            }
+
+            return [
+                'bulan' => $bulan,
+                'tanggal' => $tanggal,
+                'judul' => $event->judul_event,
+                'waktu' => $waktu,
+                'lokasi' => $event->lokasi ?? 'Perpustakaan',
+            ];
+        })->all();
     }
 
     /**

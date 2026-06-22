@@ -24,6 +24,7 @@ class Anggota extends Model
         'jenis_kelamin',
         'tanggal_lahir',
         'alamat',
+        'no_telepon',
         'foto',
         'tanggal_daftar',
         'status_anggota',
