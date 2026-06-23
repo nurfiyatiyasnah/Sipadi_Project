@@ -30,6 +30,7 @@ class RegisterDataDiriRequest extends FormRequest
             'jenis_kelamin' => ['required', Rule::in(['Laki-laki', 'Perempuan'])],
             'tanggal_lahir' => ['required', 'date', 'before:today'],
             'alamat' => ['required', 'string', 'max:1000'],
+            'no_telepon' => ['required', 'string', 'max:20'],
             'foto' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ];
     }
@@ -48,6 +49,7 @@ class RegisterDataDiriRequest extends FormRequest
             'tanggal_lahir.required' => 'Tanggal lahir wajib diisi.',
             'tanggal_lahir.before' => 'Tanggal lahir harus sebelum hari ini.',
             'alamat.required' => 'Alamat wajib diisi.',
+            'no_telepon.required' => 'Nomor HP wajib diisi.',
             'foto.image' => 'Foto profil harus berupa gambar.',
             'foto.mimes' => 'Foto profil harus berformat JPG atau PNG.',
             'foto.max' => 'Ukuran foto profil maksimal 2MB.',

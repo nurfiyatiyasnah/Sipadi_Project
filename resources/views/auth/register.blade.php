@@ -145,6 +145,15 @@
                     </div>
 
                     <div>
+                        <label for="no_telepon" class="mb-2 block text-sm font-bold text-slate-700">Nomor HP</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input id="no_telepon" type="text" name="no_telepon" value="{{ old('no_telepon', session('registration.data_diri.no_telepon')) }}" required placeholder="Masukkan nomor HP aktif (cth: 081234567890)" class="w-full rounded-xl border border-slate-200 bg-[#f4f6fa] py-3 pl-11 pr-4 text-slate-700 focus:border-[#061b3a] focus:ring-4 focus:ring-[#061b3a]/10">
+                        </div>
+                        <x-input-error :messages="$errors->get('no_telepon')" class="mt-2" />
+                    </div>
+
+                    <div>
                         <label for="foto" class="mb-2 block text-sm font-bold text-slate-700">Foto Profil <span class="font-medium text-slate-400">(Opsional)</span></label>
                         <label class="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 px-6 py-8 text-center transition hover:border-[#061b3a] hover:bg-[#061b3a]/5">
                             <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-500"></i>
