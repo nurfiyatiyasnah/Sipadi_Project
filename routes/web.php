@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnggotaController;
+use App\Http\Controllers\AnggotaDashboardController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EKartuController;
@@ -21,10 +22,11 @@ Route::middleware(['auth'])->get('/dashboard', function () {
         return redirect()->route('petugas.dashboard');
     }
 
-    return redirect()->route('landing');
+    return redirect()->route('anggota.dashboard');
 })->name('dashboard');
 
 Route::middleware(['auth', 'role:Anggota'])->group(function () {
+    Route::get('/beranda', [AnggotaDashboardController::class, 'index'])->name('anggota.dashboard');
     Route::get('/e-kartu', [EKartuController::class, 'show'])->name('anggota.e-kartu');
     Route::get('/e-kartu/download', [EKartuController::class, 'download'])->name('anggota.e-kartu.download');
 });
