@@ -100,6 +100,7 @@ class RegisteredUserController extends Controller
                     'jenis_kelamin' => $data['jenis_kelamin'],
                     'tanggal_lahir' => $data['tanggal_lahir'],
                     'alamat' => $data['alamat'],
+                    'no_telepon' => $data['no_telepon'],
                     'foto' => $fotoPath,
                     'tanggal_daftar' => now()->toDateString(),
                     'status_anggota' => 'aktif',

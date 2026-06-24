@@ -27,7 +27,7 @@ class DashboardPetugasTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertSee('Selamat Pagi, Administrator')
+            ->assertSee('Selamat Datang, Administrator')
             ->assertSee('Panel Operasional Admin')
             ->assertSee('Aksi Cepat')
             ->assertSee('Status Layanan')

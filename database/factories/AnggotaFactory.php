@@ -28,6 +28,7 @@ class AnggotaFactory extends Factory
             'jenis_kelamin' => fake()->randomElement(['Laki-laki', 'Perempuan']),
             'tanggal_lahir' => fake()->dateTimeBetween('-60 years', '-15 years'),
             'alamat' => fake()->address(),
+            'no_telepon' => fake()->phoneNumber(),
             'tanggal_daftar' => now()->toDateString(),
             'status_anggota' => 'aktif',
         ];
