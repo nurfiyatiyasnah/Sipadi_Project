@@ -29,6 +29,7 @@ class RegistrationTest extends TestCase
             'jenis_kelamin' => 'Laki-laki',
             'tanggal_lahir' => '2000-01-01',
             'alamat' => 'Bukittinggi',
+            'no_telepon' => '081234567890',
         ])->assertRedirect(route('register.akun', absolute: false));
 
         $response = $this->post('/register/akun', [
@@ -44,6 +45,6 @@ class RegistrationTest extends TestCase
         $this->assertAuthenticated();
         $this->assertSame('1375010101010001', $anggota->no_anggota);
         $this->assertModelExists(EKartuAnggota::whereBelongsTo($anggota)->firstOrFail());
-        $response->assertRedirect(route('anggota.e-kartu', absolute: false));
+        $response->assertRedirect(route('register.e-kartu', absolute: false));
     }
 }

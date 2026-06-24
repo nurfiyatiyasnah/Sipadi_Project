@@ -54,9 +54,9 @@ class RegistrasiAnggotaTest extends TestCase
         $this->assertSame($anggota->nik, $eKartu->no_anggota);
         $response
             ->assertSessionHas('status', 'registration-success')
-            ->assertRedirect(route('anggota.e-kartu'));
+            ->assertRedirect(route('register.e-kartu'));
 
-        $this->get(route('anggota.e-kartu'))
+        $this->get(route('register.e-kartu'))
             ->assertOk()
             ->assertSee('E-Kartu Anggota')
             ->assertSee('E-Kartu Anggota Anda Sudah Aktif');
@@ -90,9 +90,9 @@ class RegistrasiAnggotaTest extends TestCase
 
         $this->assertNotNull($anggota->foto);
         Storage::disk('public')->assertExists($anggota->foto);
-        $response->assertRedirect(route('anggota.e-kartu'));
+        $response->assertRedirect(route('register.e-kartu'));
 
-        $this->get(route('anggota.e-kartu'))
+        $this->get(route('register.e-kartu'))
             ->assertOk()
             ->assertSee('storage/'.$anggota->foto, false);
     }
@@ -210,7 +210,7 @@ class RegistrasiAnggotaTest extends TestCase
             'terms' => '1',
         ]);
 
-        $response->assertRedirect(route('anggota.e-kartu'));
+        $response->assertRedirect(route('register.e-kartu'));
 
         // Cek database
         $anggota = Anggota::where('nik', '1375010101010004')->firstOrFail();
