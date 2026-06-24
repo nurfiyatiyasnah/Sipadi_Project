@@ -26,7 +26,7 @@
             <!-- Nav Links -->
             <nav class="hidden md:flex items-center gap-8 text-sm font-semibold">
                 <a href="{{ route('landing') }}" class="text-slate-300 hover:text-white transition">Beranda</a>
-                <a href="{{ route('landing') }}#koleksi" class="text-slate-300 hover:text-white transition">Katalog</a>
+                <a href="{{ route('katalog') }}" class="text-slate-300 hover:text-white transition">Katalog</a>
                 <a href="{{ route('landing') }}#koleksi" class="text-slate-300 hover:text-white transition">Layanan</a>
                 <a href="{{ route('landing') }}#kontak" class="text-slate-300 hover:text-white transition">Fasilitas</a>
                 <a href="{{ route('berita.public.index') }}" class="text-[#ffdc7c] border-b-2 border-[#ffdc7c] pb-1">Berita</a>

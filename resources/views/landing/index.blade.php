@@ -26,13 +26,13 @@
             <!-- Nav Links -->
             <nav class="hidden md:flex items-center gap-8 text-sm font-semibold">
                 <a href="{{ route('landing') }}" class="text-[#ffdc7c] border-b-2 border-[#ffdc7c] pb-1">Beranda</a>
-                <a href="#koleksi" class="text-slate-300 hover:text-white transition">Katalog</a>
+                <a href="{{ route('katalog') }}" class="text-slate-300 hover:text-white transition">Katalog</a>
                 <a href="#koleksi" class="text-slate-300 hover:text-white transition">Layanan</a>
                 <a href="#kontak" class="text-slate-300 hover:text-white transition">Fasilitas</a>
                 <a href="{{ route('berita.public.index') }}" class="text-slate-300 hover:text-white transition">Berita</a>
                 <a href="#agenda" class="text-slate-300 hover:text-white transition">Agenda</a>
             </nav>
-
+            
             <!-- Action Buttons -->
             <div class="flex items-center gap-4">
                 @auth
@@ -87,7 +87,7 @@
                             Literasi Digital dan Arsip Daerah: Inovasi Baru SIPADI untuk Bukittinggi
                         </h3>
                         <p class="mt-3 text-slate-500 text-sm leading-relaxed">
-                            SIPADI menghadirkan layanan perpustakaan dan arsip digital yang lebih modern, memudahkan masyarakat mengakses buku, dokumen, dan informasi literasi secara terpadu.
+                            SIPADI menghadirkan layanan perpustakaan dan arsip digital yang lebih modern, memudahkan masyarakat mengakses buku, dokumen, dan information literasi secara terpadu.
                         </p>
                     </div>
                 </div>
@@ -142,7 +142,7 @@
                 <h2 class="font-serif text-3xl lg:text-4xl font-bold text-[#061b3a]">Pilihan Koleksi</h2>
                 <p class="text-slate-500 mt-2 text-sm">Kurasi literatur terbaik minggu ini.</p>
             </div>
-            <a href="#" class="group text-sm font-bold text-[#04241e] hover:underline flex items-center gap-1.5 transition">
+            <a href="{{ route('katalog') }}" class="group text-sm font-bold text-[#04241e] hover:underline flex items-center gap-1.5 transition">
                 Lihat Semua
                 <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition duration-150"></i>
             </a>
@@ -235,10 +235,10 @@
                         Jelajahi 24K+ Koleksi Lainnya
                     </h3>
                 </div>
-                <button class="w-full bg-[#ffdc7c] text-[#04241e] font-bold rounded-2xl py-3.5 hover:bg-[#ffe399] transition duration-200 text-sm flex items-center justify-center gap-2 mt-8">
+                <a href="{{ route('katalog') }}" class="w-full bg-[#ffdc7c] text-[#04241e] font-bold rounded-2xl py-3.5 hover:bg-[#ffe399] transition duration-200 text-sm flex items-center justify-center gap-2 mt-8">
                     Buka Katalog
                     <i class="fa-solid fa-arrow-right text-xs"></i>
-                </button>
+                </a>
             </div>
         </div>
     </section>
