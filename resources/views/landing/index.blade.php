@@ -29,7 +29,7 @@
                 <a href="#koleksi" class="text-slate-300 hover:text-white transition">Katalog</a>
                 <a href="#koleksi" class="text-slate-300 hover:text-white transition">Layanan</a>
                 <a href="#kontak" class="text-slate-300 hover:text-white transition">Fasilitas</a>
-                <a href="#berita" class="text-slate-300 hover:text-white transition">Berita</a>
+                <a href="{{ route('berita.public.index') }}" class="text-slate-300 hover:text-white transition">Berita</a>
                 <a href="#agenda" class="text-slate-300 hover:text-white transition">Agenda</a>
             </nav>
 
@@ -251,7 +251,7 @@
             <div id="berita">
                 <div class="flex items-end justify-between border-b border-slate-200/60 pb-5 mb-8">
                     <h2 class="font-serif text-3xl font-bold text-[#061b3a]">Berita Terbaru</h2>
-                    <a href="#" class="text-sm font-bold text-[#04241e] hover:underline">Lihat Semua</a>
+                    <a href="{{ route('berita.public.index') }}" class="text-sm font-bold text-[#04241e] hover:underline">Lihat Semua</a>
                 </div>
 
                 <div class="grid gap-4">
@@ -259,9 +259,13 @@
                         <div class="bg-white rounded-3xl p-4 flex flex-col sm:flex-row gap-5 border border-slate-100 shadow-sm hover:shadow-md transition duration-200">
                             <div class="w-full sm:w-[160px] h-[100px] bg-slate-100 rounded-2xl flex-shrink-0 flex items-center justify-center text-slate-400 overflow-hidden">
                                 @if ($item->gambar)
-                                    <img src="{{ Storage::url($item->gambar) }}" alt="{{ $item->judul }}" class="h-full w-full object-cover rounded-2xl">
+                                    <a href="{{ route('berita.public.show', $item->slug) }}" class="h-full w-full">
+                                        <img src="{{ Storage::url($item->gambar) }}" alt="{{ $item->judul }}" class="h-full w-full object-cover rounded-2xl">
+                                    </a>
                                 @else
-                                    <i class="fa-regular fa-image text-3xl"></i>
+                                    <a href="{{ route('berita.public.show', $item->slug) }}" class="flex h-full w-full items-center justify-center">
+                                        <i class="fa-regular fa-image text-3xl"></i>
+                                    </a>
                                 @endif
                             </div>
                             <div class="flex flex-col justify-between py-1">
@@ -276,8 +280,8 @@
                                         @endif">
                                         {{ $item->kategoriBerita?->nama_kategori }}
                                     </span>
-                                    <h4 class="mt-1.5 font-bold text-[#061b3a] text-lg leading-snug hover:text-[#04241e] transition cursor-pointer">
-                                        {{ $item->judul }}
+                                    <h4 class="mt-1.5 font-bold text-[#061b3a] text-lg leading-snug hover:text-[#04241e] transition">
+                                        <a href="{{ route('berita.public.show', $item->slug) }}">{{ $item->judul }}</a>
                                     </h4>
                                 </div>
                                 <p class="text-xs text-slate-400 mt-2">
