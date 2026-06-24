@@ -134,7 +134,25 @@ class RegisteredUserController extends Controller
         }
 
         return redirect()
-            ->route('anggota.e-kartu')
+            ->route('register.e-kartu')
             ->with('status', 'registration-success');
+    }
+
+    public function showEKartu(): View|RedirectResponse
+    {
+        /** @var User|null $user */
+        $user = Auth::user();
+        if (! $user || ! $user->isAnggota()) {
+            return redirect()->route('login');
+        }
+
+        $anggota = $user->anggota()->with('eKartuAnggota')->first();
+        if (! $anggota) {
+            return redirect()->route('register');
+        }
+
+        $eKartu = $anggota->eKartuAnggota;
+
+        return view('auth.register-e-kartu', compact('anggota', 'eKartu'));
     }
 }

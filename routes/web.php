@@ -6,12 +6,20 @@ use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EKartuController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Berita;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('landing.index');
+    $beritaList = Berita::query()
+        ->published()
+        ->with('kategoriBerita')
+        ->latest('id_berita')
+        ->limit(3)
+        ->get();
+
+    return view('landing.index', compact('beritaList'));
 })->name('landing');
 
 Route::middleware(['auth'])->get('/dashboard', function () {

@@ -30,7 +30,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('petugas.dashboard'));
         }
 
-        return redirect()->intended(route('landing'));
+        return redirect()->intended(route('anggota.dashboard'));
     }
 
     public function destroy(Request $request): RedirectResponse
