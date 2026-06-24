@@ -255,37 +255,41 @@
                 </div>
 
                 <div class="grid gap-4">
-                    <!-- News Item 1 -->
-                    <div class="bg-white rounded-3xl p-4 flex flex-col sm:flex-row gap-5 border border-slate-100 shadow-sm hover:shadow-md transition duration-200">
-                        <div class="w-full sm:w-[160px] h-[100px] bg-slate-100 rounded-2xl flex-shrink-0 flex items-center justify-center text-slate-400">
-                            <i class="fa-regular fa-image text-3xl"></i>
-                        </div>
-                        <div class="flex flex-col justify-between py-1">
-                            <div>
-                                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">Kegiatan</span>
-                                <h4 class="mt-1.5 font-bold text-[#061b3a] text-lg leading-snug hover:text-[#04241e] transition cursor-pointer">
-                                    Workshop Literasi Digital untuk Pelajar Bukittinggi
-                                </h4>
+                    @forelse ($beritaList as $item)
+                        <div class="bg-white rounded-3xl p-4 flex flex-col sm:flex-row gap-5 border border-slate-100 shadow-sm hover:shadow-md transition duration-200">
+                            <div class="w-full sm:w-[160px] h-[100px] bg-slate-100 rounded-2xl flex-shrink-0 flex items-center justify-center text-slate-400 overflow-hidden">
+                                @if ($item->gambar)
+                                    <img src="{{ Storage::url($item->gambar) }}" alt="{{ $item->judul }}" class="h-full w-full object-cover rounded-2xl">
+                                @else
+                                    <i class="fa-regular fa-image text-3xl"></i>
+                                @endif
                             </div>
-                            <p class="text-xs text-slate-400 mt-2">12 Oktober 2024</p>
-                        </div>
-                    </div>
-
-                    <!-- News Item 2 -->
-                    <div class="bg-white rounded-3xl p-4 flex flex-col sm:flex-row gap-5 border border-slate-100 shadow-sm hover:shadow-md transition duration-200">
-                        <div class="w-full sm:w-[160px] h-[100px] bg-slate-100 rounded-2xl flex-shrink-0 flex items-center justify-center text-slate-400">
-                            <i class="fa-regular fa-image text-3xl"></i>
-                        </div>
-                        <div class="flex flex-col justify-between py-1">
-                            <div>
-                                <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600">Pengumuman</span>
-                                <h4 class="mt-1.5 font-bold text-[#061b3a] text-lg leading-snug hover:text-[#04241e] transition cursor-pointer">
-                                    Penambahan 500 Koleksi E-Book Terbaru Bulan Ini
-                                </h4>
+                            <div class="flex flex-col justify-between py-1">
+                                <div>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider 
+                                        @if($item->kategoriBerita?->nama_kategori === 'Kegiatan')
+                                            text-emerald-600
+                                        @elseif($item->kategoriBerita?->nama_kategori === 'Pengumuman')
+                                            text-blue-600
+                                        @else
+                                            text-amber-600
+                                        @endif">
+                                        {{ $item->kategoriBerita?->nama_kategori }}
+                                    </span>
+                                    <h4 class="mt-1.5 font-bold text-[#061b3a] text-lg leading-snug hover:text-[#04241e] transition cursor-pointer">
+                                        {{ $item->judul }}
+                                    </h4>
+                                </div>
+                                <p class="text-xs text-slate-400 mt-2">
+                                    {{ ($item->tanggal_terbit ?? $item->created_at)->locale('id')->translatedFormat('d F Y') }}
+                                </p>
                             </div>
-                            <p class="text-xs text-slate-400 mt-2">19 Oktober 2024</p>
                         </div>
-                    </div>
+                    @empty
+                        <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm text-center">
+                            <p class="text-sm font-semibold text-slate-400">Belum ada berita terbaru.</p>
+                        </div>
+                    @endforelse
                 </div>
             </div>
 
