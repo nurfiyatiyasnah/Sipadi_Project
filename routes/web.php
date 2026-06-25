@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\AgendaEventController;
 use App\Http\Controllers\AnggotaController;
 use App\Http\Controllers\AnggotaDashboardController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EKartuController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PublicAgendaController;
+use App\Models\AgendaEvent;
 use App\Models\Berita;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -19,8 +22,17 @@ Route::get('/', function () {
         ->limit(3)
         ->get();
 
-    return view('landing.index', compact('beritaList'));
+    $agendaList = AgendaEvent::query()
+        ->where('status_event', 'terbit')
+        ->latest('id_event')
+        ->limit(3)
+        ->get();
+
+    return view('landing.index', compact('beritaList', 'agendaList'));
 })->name('landing');
+
+Route::get('/agenda', [PublicAgendaController::class, 'index'])->name('agenda.index');
+Route::get('/agenda/{slug}', [PublicAgendaController::class, 'show'])->name('agenda.show');
 
 Route::middleware(['auth'])->get('/dashboard', function () {
     /** @var User $user */
@@ -68,6 +80,15 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
         ->name('berita.publish');
     Route::delete('/berita/{berita}', [BeritaController::class, 'destroy'])
         ->name('berita.destroy');
+
+    // Agenda routes
+    Route::get('/agenda', [AgendaEventController::class, 'index'])->name('agenda.index');
+    Route::get('/agenda/tambah', [AgendaEventController::class, 'create'])->name('agenda.create');
+    Route::post('/agenda', [AgendaEventController::class, 'store'])->name('agenda.store');
+    Route::get('/agenda/{agenda}', [AgendaEventController::class, 'show'])->name('agenda.show');
+    Route::get('/agenda/{agenda}/edit', [AgendaEventController::class, 'edit'])->name('agenda.edit');
+    Route::put('/agenda/{agenda}', [AgendaEventController::class, 'update'])->name('agenda.update');
+    Route::delete('/agenda/{agenda}', [AgendaEventController::class, 'destroy'])->name('agenda.destroy');
 });
 
 Route::middleware('auth')->group(function () {
