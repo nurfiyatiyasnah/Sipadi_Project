@@ -281,11 +281,11 @@
 
         <div class="sipadi-nav-links">
             <a href="{{ route('anggota.dashboard') }}" class="sipadi-nav-link {{ request()->routeIs('anggota.dashboard') ? 'active' : '' }}">Beranda</a>
-            <a href="#" class="sipadi-nav-link">Katalog</a>
+            <a href="{{ route('katalog') }}" class="sipadi-nav-link {{ request()->routeIs('katalog*') ? 'active' : '' }}">Katalog</a>
             <a href="#" class="sipadi-nav-link">Layanan</a>
             <a href="#" class="sipadi-nav-link">Fasilitas</a>
-            <a href="#" class="sipadi-nav-link">Berita</a>
-            <a href="#" class="sipadi-nav-link">Agenda</a>
+            <a href="{{ route('berita.public.index') }}" class="sipadi-nav-link {{ request()->routeIs('berita.public.*') ? 'active' : '' }}">Berita</a>
+            <a href="{{ route('agenda.index') }}" class="sipadi-nav-link {{ request()->routeIs('agenda.*') ? 'active' : '' }}">Agenda</a>
         </div>
 
         <div class="sipadi-nav-search">

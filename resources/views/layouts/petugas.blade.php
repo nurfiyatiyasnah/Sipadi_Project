@@ -28,7 +28,7 @@
                 ['Peminjaman', 'fa-solid fa-right-left', null, null],
                 ['Agenda', 'fa-regular fa-calendar', 'petugas.agenda.index', 'petugas.agenda.*'],
                 ['Berita', 'fa-regular fa-newspaper', 'petugas.berita.index', 'petugas.berita.*'],
-                ['Pengumuman', 'fa-solid fa-bullhorn', null, null],
+                ['Pengumuman', 'fa-solid fa-bullhorn', 'petugas.pengumuman.index', 'petugas.pengumuman.*'],
                 ['Aduan', 'fa-solid fa-triangle-exclamation', null, null],
                 ['divider', '', null, null],
                 ['Profil Perpustakaan', 'fa-solid fa-building-columns', null, null],

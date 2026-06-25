@@ -31,7 +31,7 @@
                     <a href="{{ route('landing') }}#koleksi" class="text-slate-300 hover:text-white transition">Layanan</a>
                     <a href="{{ route('landing') }}#kontak" class="text-slate-300 hover:text-white transition">Fasilitas</a>
                     <a href="{{ route('berita.public.index') }}" class="text-slate-300 hover:text-white transition">Berita</a>
-                    <a href="{{ route('landing') }}#agenda" class="text-slate-300 hover:text-white transition">Agenda</a>
+                    <a href="{{ route('agenda.index') }}" class="text-slate-300 hover:text-white transition">Agenda</a>
                 </nav>
             </div>
 
