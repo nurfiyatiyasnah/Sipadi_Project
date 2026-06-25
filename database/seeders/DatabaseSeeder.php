@@ -119,5 +119,9 @@ class DatabaseSeeder extends Seeder
                 'created_by' => $petugas->id_petugas,
             ]);
         }
+
+        $this->call([
+            KatalogSeeder::class,
+        ]);
     }
 }
