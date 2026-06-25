@@ -7,6 +7,7 @@ use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EKartuController;
 use App\Http\Controllers\ProfileController;
+use App\Models\AgendaEvent;
 use App\Models\Berita;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -28,6 +29,14 @@ Route::get('/', function () {
 
     return view('landing.index', compact('beritaList', 'agendaList'));
 })->name('landing');
+
+Route::get('/berita', [PublicBeritaController::class, 'index'])->name('berita.public.index');
+Route::get('/berita/{slug}', [PublicBeritaController::class, 'show'])->name('berita.public.show');
+
+Route::get('/katalog', [PublicKatalogController::class, 'index'])->name('katalog');
+Route::get('/katalog/{buku}', [PublicKatalogController::class, 'show'])->name('katalog.show');
+Route::get('/agenda', [PublicAgendaController::class, 'index'])->name('agenda.index');
+Route::get('/agenda/{slug}', [PublicAgendaController::class, 'show'])->name('agenda.show');
 
 Route::middleware(['auth'])->get('/dashboard', function () {
     /** @var User $user */
