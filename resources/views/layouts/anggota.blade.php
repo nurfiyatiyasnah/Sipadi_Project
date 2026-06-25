@@ -275,7 +275,8 @@
     <!-- Navbar -->
     <nav class="sipadi-navbar">
         <a href="{{ route('anggota.dashboard') }}" class="sipadi-navbar-brand">
-            <i class="fa-solid fa-building-columns"></i>
+            <img src="{{ asset('images/logo-kota.png') }}" alt="Logo Kota Bukittinggi" style="height: 32px; width: auto; object-fit: contain; margin-right: 4px;">
+            <img src="{{ asset('images/logo-dinas.png') }}" alt="Logo Perpustakaan Nasional" style="height: 32px; width: auto; object-fit: contain; margin-right: 8px;">
             SIPADI Bukittinggi
         </a>
 

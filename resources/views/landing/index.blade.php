@@ -13,63 +13,7 @@
 <body class="min-h-screen bg-[#f6f5e9] font-sans text-[#061b3a] antialiased">
 
     <!-- Header / Navbar -->
-    <header class="bg-[#04241e] text-white">
-        <div class="mx-auto max-w-7xl px-6 py-5 lg:px-12 flex items-center justify-between">
-            <!-- Logo Section -->
-            <a href="{{ route('landing') }}" class="flex items-center gap-3 hover:opacity-90 transition">
-                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#ffdc7c] text-[#04241e]">
-                    <i class="fa-solid fa-building-columns text-lg"></i>
-                </span>
-                <span class="font-serif font-bold text-xl tracking-tight">SIPADI Bukittinggi</span>
-            </a>
-
-            <!-- Nav Links -->
-            <nav class="hidden md:flex items-center gap-8 text-sm font-semibold">
-                <a href="{{ route('landing') }}" class="text-[#ffdc7c] border-b-2 border-[#ffdc7c] pb-1">Beranda</a>
-                <a href="{{ route('katalog') }}" class="text-slate-300 hover:text-white transition">Katalog</a>
-                <a href="#koleksi" class="text-slate-300 hover:text-white transition">Layanan</a>
-                <a href="#kontak" class="text-slate-300 hover:text-white transition">Fasilitas</a>
-                <a href="{{ route('berita.public.index') }}" class="text-slate-300 hover:text-white transition">Berita</a>
-                <a href="{{ route('agenda.index') }}" class="text-slate-300 hover:text-white transition">Agenda</a>
-            </nav>
-
-            <!-- Action Buttons -->
-            <div class="flex items-center gap-4">
-                @auth
-                    @if (Auth::user()->isPetugas())
-                        <a href="{{ route('petugas.dashboard') }}" class="rounded-xl bg-[#ffdc7c] px-5 py-2.5 text-sm font-bold text-[#04241e] hover:bg-[#ffe399] transition shadow-md shadow-[#ffdc7c]/10">
-                            Dashboard
-                        </a>
-                    @else
-                        <a href="{{ route('anggota.e-kartu') }}" class="rounded-xl bg-[#ffdc7c] px-5 py-2.5 text-sm font-bold text-[#04241e] hover:bg-[#ffe399] transition shadow-md shadow-[#ffdc7c]/10">
-                            E-Kartu
-                        </a>
-                    @endif
-
-                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 rounded-xl border border-slate-500 px-4 py-2.5 text-sm font-semibold hover:bg-white/10 transition text-white" title="Profil Saya">
-                        <span class="flex h-6 w-6 items-center justify-center rounded-full bg-[#ffdc7c] text-[#04241e]">
-                            <i class="fa-regular fa-user text-xs"></i>
-                        </span>
-                        <span class="max-w-[150px] truncate">{{ Auth::user()->nama }}</span>
-                    </a>
-
-                    <form method="POST" action="{{ route('logout') }}" class="inline">
-                        @csrf
-                        <button type="submit" class="rounded-xl border border-slate-500 px-5 py-2.5 text-sm font-semibold hover:bg-white/10 transition">
-                            Keluar
-                        </button>
-                    </form>
-                @else
-                    <a href="{{ route('login') }}" class="rounded-xl border border-slate-500 px-5 py-2.5 text-sm font-semibold hover:bg-white/10 transition">
-                        Masuk
-                    </a>
-                    <a href="{{ route('register') }}" class="rounded-xl bg-[#ffdc7c] px-5 py-2.5 text-sm font-bold text-[#04241e] hover:bg-[#ffe399] transition shadow-md shadow-[#ffdc7c]/10">
-                        Daftar
-                    </a>
-                @endauth
-            </div>
-        </div>
-    </header>
+    @include('layouts.public_navbar')
 
     <!-- Hero / Banner Section -->
     <section class="bg-[#04241e] text-white py-12 lg:py-20 overflow-hidden relative">
@@ -167,21 +111,27 @@
                 <div class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between">
                     <div>
                         <!-- Styled Book Cover -->
-                        <div class="relative w-full h-[240px] rounded-2xl flex flex-col justify-between p-5 text-white shadow-sm overflow-hidden mb-4" style="background-color: {{ $coverColors[$colorIndex] }}">
-                            <div class="absolute left-0 top-0 bottom-0 w-3.5 bg-gradient-to-r from-black/25 to-transparent"></div>
-                            @if($tersedia)
-                                <div class="absolute top-3 right-3 bg-emerald-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                                    Tersedia
-                                </div>
+                        <div class="relative w-full h-[240px] rounded-2xl bg-slate-100 flex flex-col items-center justify-center shadow-sm overflow-hidden mb-4">
+                            @if($buku->gambar_cover)
+                                @php
+                                    $imageUrl = str_starts_with($buku->gambar_cover, 'http') ? $buku->gambar_cover : asset('storage/' . $buku->gambar_cover);
+                                @endphp
+                                <img src="{{ $imageUrl }}" alt="{{ $buku->judul }}" class="w-full h-full object-cover">
                             @else
-                                <div class="absolute top-3 right-3 bg-slate-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                                    Dipinjam
+                                <!-- Dynamic Fallback Cover -->
+                                <div class="absolute inset-0 p-5 text-white flex flex-col justify-between" style="background-color: {{ $coverColors[$colorIndex] }}">
+                                    <div class="absolute left-0 top-0 bottom-0 w-3.5 bg-gradient-to-r from-black/25 to-transparent"></div>
+                                    <div class="mt-4 pl-3">
+                                        <p class="font-serif font-bold text-base leading-snug mt-1 line-clamp-3">{{ $buku->judul }}</p>
+                                    </div>
+                                    <p class="text-xs {{ $textColors[$colorIndex] }} pl-3">{{ $buku->penulis ?? '-' }}</p>
                                 </div>
                             @endif
-                            <div class="mt-4 pl-3">
-                                <p class="font-serif font-bold text-base leading-snug mt-1 line-clamp-3">{{ $buku->judul }}</p>
+
+                            <!-- Status Badge -->
+                            <div class="absolute top-3 right-3 {{ $tersedia ? 'bg-emerald-500/90' : 'bg-slate-500/90' }} backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                                {{ $tersedia ? 'Tersedia' : 'Dipinjam' }}
                             </div>
-                            <p class="text-xs {{ $textColors[$colorIndex] }} pl-3">{{ $buku->penulis ?? '-' }}</p>
                         </div>
 
                         <span class="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 rounded px-2 py-0.5">

@@ -18,7 +18,7 @@ class LandingPageNewsTest extends TestCase
     {
         // 1. Setup categories
         $kategoriKegiatan = KategoriBerita::factory()->create(['nama_kategori' => 'Kegiatan']);
-        $kategoriPengumuman = KategoriBerita::factory()->create(['nama_kategori' => 'Pengumuman']);
+        $kategoriPengumuman = KategoriBerita::factory()->create(['nama_kategori' => 'Pengumuman Draft']);
 
         // 2. Setup news (1 published, 1 draft)
         $beritaTerbit = Berita::factory()->published()->create([
@@ -43,7 +43,7 @@ class LandingPageNewsTest extends TestCase
 
         // Draft news must NOT be visible
         $response->assertDontSee('Info Pemeliharaan Gedung Draft');
-        $response->assertDontSee('Pengumuman');
+        $response->assertDontSee('Pengumuman Draft');
     }
 
     public function test_landing_page_shows_empty_message_when_no_published_news(): void

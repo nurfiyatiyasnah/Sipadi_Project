@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Buku;
 use App\Models\KategoriBuku;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class PublicKatalogController extends Controller
@@ -26,10 +27,11 @@ class PublicKatalogController extends Controller
         // Search Filter
         if ($request->filled('search')) {
             $search = $request->query('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('judul', 'like', "%{$search}%")
-                    ->orWhere('penulis', 'like', "%{$search}%")
-                    ->orWhere('isbn', 'like', "%{$search}%");
+            $likeOperator = DB::connection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
+            $query->where(function ($q) use ($search, $likeOperator) {
+                $q->where('judul', $likeOperator, "%{$search}%")
+                    ->orWhere('penulis', $likeOperator, "%{$search}%")
+                    ->orWhere('isbn', $likeOperator, "%{$search}%");
             });
         }
 
