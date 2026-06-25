@@ -26,7 +26,7 @@
                 ['Anggota', 'fa-solid fa-user-group', 'petugas.anggota.index', 'petugas.anggota.*'],
                 ['Buku', 'fa-solid fa-book', 'petugas.koleksi', 'petugas.koleksi'],
                 ['Peminjaman', 'fa-solid fa-right-left', null, null],
-                ['Agenda', 'fa-regular fa-calendar', null, null],
+                ['Agenda', 'fa-regular fa-calendar', 'petugas.agenda.index', 'petugas.agenda.*'],
                 ['Berita', 'fa-regular fa-newspaper', 'petugas.berita.index', 'petugas.berita.*'],
                 ['Pengumuman', 'fa-solid fa-bullhorn', null, null],
                 ['Aduan', 'fa-solid fa-triangle-exclamation', null, null],

@@ -32,7 +32,7 @@
                 <a href="{{ route('berita.public.index') }}" class="text-slate-300 hover:text-white transition">Berita</a>
                 <a href="#agenda" class="text-slate-300 hover:text-white transition">Agenda</a>
             </nav>
-            
+
             <!-- Action Buttons -->
             <div class="flex items-center gap-4">
                 @auth
@@ -45,14 +45,14 @@
                             E-Kartu
                         </a>
                     @endif
-                    
+
                     <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 rounded-xl border border-slate-500 px-4 py-2.5 text-sm font-semibold hover:bg-white/10 transition text-white" title="Profil Saya">
                         <span class="flex h-6 w-6 items-center justify-center rounded-full bg-[#ffdc7c] text-[#04241e]">
                             <i class="fa-regular fa-user text-xs"></i>
                         </span>
                         <span class="max-w-[150px] truncate">{{ Auth::user()->nama }}</span>
                     </a>
-                    
+
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
                         <button type="submit" class="rounded-xl border border-slate-500 px-5 py-2.5 text-sm font-semibold hover:bg-white/10 transition">
@@ -253,7 +253,7 @@
     <!-- Berita Terbaru & Agenda Section -->
     <section class="py-12 bg-slate-50/50">
         <div class="max-w-7xl mx-auto px-6 lg:px-12 grid gap-8 lg:grid-cols-[1fr_400px]">
-            
+
             <!-- Berita Terbaru (Left Column) -->
             <div id="berita">
                 <div class="flex items-end justify-between border-b border-slate-200/60 pb-5 mb-8">
@@ -277,7 +277,7 @@
                             </div>
                             <div class="flex flex-col justify-between py-1">
                                 <div>
-                                    <span class="text-[10px] font-bold uppercase tracking-wider 
+                                    <span class="text-[10px] font-bold uppercase tracking-wider
                                         @if($item->kategoriBerita?->nama_kategori === 'Kegiatan')
                                             text-emerald-600
                                         @elseif($item->kategoriBerita?->nama_kategori === 'Pengumuman')
@@ -308,58 +308,43 @@
             <div id="agenda" class="bg-[#04241e] text-white rounded-[2.5rem] p-6 lg:p-8 shadow-xl flex flex-col justify-between">
                 <div>
                     <h3 class="font-serif text-2xl font-bold tracking-wide">Agenda</h3>
-                    
+
                     <div class="mt-8 space-y-6">
-                        <!-- Event 1 -->
-                        <div class="flex gap-4 items-center">
-                            <div class="bg-white/10 rounded-2xl p-2.5 text-center min-w-[60px]">
-                                <p class="text-xl font-extrabold text-[#ffdc7c] leading-none">28</p>
-                                <p class="text-[9px] font-bold uppercase text-slate-300 mt-1">Okt</p>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm leading-snug">Workshop Penulisan Sejarah</h4>
-                                <p class="text-xs text-slate-400 mt-0.5">
-                                    <i class="fa-solid fa-location-dot text-[10px] mr-1"></i> Aula Perpustakaan Kota
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Event 2 -->
-                        <div class="flex gap-4 items-center">
-                            <div class="bg-white/10 rounded-2xl p-2.5 text-center min-w-[60px]">
-                                <p class="text-xl font-extrabold text-[#ffdc7c] leading-none">02</p>
-                                <p class="text-[9px] font-bold uppercase text-slate-300 mt-1">Nov</p>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm leading-snug">Pameran Foto Bukittinggi Tempo Doeloe</h4>
-                                <p class="text-xs text-slate-400 mt-0.5">
-                                    <i class="fa-solid fa-location-dot text-[10px] mr-1"></i> Halaman Jam Gadang
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Event 3 -->
-                        <div class="flex gap-4 items-center">
-                            <div class="bg-white/10 rounded-2xl p-2.5 text-center min-w-[60px]">
-                                <p class="text-xl font-extrabold text-[#ffdc7c] leading-none">15</p>
-                                <p class="text-[9px] font-bold uppercase text-slate-300 mt-1">Nov</p>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm leading-snug">Bedah Buku Literasi Minang</h4>
-                                <p class="text-xs text-slate-400 mt-0.5">
-                                    <i class="fa-solid fa-location-dot text-[10px] mr-1"></i> Virtual Zoom Meeting
-                                </p>
-                            </div>
-                        </div>
+                        @forelse ($agendaList as $agenda)
+                            <a href="{{ route('agenda.show', $agenda->slug) }}" class="flex gap-4 items-center group">
+                                <div class="bg-white/10 rounded-2xl p-2.5 text-center min-w-[60px] group-hover:bg-white/20 transition">
+                                    <p class="text-xl font-extrabold text-[#ffdc7c] leading-none">
+                                        {{ $agenda->tanggal_mulai ? $agenda->tanggal_mulai->format('d') : '00' }}
+                                    </p>
+                                    <p class="text-[9px] font-bold uppercase text-slate-300 mt-1">
+                                        {{ $agenda->tanggal_mulai ? $agenda->tanggal_mulai->locale('id')->translatedFormat('M') : 'AGEN' }}
+                                    </p>
+                                </div>
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-sm leading-snug truncate group-hover:text-[#ffdc7c] transition">
+                                        {{ $agenda->judul_event }}
+                                    </h4>
+                                    <p class="text-xs text-slate-400 mt-0.5 truncate">
+                                        <i class="fa-solid fa-location-dot text-[10px] mr-1"></i>
+                                        @if(filter_var($agenda->lokasi, FILTER_VALIDATE_URL))
+                                            Tautan Peta
+                                        @else
+                                            {{ $agenda->lokasi }}
+                                        @endif
+                                    </p>
+                                </div>
+                            </a>
+                        @empty
+                            <p class="text-xs text-slate-400">Tidak ada agenda mendatang saat ini.</p>
+                        @endforelse
                     </div>
                 </div>
 
-                <button class="w-full bg-white text-[#04241e] font-bold rounded-2xl py-3.5 hover:bg-slate-100 transition duration-200 text-sm flex items-center justify-center gap-2 mt-8 shadow-md">
+                <a href="{{ route('agenda.index') }}" class="w-full bg-white text-[#04241e] font-bold rounded-2xl py-3.5 hover:bg-slate-100 transition duration-200 text-sm flex items-center justify-center gap-2 mt-8 shadow-md">
                     <i class="fa-regular fa-calendar-days text-sm"></i>
                     Lihat Kalender Lengkap
-                </button>
+                </a>
             </div>
-
         </div>
     </section>
 
@@ -425,7 +410,7 @@
 
             <!-- Right: Interactive Google Map -->
             <div class="relative h-[300px] lg:h-auto min-h-[300px] bg-slate-100 group">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.7018317765103!2d100.36830871524874!3d-0.31568289977051493!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2fd538c1b3639d9f%3A0x2d510a9f7ea4cb62!2sDinas%20Perpustakaan%20dan%20Kearsipan%20Kota%20Bukittinggi!5e0!3m2!1sid!2sid!4v1719232338100!5m2!1sid!2sid" 
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.7018317765103!2d100.36830871524874!3d-0.31568289977051493!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2fd538c1b3639d9f%3A0x2d510a9f7ea4cb62!2sDinas%20Perpustakaan%20dan%20Kearsipan%20Kota%20Bukittinggi!5e0!3m2!1sid!2sid!4v1719232338100!5m2!1sid!2sid"
                     width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="absolute inset-0"></iframe>
                 <!-- Hover Link Button -->
                 <a href="https://maps.app.goo.gl/hsQ2hDQgA3M7GGLy5" target="_blank" class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm hover:bg-white text-[#061b3a] font-bold text-xs px-3.5 py-2 rounded-xl shadow-md border border-slate-100 flex items-center gap-1.5 transition">
