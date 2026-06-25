@@ -6,6 +6,7 @@ use App\Http\Controllers\AnggotaDashboardController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EKartuController;
+use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicAgendaController;
 use App\Models\AgendaEvent;
@@ -89,6 +90,15 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
     Route::get('/agenda/{agenda}/edit', [AgendaEventController::class, 'edit'])->name('agenda.edit');
     Route::put('/agenda/{agenda}', [AgendaEventController::class, 'update'])->name('agenda.update');
     Route::delete('/agenda/{agenda}', [AgendaEventController::class, 'destroy'])->name('agenda.destroy');
+
+    // Pengumuman routes
+    Route::get('/pengumuman', [PengumumanController::class, 'index'])->name('pengumuman.index');
+    Route::get('/pengumuman/tambah', [PengumumanController::class, 'create'])->name('pengumuman.create');
+    Route::post('/pengumuman', [PengumumanController::class, 'store'])->name('pengumuman.store');
+    Route::get('/pengumuman/{pengumuman}', [PengumumanController::class, 'show'])->name('pengumuman.show');
+    Route::get('/pengumuman/{pengumuman}/edit', [PengumumanController::class, 'edit'])->name('pengumuman.edit');
+    Route::put('/pengumuman/{pengumuman}', [PengumumanController::class, 'update'])->name('pengumuman.update');
+    Route::delete('/pengumuman/{pengumuman}', [PengumumanController::class, 'destroy'])->name('pengumuman.destroy');
 });
 
 Route::middleware('auth')->group(function () {
