@@ -124,30 +124,30 @@
             <div class="grid gap-6 md:grid-cols-3">
                 <!-- Stat Card 1 -->
                 <div class="bg-white rounded-3xl p-6 text-center shadow-lg border border-slate-100 hover:shadow-xl transition duration-300">
-                    <p class="text-4xl font-extrabold text-[#061b3a] font-sans">45,280+</p>
-                    <p class="mt-2 text-xs font-bold uppercase tracking-widest text-slate-400">Total Koleksi Buku</p>
+                    <p class="text-4xl font-extrabold text-[#061b3a] font-sans">{{ number_format($koleksiBuku) }}</p>
+                    <p class="mt-2 text-xs font-bold uppercase tracking-widest text-slate-400">Koleksi Buku</p>
                 </div>
                 <!-- Stat Card 2 -->
                 <div class="bg-white rounded-3xl p-6 text-center shadow-lg border border-slate-100 hover:shadow-xl transition duration-300">
-                    <p class="text-4xl font-extrabold text-[#061b3a] font-sans">12,150+</p>
-                    <p class="mt-2 text-xs font-bold uppercase tracking-widest text-slate-400">Anggota Aktif</p>
+                    <p class="text-4xl font-extrabold text-[#061b3a] font-sans">{{ number_format($jumlahBuku) }}</p>
+                    <p class="mt-2 text-xs font-bold uppercase tracking-widest text-slate-400">Jumlah Buku</p>
                 </div>
                 <!-- Stat Card 3 -->
                 <div class="bg-white rounded-3xl p-6 text-center shadow-lg border border-slate-100 hover:shadow-xl transition duration-300">
-                    <p class="text-4xl font-extrabold text-[#061b3a] font-sans">8,400+</p>
-                    <p class="mt-2 text-xs font-bold uppercase tracking-widest text-slate-400">Arsip Digital</p>
+                    <p class="text-4xl font-extrabold text-[#061b3a] font-sans">{{ number_format($anggotaAktif) }}</p>
+                    <p class="mt-2 text-xs font-bold uppercase tracking-widest text-slate-400">Anggota Aktif</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Pilihan Koleksi Section -->
+    <!-- Pilihan Buku Section -->
     <section id="koleksi" class="py-16 max-w-7xl mx-auto px-6 lg:px-12">
         <!-- Section Header -->
         <div class="flex items-end justify-between border-b border-slate-200/60 pb-6 mb-10">
             <div>
-                <h2 class="font-serif text-3xl lg:text-4xl font-bold text-[#061b3a]">Pilihan Koleksi</h2>
-                <p class="text-slate-500 mt-2 text-sm">Kurasi literatur terbaik minggu ini.</p>
+                <h2 class="font-serif text-3xl lg:text-4xl font-bold text-[#061b3a]">Pilihan Buku</h2>
+                <p class="text-slate-500 mt-2 text-sm">Koleksi buku terbaru di perpustakaan kami.</p>
             </div>
             <a href="{{ route('katalog') }}" class="group text-sm font-bold text-[#04241e] hover:underline flex items-center gap-1.5 transition">
                 Lihat Semua
@@ -157,80 +157,49 @@
 
         <!-- Cards Grid -->
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            <!-- Book 1 -->
-            <div class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between">
-                <div>
-                    <!-- Styled Book Cover -->
-                    <div class="relative w-full h-[240px] rounded-2xl bg-[#2e4031] flex flex-col justify-between p-5 text-white shadow-sm overflow-hidden mb-4">
-                        <div class="absolute left-0 top-0 bottom-0 w-3.5 bg-gradient-to-r from-black/25 to-transparent"></div>
-                        <div class="absolute top-3 right-3 bg-emerald-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                            Tersedia
+            @forelse($pilihanBuku as $buku)
+                @php
+                    $tersedia = $buku->eksemplar_tersedia_count > 0;
+                    $coverColors = ['#2e4031', '#8c6d58', '#3f5b7a', '#5b3a5e', '#4a6741', '#6b4c3b'];
+                    $textColors = ['text-emerald-200', 'text-amber-200', 'text-blue-200', 'text-purple-200', 'text-lime-200', 'text-orange-200'];
+                    $colorIndex = $loop->index % count($coverColors);
+                @endphp
+                <div class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between">
+                    <div>
+                        <!-- Styled Book Cover -->
+                        <div class="relative w-full h-[240px] rounded-2xl flex flex-col justify-between p-5 text-white shadow-sm overflow-hidden mb-4" style="background-color: {{ $coverColors[$colorIndex] }}">
+                            <div class="absolute left-0 top-0 bottom-0 w-3.5 bg-gradient-to-r from-black/25 to-transparent"></div>
+                            @if($tersedia)
+                                <div class="absolute top-3 right-3 bg-emerald-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                                    Tersedia
+                                </div>
+                            @else
+                                <div class="absolute top-3 right-3 bg-slate-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                                    Dipinjam
+                                </div>
+                            @endif
+                            <div class="mt-4 pl-3">
+                                <p class="font-serif font-bold text-base leading-snug mt-1 line-clamp-3">{{ $buku->judul }}</p>
+                            </div>
+                            <p class="text-xs {{ $textColors[$colorIndex] }} pl-3">{{ $buku->penulis ?? '-' }}</p>
                         </div>
-                        <div class="mt-4 pl-3">
-                            <p class="font-serif font-bold text-base leading-snug mt-1">Tamboko Alam Minangkabau</p>
-                        </div>
-                        <p class="text-xs text-emerald-200 pl-3">A.A. Navis</p>
+
+                        <span class="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 rounded px-2 py-0.5">
+                            {{ $buku->kategori->nama_kategori ?? 'Umum' }}
+                        </span>
+                        <h4 class="mt-2.5 font-bold text-[#061b3a] line-clamp-1">{{ $buku->judul }}</h4>
+                        <p class="text-xs text-slate-500 mt-1">{{ $buku->penulis ?? '-' }}</p>
                     </div>
-
-                    <span class="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 rounded px-2 py-0.5">
-                        Sejarah
-                    </span>
-                    <h4 class="mt-2.5 font-bold text-[#061b3a] line-clamp-1">Tamboko Alam Minangkabau</h4>
-                    <p class="text-xs text-slate-500 mt-1">A.A. Navis</p>
+                    <a href="{{ route('katalog.show', $buku) }}" class="w-full mt-5 border border-[#061b3a] text-[#061b3a] font-bold rounded-xl py-2 px-4 hover:bg-slate-50 transition duration-200 text-sm text-center block">
+                        Lihat Detail
+                    </a>
                 </div>
-                <button class="w-full mt-5 border border-[#061b3a] text-[#061b3a] font-bold rounded-xl py-2 px-4 hover:bg-slate-50 transition duration-200 text-sm">
-                    Pinjam Buku
-                </button>
-            </div>
-
-            <!-- Book 2 -->
-            <div class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between">
-                <div>
-                    <!-- Styled Book Cover -->
-                    <div class="relative w-full h-[240px] rounded-2xl bg-[#8c6d58] flex flex-col justify-between p-5 text-white shadow-sm overflow-hidden mb-4">
-                        <div class="absolute left-0 top-0 bottom-0 w-3.5 bg-gradient-to-r from-black/25 to-transparent"></div>
-                        <div class="absolute top-3 right-3 bg-slate-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                            Antrean
-                        </div>
-                        <div class="mt-4 pl-3">
-                            <p class="font-serif font-bold text-base leading-snug mt-1">Sitti Nurbaya</p>
-                        </div>
-                        <p class="text-xs text-amber-200 pl-3">Marah Roesli</p>
-                    </div>
-
-                    <span class="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 rounded px-2 py-0.5">
-                        Sastra
-                    </span>
-                    <h4 class="mt-2.5 font-bold text-[#061b3a] line-clamp-1">Sitti Nurbaya: Kasih Tak Sampai</h4>
-                    <p class="text-xs text-slate-500 mt-1">Marah Roesli</p>
+            @empty
+                <div class="col-span-full text-center py-12 text-slate-400">
+                    <i class="fa-solid fa-book-open text-4xl mb-3"></i>
+                    <p class="text-sm">Belum ada buku di perpustakaan.</p>
                 </div>
-                <button class="w-full mt-5 bg-blue-50 text-blue-700 font-bold rounded-xl py-2 px-4 hover:bg-blue-100 transition duration-200 text-sm">
-                    Masuk Antrean
-                </button>
-            </div>
-
-            <!-- Book 3 -->
-            <div class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between">
-                <div>
-                    <!-- Styled Book Cover -->
-                    <div class="relative w-full h-[240px] rounded-2xl bg-[#3f5b7a] flex flex-col justify-between p-5 text-white shadow-sm overflow-hidden mb-4">
-                        <div class="absolute left-0 top-0 bottom-0 w-3.5 bg-gradient-to-r from-black/25 to-transparent"></div>
-                        <div class="mt-4 pl-3">
-                            <p class="font-serif font-bold text-base leading-snug mt-1">Arsitektur Digital Masa Depan</p>
-                        </div>
-                        <p class="text-xs text-blue-200 pl-3">Tim Peneliti</p>
-                    </div>
-
-                    <span class="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 rounded px-2 py-0.5">
-                        Teknologi
-                    </span>
-                    <h4 class="mt-2.5 font-bold text-[#061b3a] line-clamp-1">Arsitektur Digital Masa Depan</h4>
-                    <p class="text-xs text-slate-500 mt-1">Tim Peneliti</p>
-                </div>
-                <button class="w-full mt-5 border border-[#061b3a] text-[#061b3a] font-bold rounded-xl py-2 px-4 hover:bg-slate-50 transition duration-200 text-sm">
-                    Pinjam Buku
-                </button>
-            </div>
+            @endforelse
 
             <!-- Explore Card -->
             <div class="bg-[#04241e] text-white rounded-[2rem] p-6 shadow-xl flex flex-col justify-between items-center text-center">
@@ -239,7 +208,7 @@
                         <i class="fa-solid fa-compass"></i>
                     </span>
                     <h3 class="font-serif text-xl font-bold leading-snug px-3">
-                        Jelajahi 24K+ Koleksi Lainnya
+                        Jelajahi {{ number_format($koleksiBuku) }}+ Koleksi Lainnya
                     </h3>
                 </div>
                 <a href="{{ route('katalog') }}" class="w-full bg-[#ffdc7c] text-[#04241e] font-bold rounded-2xl py-3.5 hover:bg-[#ffe399] transition duration-200 text-sm flex items-center justify-center gap-2 mt-8">
