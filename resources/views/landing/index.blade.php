@@ -1,8 +1,69 @@
-@extends('layouts.public')
- 
-@section('title', 'SIPADI Bukittinggi - Perpustakaan & Arsip Digital')
- 
-@section('content')
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIPADI Bukittinggi - Perpustakaan & Arsip Digital</title>
+
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700|playfair-display:600,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="min-h-screen bg-[#f6f5e9] font-sans text-[#061b3a] antialiased">
+
+    <!-- Header / Navbar -->
+    <header class="bg-[#04241e] text-white">
+        <div class="mx-auto max-w-7xl px-6 py-5 lg:px-12 flex items-center justify-between">
+            <!-- Logo Section -->
+            <a href="{{ route('landing') }}" class="flex items-center gap-3 hover:opacity-90 transition">
+                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#ffdc7c] text-[#04241e]">
+                    <i class="fa-solid fa-building-columns text-lg"></i>
+                </span>
+                <span class="font-serif font-bold text-xl tracking-tight">SIPADI Bukittinggi</span>
+            </a>
+
+            <!-- Nav Links -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-semibold">
+                <a href="{{ route('landing') }}" class="text-[#ffdc7c] border-b-2 border-[#ffdc7c] pb-1">Beranda</a>
+                <a href="#koleksi" class="text-slate-300 hover:text-white transition">Katalog</a>
+                <a href="#koleksi" class="text-slate-300 hover:text-white transition">Layanan</a>
+                <a href="#kontak" class="text-slate-300 hover:text-white transition">Fasilitas</a>
+                <a href="#berita" class="text-slate-300 hover:text-white transition">Berita</a>
+                <a href="#agenda" class="text-slate-300 hover:text-white transition">Agenda</a>
+            </nav>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-4">
+                @auth
+                    @if (Auth::user()->isPetugas())
+                        <a href="{{ route('petugas.dashboard') }}" class="rounded-xl bg-[#ffdc7c] px-5 py-2.5 text-sm font-bold text-[#04241e] hover:bg-[#ffe399] transition shadow-md shadow-[#ffdc7c]/10">
+                            Dashboard
+                        </a>
+                    @else
+                        <a href="{{ route('anggota.e-kartu') }}" class="rounded-xl bg-[#ffdc7c] px-5 py-2.5 text-sm font-bold text-[#04241e] hover:bg-[#ffe399] transition shadow-md shadow-[#ffdc7c]/10">
+                            E-Kartu
+                        </a>
+                    @endif
+                    
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="rounded-xl border border-slate-500 px-5 py-2.5 text-sm font-semibold hover:bg-white/10 transition">
+                            Keluar
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="rounded-xl border border-slate-500 px-5 py-2.5 text-sm font-semibold hover:bg-white/10 transition">
+                        Masuk
+                    </a>
+                    <a href="{{ route('register') }}" class="rounded-xl bg-[#ffdc7c] px-5 py-2.5 text-sm font-bold text-[#04241e] hover:bg-[#ffe399] transition shadow-md shadow-[#ffdc7c]/10">
+                        Daftar
+                    </a>
+                @endauth
+            </div>
+        </div>
+    </header>
+
     <!-- Hero / Banner Section -->
     <section class="bg-[#04241e] text-white py-12 lg:py-20 overflow-hidden relative">
         <!-- Subtle Pattern Overlay -->
@@ -26,7 +87,7 @@
                             Literasi Digital dan Arsip Daerah: Inovasi Baru SIPADI untuk Bukittinggi
                         </h3>
                         <p class="mt-3 text-slate-500 text-sm leading-relaxed">
-                            SIPADI menghadirkan layanan perpustakaan and arsip digital yang lebih modern, memudahkan masyarakat mengakses buku, dokumen, dan informasi literasi secara terpadu.
+                            SIPADI menghadirkan layanan perpustakaan dan arsip digital yang lebih modern, memudahkan masyarakat mengakses buku, dokumen, dan informasi literasi secara terpadu.
                         </p>
                     </div>
                 </div>
@@ -81,7 +142,7 @@
                 <h2 class="font-serif text-3xl lg:text-4xl font-bold text-[#061b3a]">Pilihan Koleksi</h2>
                 <p class="text-slate-500 mt-2 text-sm">Kurasi literatur terbaik minggu ini.</p>
             </div>
-            <a href="#" class="group text-sm font-bold text-[#04241e] hover:underline flex items-center gap-1.5 transition">
+            <a href="{{ route('katalog') }}" class="group text-sm font-bold text-[#04241e] hover:underline flex items-center gap-1.5 transition">
                 Lihat Semua
                 <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition duration-150"></i>
             </a>
@@ -174,10 +235,10 @@
                         Jelajahi 24K+ Koleksi Lainnya
                     </h3>
                 </div>
-                <button class="w-full bg-[#ffdc7c] text-[#04241e] font-bold rounded-2xl py-3.5 hover:bg-[#ffe399] transition duration-200 text-sm flex items-center justify-center gap-2 mt-8">
+                <a href="{{ route('katalog') }}" class="w-full bg-[#ffdc7c] text-[#04241e] font-bold rounded-2xl py-3.5 hover:bg-[#ffe399] transition duration-200 text-sm flex items-center justify-center gap-2 mt-8">
                     Buka Katalog
                     <i class="fa-solid fa-arrow-right text-xs"></i>
-                </button>
+                </a>
             </div>
         </div>
     </section>
@@ -190,7 +251,7 @@
             <div id="berita">
                 <div class="flex items-end justify-between border-b border-slate-200/60 pb-5 mb-8">
                     <h2 class="font-serif text-3xl font-bold text-[#061b3a]">Berita Terbaru</h2>
-                    <a href="#" class="text-sm font-bold text-[#04241e] hover:underline">Lihat Semua</a>
+                    <a href="{{ route('berita.public.index') }}" class="text-sm font-bold text-[#04241e] hover:underline">Lihat Semua</a>
                 </div>
  
                 <div class="grid gap-4">
@@ -198,9 +259,13 @@
                         <div class="bg-white rounded-3xl p-4 flex flex-col sm:flex-row gap-5 border border-slate-100 shadow-sm hover:shadow-md transition duration-200">
                             <div class="w-full sm:w-[160px] h-[100px] bg-slate-100 rounded-2xl flex-shrink-0 flex items-center justify-center text-slate-400 overflow-hidden">
                                 @if ($item->gambar)
-                                    <img src="{{ Storage::url($item->gambar) }}" alt="{{ $item->judul }}" class="h-full w-full object-cover rounded-2xl">
+                                    <a href="{{ route('berita.public.show', $item->slug) }}" class="h-full w-full">
+                                        <img src="{{ Storage::url($item->gambar) }}" alt="{{ $item->judul }}" class="h-full w-full object-cover rounded-2xl">
+                                    </a>
                                 @else
-                                    <i class="fa-regular fa-image text-3xl"></i>
+                                    <a href="{{ route('berita.public.show', $item->slug) }}" class="flex h-full w-full items-center justify-center">
+                                        <i class="fa-regular fa-image text-3xl"></i>
+                                    </a>
                                 @endif
                             </div>
                             <div class="flex flex-col justify-between py-1">
@@ -215,8 +280,8 @@
                                         @endif">
                                         {{ $item->kategoriBerita?->nama_kategori }}
                                     </span>
-                                    <h4 class="mt-1.5 font-bold text-[#061b3a] text-lg leading-snug hover:text-[#04241e] transition cursor-pointer">
-                                        {{ $item->judul }}
+                                    <h4 class="mt-1.5 font-bold text-[#061b3a] text-lg leading-snug hover:text-[#04241e] transition">
+                                        <a href="{{ route('berita.public.show', $item->slug) }}">{{ $item->judul }}</a>
                                     </h4>
                                 </div>
                                 <p class="text-xs text-slate-400 mt-2">
