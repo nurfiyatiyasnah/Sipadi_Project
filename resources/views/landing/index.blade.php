@@ -413,4 +413,3 @@
             </div>
         </div>
     </section>
-@endsection
