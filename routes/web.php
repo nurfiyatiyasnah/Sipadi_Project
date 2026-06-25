@@ -11,7 +11,10 @@ use App\Http\Controllers\PublicAgendaController;
 use App\Http\Controllers\PublicBeritaController;
 use App\Http\Controllers\PublicKatalogController;
 use App\Models\AgendaEvent;
+use App\Models\Anggota;
 use App\Models\Berita;
+use App\Models\Buku;
+use App\Models\EksemplarBuku;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -30,7 +33,31 @@ Route::get('/', function () {
         ->limit(3)
         ->get();
 
-    return view('landing.index', compact('beritaList', 'agendaList'));
+    // Statistik beranda dari database
+    $koleksiBuku = Buku::count();
+    $jumlahBuku = EksemplarBuku::count();
+    $anggotaAktif = Anggota::where('status_anggota', 'aktif')->count();
+
+    // Pilihan buku dari database (3 buku terbaru)
+    $pilihanBuku = Buku::query()
+        ->with('kategori')
+        ->withCount('eksemplar')
+        ->withCount([
+            'eksemplar as eksemplar_tersedia_count' => fn ($q) => $q
+                ->whereIn('status_eksemplar', ['tersedia', 'Tersedia']),
+        ])
+        ->latest('id_buku')
+        ->limit(3)
+        ->get();
+
+    return view('landing.index', compact(
+        'beritaList',
+        'agendaList',
+        'koleksiBuku',
+        'jumlahBuku',
+        'anggotaAktif',
+        'pilihanBuku'
+    ));
 })->name('landing');
 
 Route::get('/berita', [PublicBeritaController::class, 'index'])->name('berita.public.index');
