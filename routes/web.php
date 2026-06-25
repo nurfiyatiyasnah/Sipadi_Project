@@ -2,14 +2,19 @@
 
 use App\Http\Controllers\AgendaEventController;
 use App\Http\Controllers\AnggotaController;
-use App\Http\Controllers\AnggotaDashboardController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EKartuController;
 use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\ProfileController;
 use App\Models\AgendaEvent;
+use App\Http\Controllers\PublicAgendaController;
+use App\Http\Controllers\PublicBeritaController;
+use App\Http\Controllers\PublicKatalogController;
+use App\Models\Anggota;
 use App\Models\Berita;
+use App\Models\Buku;
+use App\Models\EksemplarBuku;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -28,7 +33,31 @@ Route::get('/', function () {
         ->limit(3)
         ->get();
 
-    return view('landing.index', compact('beritaList', 'agendaList'));
+    // Statistik beranda dari database
+    $koleksiBuku = Buku::count();
+    $jumlahBuku = EksemplarBuku::count();
+    $anggotaAktif = Anggota::where('status_anggota', 'aktif')->count();
+
+    // Pilihan buku dari database (3 buku terbaru)
+    $pilihanBuku = Buku::query()
+        ->with('kategori')
+        ->withCount('eksemplar')
+        ->withCount([
+            'eksemplar as eksemplar_tersedia_count' => fn ($q) => $q
+                ->whereIn('status_eksemplar', ['tersedia', 'Tersedia']),
+        ])
+        ->latest('id_buku')
+        ->limit(3)
+        ->get();
+
+    return view('landing.index', compact(
+        'beritaList',
+        'agendaList',
+        'koleksiBuku',
+        'jumlahBuku',
+        'anggotaAktif',
+        'pilihanBuku'
+    ));
 })->name('landing');
 
 Route::get('/berita', [PublicBeritaController::class, 'index'])->name('berita.public.index');
@@ -51,7 +80,9 @@ Route::middleware(['auth'])->get('/dashboard', function () {
 })->name('dashboard');
 
 Route::middleware(['auth', 'role:Anggota'])->group(function () {
-    Route::get('/beranda', [AnggotaDashboardController::class, 'index'])->name('anggota.dashboard');
+    Route::get('/beranda', function () {
+        return redirect()->route('landing');
+    })->name('anggota.dashboard');
     Route::get('/e-kartu', [EKartuController::class, 'show'])->name('anggota.e-kartu');
     Route::get('/e-kartu/download', [EKartuController::class, 'download'])->name('anggota.e-kartu.download');
 });
@@ -86,7 +117,6 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
     Route::delete('/berita/{berita}', [BeritaController::class, 'destroy'])
         ->name('berita.destroy');
 
-    // Agenda routes
     Route::get('/agenda', [AgendaEventController::class, 'index'])->name('agenda.index');
     Route::get('/agenda/tambah', [AgendaEventController::class, 'create'])->name('agenda.create');
     Route::post('/agenda', [AgendaEventController::class, 'store'])->name('agenda.store');

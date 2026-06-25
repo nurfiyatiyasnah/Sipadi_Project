@@ -626,7 +626,10 @@
                     <div class="book-borrowed">
                         <div class="book-cover-wrapper">
                             @if($buku->gambar_cover)
-                                <img src="{{ asset('storage/' . $buku->gambar_cover) }}" alt="{{ $buku->judul }}" class="book-cover">
+                                @php
+                                    $imageUrl = str_starts_with($buku->gambar_cover, 'http') ? $buku->gambar_cover : asset('storage/' . $buku->gambar_cover);
+                                @endphp
+                                <img src="{{ $imageUrl }}" alt="{{ $buku->judul }}" class="book-cover">
                             @else
                                 <div class="book-cover-placeholder">
                                     <i class="fa-solid fa-book"></i>
@@ -754,7 +757,10 @@
                 <div class="book-card">
                     <div class="book-card-cover">
                         @if($rekom->gambar_cover)
-                            <img src="{{ asset('storage/' . $rekom->gambar_cover) }}" alt="{{ $rekom->judul }}">
+                            @php
+                                $rekomImageUrl = str_starts_with($rekom->gambar_cover, 'http') ? $rekom->gambar_cover : asset('storage/' . $rekom->gambar_cover);
+                            @endphp
+                            <img src="{{ $rekomImageUrl }}" alt="{{ $rekom->judul }}">
                         @else
                             <div class="cover-placeholder">
                                 <i class="fa-solid fa-book"></i>

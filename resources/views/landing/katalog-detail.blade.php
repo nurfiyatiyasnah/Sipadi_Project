@@ -13,70 +13,7 @@
 <body class="min-h-screen bg-[#f6f5e9] font-sans text-[#061b3a] antialiased">
 
     <!-- Header / Navbar -->
-    <header class="bg-[#04241e] text-white">
-        <div class="mx-auto max-w-7xl px-6 py-5 lg:px-12 flex items-center justify-between">
-            <!-- Logo Section & Links -->
-            <div class="flex items-center gap-8">
-                <a href="{{ route('landing') }}" class="flex items-center gap-3 hover:opacity-90 transition">
-                    <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#ffdc7c] text-[#04241e]">
-                        <i class="fa-solid fa-building-columns text-lg"></i>
-                    </span>
-                    <span class="font-serif font-bold text-xl tracking-tight">SIPADI Bukittinggi</span>
-                </a>
-
-                <!-- Nav Links -->
-                <nav class="hidden md:flex items-center gap-8 text-sm font-semibold">
-                    <a href="{{ route('landing') }}" class="text-slate-300 hover:text-white transition">Beranda</a>
-                    <a href="{{ route('katalog') }}" class="text-[#ffdc7c] border-b-2 border-[#ffdc7c] pb-1">Katalog</a>
-                    <a href="{{ route('landing') }}#koleksi" class="text-slate-300 hover:text-white transition">Layanan</a>
-                    <a href="{{ route('landing') }}#kontak" class="text-slate-300 hover:text-white transition">Fasilitas</a>
-                    <a href="{{ route('berita.public.index') }}" class="text-slate-300 hover:text-white transition">Berita</a>
-                    <a href="{{ route('landing') }}#agenda" class="text-slate-300 hover:text-white transition">Agenda</a>
-                </nav>
-            </div>
-
-            <!-- Search inside Navbar & Action Buttons -->
-            <div class="flex items-center gap-6">
-                <!-- Search bar inside Navbar -->
-                <form action="{{ route('katalog') }}" method="GET" class="relative hidden lg:block w-64">
-                    <input type="text" name="search" placeholder="Cari Koleksi..." 
-                           class="w-full rounded-xl border-none bg-emerald-950/60 text-white placeholder:text-slate-400 py-2.5 pl-4 pr-10 text-xs focus:ring-1 focus:ring-[#ffdc7c] focus:outline-none">
-                    <button type="submit" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition">
-                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                    </button>
-                </form>
-
-                <!-- Action Buttons -->
-                <div class="flex items-center gap-4">
-                    @auth
-                        @if (Auth::user()->isPetugas())
-                            <a href="{{ route('petugas.dashboard') }}" class="rounded-xl bg-[#ffdc7c] px-5 py-2.5 text-sm font-bold text-[#04241e] hover:bg-[#ffe399] transition shadow-md shadow-[#ffdc7c]/10">
-                                Dashboard
-                            </a>
-                        @else
-                            <a href="{{ route('anggota.e-kartu') }}" class="rounded-xl bg-[#ffdc7c] px-5 py-2.5 text-sm font-bold text-[#04241e] hover:bg-[#ffe399] transition shadow-md shadow-[#ffdc7c]/10">
-                                E-Kartu
-                            </a>
-                        @endif
-                        
-                        <form method="POST" action="{{ route('logout') }}" class="inline">
-                            @csrf
-                            <button type="submit" class="rounded-xl border border-slate-500 px-5 py-2.5 text-sm font-semibold hover:bg-white/10 transition">
-                                Keluar
-                            </button>
-                        </form>
-                    @else
-                        <a href="{{ route('login') }}" class="rounded-xl border border-slate-500 px-5 py-2.5 text-sm font-semibold hover:bg-white/10 transition">
-                            Masuk
-                        </a>
-                        <a href="{{ route('register') }}" class="rounded-xl bg-[#ffdc7c] px-5 py-2.5 text-sm font-bold text-[#04241e] hover:bg-[#ffe399] transition shadow-md shadow-[#ffdc7c]/10">
-                            Daftar
-                        </a>
-                    @endauth
-                </div>
-            </div>
-        </div>
-    </header>
+    @include('layouts.public_navbar')
 
     <!-- Breadcrumbs -->
     <div class="mx-auto max-w-7xl px-6 lg:px-12 py-6">
@@ -102,7 +39,10 @@
                 <!-- Cover Image Box -->
                 <div class="relative w-full h-[360px] rounded-3xl bg-slate-100 shadow-sm overflow-hidden flex flex-col items-center justify-center">
                     @if($buku->gambar_cover)
-                        <img src="{{ $buku->gambar_cover }}" alt="{{ $buku->judul }}" class="w-full h-full object-cover">
+                        @php
+                            $imageUrl = str_starts_with($buku->gambar_cover, 'http') ? $buku->gambar_cover : asset('storage/' . $buku->gambar_cover);
+                        @endphp
+                        <img src="{{ $imageUrl }}" alt="{{ $buku->judul }}" class="w-full h-full object-cover">
                     @else
                         <!-- Fallback Dynamic CSS Cover -->
                         <div class="absolute inset-0 bg-gradient-to-br from-[#04241e] to-[#0a4b3f] p-6 text-white flex flex-col justify-between">
@@ -267,7 +207,10 @@
                                 <!-- Styled Book Cover -->
                                 <div class="relative w-full h-[180px] rounded-xl bg-slate-100 overflow-hidden mb-3 flex flex-col items-center justify-center">
                                     @if($recom->gambar_cover)
-                                        <img src="{{ $recom->gambar_cover }}" alt="{{ $recom->judul }}" class="w-full h-full object-cover">
+                                        @php
+                                            $recomImageUrl = str_starts_with($recom->gambar_cover, 'http') ? $recom->gambar_cover : asset('storage/' . $recom->gambar_cover);
+                                        @endphp
+                                        <img src="{{ $recomImageUrl }}" alt="{{ $recom->judul }}" class="w-full h-full object-cover">
                                     @else
                                         <!-- Fallback cover -->
                                         <div class="absolute inset-0 bg-gradient-to-br from-[#04241e] to-[#0a4b3f] p-3 text-white flex flex-col justify-between">
