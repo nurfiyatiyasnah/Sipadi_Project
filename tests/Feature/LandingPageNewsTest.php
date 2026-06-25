@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\Anggota;
 use App\Models\Berita;
 use App\Models\KategoriBerita;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -93,5 +96,39 @@ class LandingPageNewsTest extends TestCase
 
         // The oldest one (4th) must NOT be visible
         $response->assertDontSee('Berita Terlama Ke-4');
+    }
+
+    public function test_authenticated_user_sees_profile_and_no_login_register_buttons(): void
+    {
+        $role = Role::create(['nama_role' => 'Anggota']);
+        $user = User::factory()->create([
+            'id_role' => $role->id_role,
+        ]);
+        $anggota = Anggota::factory()->create([
+            'id_user' => $user->id_user,
+            'nama_lengkap' => 'Budi Santoso',
+        ]);
+
+        // Request as guest
+        $responseGuest = $this->get(route('landing'));
+        $responseGuest->assertStatus(200);
+        $responseGuest->assertSee('Masuk');
+        $responseGuest->assertSee('Daftar');
+        $responseGuest->assertDontSee('Budi Santoso');
+
+        // Request as logged-in user
+        $responseAuth = $this->actingAs($user)->get(route('landing'));
+        $responseAuth->assertStatus(200);
+        // We assert HTML structure changes. Let's make sure we assert it correctly
+        // Wait, "Masuk" and "Daftar" might be inside route links. Let's assert we don't see buttons or the specific text.
+        // On our navbar, guest has: Masuk and Daftar links.
+        // Auth has: Keluar button and profile.
+        $responseAuth->assertDontSee('href="'.route('login').'"', false);
+        $responseAuth->assertDontSee('href="'.route('register').'"', false);
+        $responseAuth->assertSee('Budi Santoso');
+
+        // Also check that going to dashboard redirects to landing page
+        $responseRedirect = $this->actingAs($user)->get(route('anggota.dashboard'));
+        $responseRedirect->assertRedirect(route('landing'));
     }
 }

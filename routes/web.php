@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AnggotaController;
-use App\Http\Controllers\AnggotaDashboardController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EKartuController;
@@ -30,7 +29,6 @@ Route::get('/berita/{slug}', [PublicBeritaController::class, 'show'])->name('ber
 Route::get('/katalog', [PublicKatalogController::class, 'index'])->name('katalog');
 Route::get('/katalog/{buku}', [PublicKatalogController::class, 'show'])->name('katalog.show');
 
-
 Route::middleware(['auth'])->get('/dashboard', function () {
     /** @var User $user */
     $user = Auth::user();
@@ -43,7 +41,9 @@ Route::middleware(['auth'])->get('/dashboard', function () {
 })->name('dashboard');
 
 Route::middleware(['auth', 'role:Anggota'])->group(function () {
-    Route::get('/beranda', [AnggotaDashboardController::class, 'index'])->name('anggota.dashboard');
+    Route::get('/beranda', function () {
+        return redirect()->route('landing');
+    })->name('anggota.dashboard');
     Route::get('/e-kartu', [EKartuController::class, 'show'])->name('anggota.e-kartu');
     Route::get('/e-kartu/download', [EKartuController::class, 'download'])->name('anggota.e-kartu.download');
 });

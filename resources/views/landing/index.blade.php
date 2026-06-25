@@ -46,6 +46,13 @@
                         </a>
                     @endif
                     
+                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 rounded-xl border border-slate-500 px-4 py-2.5 text-sm font-semibold hover:bg-white/10 transition text-white" title="Profil Saya">
+                        <span class="flex h-6 w-6 items-center justify-center rounded-full bg-[#ffdc7c] text-[#04241e]">
+                            <i class="fa-regular fa-user text-xs"></i>
+                        </span>
+                        <span class="max-w-[150px] truncate">{{ Auth::user()->nama }}</span>
+                    </a>
+                    
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
                         <button type="submit" class="rounded-xl border border-slate-500 px-5 py-2.5 text-sm font-semibold hover:bg-white/10 transition">
