@@ -104,9 +104,10 @@
             @forelse($pilihanBuku as $buku)
                 @php
                     $tersedia = $buku->eksemplar_tersedia_count > 0;
-                    $coverColors = ['#2e4031', '#8c6d58', '#3f5b7a', '#5b3a5e', '#4a6741', '#6b4c3b'];
+                    $coverClasses = ['bg-[#2e4031]', 'bg-[#8c6d58]', 'bg-[#3f5b7a]', 'bg-[#5b3a5e]', 'bg-[#4a6741]', 'bg-[#6b4c3b]'];
                     $textColors = ['text-emerald-200', 'text-amber-200', 'text-blue-200', 'text-purple-200', 'text-lime-200', 'text-orange-200'];
-                    $colorIndex = $loop->index % count($coverColors);
+                    $colorIndex = $loop->index % count($coverClasses);
+                    $coverClass = $coverClasses[$colorIndex];
                 @endphp
                 <div class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between">
                     <div>
@@ -119,7 +120,7 @@
                                 <img src="{{ $imageUrl }}" alt="{{ $buku->judul }}" class="w-full h-full object-cover">
                             @else
                                 <!-- Dynamic Fallback Cover -->
-                                <div class="absolute inset-0 p-5 text-white flex flex-col justify-between" style="background-color: {{ $coverColors[$colorIndex] }}">
+                                <div class="absolute inset-0 p-5 text-white flex flex-col justify-between {{ $coverClass }}">
                                     <div class="absolute left-0 top-0 bottom-0 w-3.5 bg-gradient-to-r from-black/25 to-transparent"></div>
                                     <div class="mt-4 pl-3">
                                         <p class="font-serif font-bold text-base leading-snug mt-1 line-clamp-3">{{ $buku->judul }}</p>
