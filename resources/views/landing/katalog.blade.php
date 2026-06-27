@@ -187,9 +187,8 @@
                                 @php
                                     $isTersedia = $book->eksemplar_tersedia_count > 0;
                                 @endphp
-                                <a href="{{ route('katalog.show', $book->id_buku) }}" 
-                                   class="group bg-white rounded-3xl p-4 border border-slate-100 shadow-sm hover:shadow-md hover:scale-[1.01] transition duration-200 flex flex-col justify-between">
-                                    <div>
+                                <div class="group bg-white rounded-3xl p-4 border border-slate-100 shadow-sm hover:shadow-md hover:scale-[1.01] transition duration-200 flex flex-col justify-between">
+                                    <a href="{{ route('katalog.show', $book->id_buku) }}" class="block">
                                         <!-- Styled Cover Wrap -->
                                         <div class="relative w-full h-[240px] rounded-2xl bg-slate-100 flex flex-col items-center justify-center shadow-sm overflow-hidden mb-4">
                                             <!-- Cover image background or custom placeholder -->
@@ -223,16 +222,13 @@
                                             {{ $book->judul }}
                                         </h4>
                                         <p class="text-xs text-slate-400 mt-1">{{ $book->penulis }}</p>
-                                    </div>
+                                    </a>
 
-                                    <!-- Bottom Info: Year & Bookmark -->
+                                    <!-- Bottom Info: Year -->
                                     <div class="flex items-center justify-between mt-4 border-t pt-3">
                                         <span class="text-xs font-semibold text-slate-400">{{ $book->tahun_terbit }}</span>
-                                        <button type="button" class="text-slate-400 hover:text-[#04241e] transition">
-                                            <i class="fa-regular fa-bookmark text-sm"></i>
-                                        </button>
                                     </div>
-                                </a>
+                                </div>
                             @endforeach
                         </div>
 
