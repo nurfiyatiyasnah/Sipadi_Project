@@ -95,7 +95,7 @@
         <a href="#" class="flex items-center justify-center px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition shadow-sm">
             <i class="fa-regular fa-eye mr-2.5"></i> Lihat Pengajuan
         </a>
-        <a href="#" class="flex items-center justify-center px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition shadow-sm">
+        <a href="{{ route('petugas.aduan.index') }}" class="flex items-center justify-center px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition shadow-sm">
             <i class="fa-regular fa-clock mr-2.5"></i> Lihat Aduan
         </a>
     </div>

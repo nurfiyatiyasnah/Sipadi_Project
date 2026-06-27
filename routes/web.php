@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AduanController;
 use App\Http\Controllers\AgendaEventController;
 use App\Http\Controllers\AnggotaController;
 use App\Http\Controllers\BeritaController;
@@ -67,6 +68,7 @@ Route::get('/katalog', [PublicKatalogController::class, 'index'])->name('katalog
 Route::get('/katalog/{buku}', [PublicKatalogController::class, 'show'])->name('katalog.show');
 Route::get('/agenda', [PublicAgendaController::class, 'index'])->name('agenda.index');
 Route::get('/agenda/{slug}', [PublicAgendaController::class, 'show'])->name('agenda.show');
+Route::get('/aduan/lacak', [AduanController::class, 'track'])->name('aduan.track');
 
 Route::middleware(['auth'])->get('/dashboard', function () {
     /** @var User $user */
@@ -85,11 +87,21 @@ Route::middleware(['auth', 'role:Anggota'])->group(function () {
     })->name('anggota.dashboard');
     Route::get('/e-kartu', [EKartuController::class, 'show'])->name('anggota.e-kartu');
     Route::get('/e-kartu/download', [EKartuController::class, 'download'])->name('anggota.e-kartu.download');
+    Route::get('/aduan/tambah', [AduanController::class, 'create'])->name('aduan.create');
+    Route::post('/aduan/tambah', [AduanController::class, 'store'])->name('aduan.store');
 });
 
 Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
+
+    // Aduan (Complaints) Routes
+    Route::get('/aduan', [AduanController::class, 'indexPetugas'])->name('aduan.index');
+    Route::get('/aduan/arsip', [AduanController::class, 'arsipPetugas'])->name('aduan.arsip');
+    Route::get('/aduan/{aduan}', [AduanController::class, 'showPetugas'])->name('aduan.show');
+    Route::get('/aduan/{aduan}/tanggapi', [AduanController::class, 'createTanggapan'])->name('aduan.tanggapi');
+    Route::post('/aduan/{aduan}/tanggapi', [AduanController::class, 'storeTanggapan'])->name('aduan.store-tanggapi');
+    Route::post('/aduan/{aduan}/arsip', [AduanController::class, 'toggleArsip'])->name('aduan.toggle-arsip');
 
     Route::get('/anggota', [AnggotaController::class, 'index'])->name('anggota.index');
     Route::get('/anggota/{anggota}', [AnggotaController::class, 'show'])->name('anggota.show');

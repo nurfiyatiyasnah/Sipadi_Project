@@ -52,7 +52,7 @@ class DashboardController extends Controller
             'peminjaman_aktif' => Peminjaman::where('status_peminjaman', 'aktif')->count(),
             'pengajuan_peminjaman' => Peminjaman::whereIn('status_peminjaman', ['pengajuan', 'pending', 'diajukan'])->count(),
             'buku_terlambat' => Peminjaman::where('status_peminjaman', 'terlambat')->count(),
-            'aduan_baru' => Aduan::where('status_aduan', 'baru')->count(),
+            'aduan_baru' => Aduan::where('status_aduan', 'terkirim')->count(),
         ];
     }
 

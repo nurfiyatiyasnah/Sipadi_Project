@@ -29,7 +29,7 @@
                 ['Agenda', 'fa-regular fa-calendar', 'petugas.agenda.index', 'petugas.agenda.*'],
                 ['Berita', 'fa-regular fa-newspaper', 'petugas.berita.index', 'petugas.berita.*'],
                 ['Pengumuman', 'fa-solid fa-bullhorn', 'petugas.pengumuman.index', 'petugas.pengumuman.*'],
-                ['Aduan', 'fa-solid fa-triangle-exclamation', null, null],
+                ['Aduan', 'fa-solid fa-triangle-exclamation', 'petugas.aduan.index', 'petugas.aduan.*'],
                 ['divider', '', null, null],
                 ['Profil Perpustakaan', 'fa-solid fa-building-columns', null, null],
                 ['Struktur Organisasi', 'fa-solid fa-sitemap', null, null],
