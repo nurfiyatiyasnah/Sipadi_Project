@@ -89,6 +89,10 @@ Route::middleware(['auth', 'role:Anggota'])->group(function () {
     Route::get('/e-kartu/download', [EKartuController::class, 'download'])->name('anggota.e-kartu.download');
     Route::get('/aduan/tambah', [AduanController::class, 'create'])->name('aduan.create');
     Route::post('/aduan/tambah', [AduanController::class, 'store'])->name('aduan.store');
+
+    // Pengajuan Peminjaman
+    Route::get('/peminjaman/{buku}/ajukan', [\App\Http\Controllers\PengajuanPeminjamanController::class, 'create'])->name('peminjaman.create');
+    Route::post('/peminjaman/{buku}/ajukan', [\App\Http\Controllers\PengajuanPeminjamanController::class, 'store'])->name('peminjaman.store');
 });
 
 Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')->group(function () {
