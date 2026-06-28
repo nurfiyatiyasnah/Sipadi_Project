@@ -28,7 +28,7 @@ class AuthenticationTest extends TestCase
 
         $this->assertAuthenticated();
         $this->assertNotNull($user->fresh()->last_login_at);
-        $response->assertRedirect(route('landing', absolute: false));
+        $response->assertRedirect(route('anggota.dashboard', absolute: false));
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Anggota;
 use App\Models\Buku;
 use App\Models\EksemplarBuku;
 use App\Models\KategoriBuku;
@@ -13,6 +14,32 @@ use Tests\TestCase;
 class DashboardPetugasTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_petugas_dapat_melihat_dashboard(): void
+    {
+        $petugas = $this->createUserWithRole('Petugas');
+        $kategori = KategoriBuku::factory()->create();
+        Anggota::factory()->count(2)->create();
+        Buku::factory()->for($kategori, 'kategori')->create();
+
+        $response = $this->actingAs($petugas)
+            ->get(route('petugas.dashboard'));
+
+        $response
+            ->assertOk()
+            ->assertSee('Selamat Datang, Administrator')
+            ->assertSee('Panel Operasional Admin')
+            ->assertSee('Aksi Cepat')
+            ->assertSee('Status Layanan')
+            ->assertSee('Prioritas Hari Ini')
+            ->assertSee('Setting')
+            ->assertSee('Log Out')
+            ->assertSee(route('logout', absolute: false), false)
+            ->assertViewHas('stats', fn (array $stats): bool => $stats['total_anggota'] === 2
+                && $stats['koleksi_buku'] === 1)
+            ->assertViewHas('status_layanan')
+            ->assertViewHas('prioritas_hari_ini');
+    }
 
     public function test_petugas_dapat_melihat_koleksi_dengan_statistik_eksemplar(): void
     {
