@@ -28,7 +28,7 @@ class DashboardController extends Controller
         $agenda_terdekat = $this->getAgendaTerdekat();
 
         return view(
-            'dashboard.index',
+            'admin.dashboard',
             compact(
                 'stats',
                 'aktivitas_terkini',
@@ -46,10 +46,17 @@ class DashboardController extends Controller
      */
     private function dashboardStats(): array
     {
+        $pengajuanStatuses = ['menunggu', 'Menunggu', 'pending', 'Pending', 'pengajuan', 'Pengajuan'];
+        $peminjamanAktifStatuses = ['aktif', 'Aktif', 'dipinjam', 'Dipinjam'];
+
         return [
             'total_anggota' => Anggota::count(),
             'koleksi_buku' => Buku::count(),
-            'peminjaman_aktif' => Peminjaman::where('status_peminjaman', 'aktif')->count(),
+            'peminjaman_aktif' => Peminjaman::whereIn('status_peminjaman', $peminjamanAktifStatuses)->count(),
+            'pengajuan_peminjaman' => Peminjaman::whereIn('status_peminjaman', $pengajuanStatuses)->count(),
+            'buku_terlambat' => Peminjaman::whereIn('status_peminjaman', $peminjamanAktifStatuses)
+                ->whereDate('tanggal_jatuh_tempo', '<', today())
+                ->count(),
             'aduan_baru' => Aduan::where('status_aduan', 'baru')->count(),
         ];
     }
@@ -234,23 +241,106 @@ class DashboardController extends Controller
                 'waktu' => '-',
             ],
         ];
+    }
 
-        $aksi_cepat = [
-            ['label' => 'Tambah Buku'],
-            ['label' => 'Tambah Anggota'],
-            ['label' => 'Kelola Peminjaman'],
-            ['label' => 'Kelola Berita'],
-            ['label' => 'Lihat Laporan'],
+    /**
+     * @return array<int, array{label: string, icon: string, url: string}>
+     */
+    private function quickActions(): array
+    {
+        return [
+            [
+                'label' => 'Tambah Buku',
+                'icon' => 'fa-solid fa-plus',
+                'url' => route('petugas.buku.create'),
+            ],
+            [
+                'label' => 'Kelola Anggota',
+                'icon' => 'fa-solid fa-user-group',
+                'url' => route('petugas.anggota.index'),
+            ],
+            [
+                'label' => 'Tambah Agenda',
+                'icon' => 'fa-regular fa-calendar',
+                'url' => route('petugas.agenda.create'),
+            ],
+            [
+                'label' => 'Kelola Berita',
+                'icon' => 'fa-regular fa-newspaper',
+                'url' => route('petugas.berita.index'),
+            ],
+            [
+                'label' => 'Lihat Aduan',
+                'icon' => 'fa-solid fa-triangle-exclamation',
+                'url' => route('petugas.aduan.index'),
+            ],
         ];
+    }
 
-        return view(
-            'dashboard.index',
-            compact(
-                'stats',
-                'aktivitas_terkini',
-                'aksi_cepat'
-            )
-        );
+    /**
+     * @param  array{total_anggota: int, koleksi_buku: int, peminjaman_aktif: int, pengajuan_peminjaman: int, buku_terlambat: int, aduan_baru: int}  $stats
+     * @return array<int, array{label: string, value: int, tone: string}>
+     */
+    private function serviceStatuses(array $stats): array
+    {
+        return [
+            [
+                'label' => 'Peminjaman Aktif',
+                'value' => $stats['peminjaman_aktif'],
+                'tone' => 'primary',
+            ],
+            [
+                'label' => 'Pengajuan Menunggu',
+                'value' => $stats['pengajuan_peminjaman'],
+                'tone' => $stats['pengajuan_peminjaman'] > 0 ? 'warning' : 'success',
+            ],
+            [
+                'label' => 'Aduan Baru',
+                'value' => $stats['aduan_baru'],
+                'tone' => $stats['aduan_baru'] > 0 ? 'warning' : 'success',
+            ],
+        ];
+    }
+
+    /**
+     * @param  array{total_anggota: int, koleksi_buku: int, peminjaman_aktif: int, pengajuan_peminjaman: int, buku_terlambat: int, aduan_baru: int}  $stats
+     * @return array<int, array{judul: string, deskripsi: string, status: string}>
+     */
+    private function todayPriorities(array $stats): array
+    {
+        $priorities = [];
+
+        if ($stats['buku_terlambat'] > 0) {
+            $priorities[] = [
+                'judul' => 'Tindak lanjuti buku terlambat',
+                'deskripsi' => $stats['buku_terlambat'].' peminjaman melewati tanggal jatuh tempo.',
+                'status' => 'urgent',
+            ];
+        }
+
+        if ($stats['pengajuan_peminjaman'] > 0) {
+            $priorities[] = [
+                'judul' => 'Verifikasi pengajuan peminjaman',
+                'deskripsi' => $stats['pengajuan_peminjaman'].' pengajuan menunggu keputusan petugas.',
+                'status' => 'pending',
+            ];
+        }
+
+        if ($stats['aduan_baru'] > 0) {
+            $priorities[] = [
+                'judul' => 'Tanggapi aduan baru',
+                'deskripsi' => $stats['aduan_baru'].' aduan perlu ditinjau.',
+                'status' => 'pending',
+            ];
+        }
+
+        return $priorities ?: [
+            [
+                'judul' => 'Operasional terkendali',
+                'deskripsi' => 'Tidak ada prioritas mendesak untuk hari ini.',
+                'status' => 'clear',
+            ],
+        ];
     }
 
     public function koleksi(Request $request): View
@@ -287,7 +377,6 @@ class DashboardController extends Controller
             ->orderBy('nama_kategori')
             ->get(['id_kategori', 'nama_kategori']);
         $books = $query->latest('id_buku')->paginate(10)->withQueryString();
-
 
         return view('admin.books.koleksi', compact('stats', 'categories', 'books'));
     }
