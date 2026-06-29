@@ -89,19 +89,66 @@
                     </a>
                 @endif
 
-                <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 rounded-xl border border-slate-500 px-4 py-2.5 text-sm font-semibold hover:bg-white/10 transition text-white" title="Profil Saya">
-                    <span class="flex h-6 w-6 items-center justify-center rounded-full bg-[#ffdc7c] text-[#04241e]">
-                        <i class="fa-regular fa-user text-xs"></i>
-                    </span>
-                    <span class="max-w-[150px] truncate">{{ Auth::user()->nama }}</span>
-                </a>
+                <!-- Vertical Divider (Left of Bell) -->
+                <div class="h-8 w-px bg-slate-700/80 mx-1"></div>
 
-                <form method="POST" action="{{ route('logout') }}" class="inline">
-                    @csrf
-                    <button type="submit" class="rounded-xl border border-slate-500 px-5 py-2.5 text-sm font-semibold hover:bg-white/10 transition">
-                        Keluar
+                <!-- Notification Bell -->
+                <button type="button" class="relative text-slate-300 hover:text-white transition focus:outline-none">
+                    <i class="fa-regular fa-bell text-lg"></i>
+                </button>
+
+                <!-- Vertical Divider (Right of Bell) -->
+                <div class="h-8 w-px bg-slate-700/80 mx-1"></div>
+
+                <!-- Profile Dropdown -->
+                <div class="relative" x-data="{ open: false }" @click.outside="open = false" @close.stop="open = false">
+                    <button @click="open = ! open" class="flex items-center gap-3 focus:outline-none text-left cursor-pointer group">
+                        <!-- Circular Avatar -->
+                        <div class="h-10 w-10 rounded-full overflow-hidden border-2 border-slate-600 group-hover:border-[#ffdc7c] transition-colors duration-150 flex items-center justify-center">
+                            @if (Auth::user()->anggota && Auth::user()->anggota->foto)
+                                <img src="{{ asset('storage/' . Auth::user()->anggota->foto) }}" alt="Avatar" class="h-full w-full object-cover">
+                            @else
+                                <div class="h-full w-full bg-[#ffdc7c] text-[#04241e] flex items-center justify-center font-bold text-sm">
+                                    {{ mb_substr(Auth::user()->nama, 0, 1) }}
+                                </div>
+                            @endif
+                        </div>
+                        <!-- User Name and Role -->
+                        <div class="hidden sm:block leading-tight">
+                            <span class="block text-sm font-bold text-white group-hover:text-slate-200 transition-colors">{{ Auth::user()->nama }}</span>
+                            <span class="block text-[11px] text-slate-400 mt-0.5">{{ Auth::user()->role?->nama_role ?? 'Anggota' }}</span>
+                        </div>
                     </button>
-                </form>
+
+                    <!-- Dropdown Menu -->
+                    <div x-show="open"
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-75"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-end="opacity-0 scale-95"
+                         class="absolute right-0 z-50 mt-3 w-52 rounded-xl bg-[#09221d] border border-slate-700/60 p-2 shadow-xl"
+                         style="display: none;">
+                         
+                         @if (Auth::user()->isPetugas())
+                             <a href="{{ route('petugas.dashboard') }}" class="block rounded-lg px-4 py-2.5 text-sm text-white hover:bg-white/10 transition">
+                                 Dashboard Admin
+                             </a>
+                         @else
+                             <a href="#" class="block rounded-lg px-4 py-2.5 text-sm text-white hover:bg-white/10 transition">
+                                 Riwayat Peminjaman
+                             </a>
+                         @endif
+                         
+                         <form method="POST" action="{{ route('logout') }}" class="block w-full">
+                             @csrf
+                             <button type="submit" class="block w-full text-left rounded-lg px-4 py-2.5 text-sm text-white hover:bg-white/10 transition">
+                                 Keluar
+                             </button>
+                         </form>
+                    </div>
+                </div>
             @else
                 <a href="{{ route('login') }}" class="rounded-xl border border-slate-500 px-5 py-2.5 text-sm font-semibold hover:bg-white/10 transition">
                     Masuk
