@@ -45,7 +45,7 @@
                 </button>
             </form>
 
-            <a href="{{ route('petugas.koleksi.export') }}" class="rounded-lg border border-gray-300 px-5 py-2 text-center font-semibold text-gray-700 hover:bg-gray-50">
+            <a href="{{ route('petugas.koleksi.export', request()->query()) }}" class="rounded-lg border border-gray-300 px-5 py-2 text-center font-semibold text-gray-700 hover:bg-gray-50">
                 Ekspor CSV
             </a>
         </div>
