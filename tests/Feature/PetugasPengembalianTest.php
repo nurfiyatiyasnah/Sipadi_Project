@@ -6,18 +6,13 @@ use App\Models\Anggota;
 use App\Models\AturanPeminjaman;
 use App\Models\Buku;
 use App\Models\DetailPeminjaman;
-use App\Models\DetailPengembalian;
 use App\Models\EksemplarBuku;
 use App\Models\KategoriBuku;
-use App\Models\Keterlambatan;
-use App\Models\Notifikasi;
 use App\Models\Peminjaman;
 use App\Models\Pengembalian;
 use App\Models\Petugas;
 use App\Models\Role;
-use App\Models\SanksiAnggota;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -157,7 +152,7 @@ class PetugasPengembalianTest extends TestCase
             'id_peminjaman' => $peminjaman->id_peminjaman,
             'id_buku' => $buku->id_buku,
             'jumlah' => 1,
-            'status_detail' => 'disetujui',
+            'status_detail' => 'dipinjam',
         ]);
 
         $file = UploadedFile::fake()->create('buku_rusak.jpg', 100);
@@ -171,9 +166,9 @@ class PetugasPengembalianTest extends TestCase
             ]);
 
         $response->assertOk()
-            ->assertSee('Detail Pengembalian & Sanksi')
+            ->assertSee('Detail Pengembalian & Sanksi', false)
             ->assertSee('Rusak Ringan')
-            ->assertSee('10 Hari') // Late penalty days multiplied by 2!
+            ->assertSee('5 Hari') // Late penalty days 1:1, no multiplier
             ->assertSee('Konfirmasi Pengembalian');
     }
 
@@ -210,7 +205,7 @@ class PetugasPengembalianTest extends TestCase
             'id_peminjaman' => $peminjaman->id_peminjaman,
             'id_buku' => $buku->id_buku,
             'jumlah' => 1,
-            'status_detail' => 'disetujui',
+            'status_detail' => 'dipinjam',
         ]);
 
         $file = UploadedFile::fake()->create('buku_rusak.jpg', 100);
@@ -224,9 +219,9 @@ class PetugasPengembalianTest extends TestCase
             ]);
 
         $response->assertOk()
-            ->assertSee('Detail Pengembalian & Sanksi')
+            ->assertSee('Detail Pengembalian & Sanksi', false)
             ->assertSee('Rusak Ringan')
-            ->assertSee('15 Hari') // 5 days late * 3 multiplier = 15
+            ->assertSee('5 Hari') // 5 days late (1:1)
             ->assertSee('Konfirmasi Pengembalian');
     }
 
@@ -239,7 +234,7 @@ class PetugasPengembalianTest extends TestCase
 
         $kategori = KategoriBuku::factory()->create();
         $buku = Buku::factory()->for($kategori, 'kategori')->create(['judul' => 'Algoritma Pemrograman']);
-        
+
         $eksemplar = EksemplarBuku::factory()->create([
             'id_buku' => $buku->id_buku,
             'status_eksemplar' => 'dipinjam',
@@ -266,8 +261,9 @@ class PetugasPengembalianTest extends TestCase
         DetailPeminjaman::create([
             'id_peminjaman' => $peminjaman->id_peminjaman,
             'id_buku' => $buku->id_buku,
+            'id_eksemplar_buku' => $eksemplar->id_eksemplar_buku,
             'jumlah' => 1,
-            'status_detail' => 'disetujui',
+            'status_detail' => 'dipinjam',
         ]);
 
         // Mock temporary photo path
@@ -311,7 +307,7 @@ class PetugasPengembalianTest extends TestCase
 
         $this->assertDatabaseHas('sanksi_anggota', [
             'id_anggota' => $anggota->anggota->id_anggota,
-            'jenis_sanksi' => 'Skorsing 10 Hari', // 5 days late * 2 multiplier
+            'jenis_sanksi' => 'Nonaktif Peminjaman 5 Hari', // 5 days late 1:1
             'status_sanksi' => 'aktif',
         ]);
 
@@ -393,7 +389,7 @@ class PetugasPengembalianTest extends TestCase
         $this->assertStringContainsString('Ahmad Hidayat', $content);
     }
 
-    public function test_petugas_dapat_melihat_daftar_peminjaman_yang_disetujui(): void
+    public function test_petugas_dapat_melihat_daftar_peminjaman_yang_terlambat(): void
     {
         $petugas = $this->createPetugasUser();
         $anggota = $this->createAnggotaUser('Ahmad Hidayat');
@@ -404,7 +400,7 @@ class PetugasPengembalianTest extends TestCase
         $peminjaman = Peminjaman::create([
             'kode_peminjaman' => 'PMJ-202310-090',
             'id_anggota' => $anggota->anggota->id_anggota,
-            'status_peminjaman' => 'disetujui',
+            'status_peminjaman' => 'terlambat',
             'tanggal_pengajuan' => now(),
             'tanggal_diambil' => now()->subDays(2),
             'tanggal_jatuh_tempo' => now()->addDays(5),
@@ -414,7 +410,7 @@ class PetugasPengembalianTest extends TestCase
             'id_peminjaman' => $peminjaman->id_peminjaman,
             'id_buku' => $buku->id_buku,
             'jumlah' => 1,
-            'status_detail' => 'disetujui',
+            'status_detail' => 'dipinjam',
         ]);
 
         $response = $this->actingAs($petugas)
@@ -451,7 +447,7 @@ class PetugasPengembalianTest extends TestCase
         Anggota::factory()->create([
             'id_user' => $user->id_user,
             'nama_lengkap' => $nama,
-            'no_anggota' => 'ANG-' . rand(1000, 9999),
+            'no_anggota' => 'ANG-'.rand(1000, 9999),
         ]);
 
         return $user->load('anggota');

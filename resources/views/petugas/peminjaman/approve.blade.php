@@ -1,6 +1,6 @@
 @extends('layouts.petugas')
 
-@section('title', 'Atur Jadwal Pengambilan')
+@section('title', 'Setujui & Atur Jadwal')
 
 @section('content')
 @php use Carbon\Carbon; @endphp
@@ -14,7 +14,7 @@
 
     <!-- Header Block -->
     <div class="mb-8">
-        <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Jadwal Pengambilan Buku</h2>
+        <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Setujui & Atur Jadwal</h2>
         <p class="text-sm text-slate-500 mt-1.5">Tentukan jadwal dan lokasi pengambilan untuk pengajuan peminjaman yang telah disetujui.</p>
     </div>
 
@@ -62,10 +62,10 @@
                     <div>
                         <span class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">Buku yang Diajukan</span>
                         <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col gap-1">
-                            <span class="text-xs font-bold text-slate-850 line-clamp-2">
+                            <span class="text-xs font-bold text-slate-800 line-clamp-2">
                                 {{ $buku->judul ?? 'Buku' }}
                             </span>
-                            <span class="text-[10px] text-slate-450 mt-1 font-semibold">
+                            <span class="text-[10px] text-slate-500 mt-1 font-semibold">
                                 {{ $buku->penulis ?? '-' }} &bull; ISBN: {{ $buku->isbn ?? '-' }}
                             </span>
                         </div>
@@ -81,8 +81,8 @@
                     <i class="fa-regular fa-calendar-check"></i>
                 </div>
                 <div>
-                    <h3 class="text-base font-bold text-slate-850">Form Jadwal Pengambilan</h3>
-                    <p class="text-xs text-slate-450 mt-0.5">Lengkapi informasi di bawah untuk menginformasikan peminjam.</p>
+                    <h3 class="text-base font-bold text-slate-800">Form Jadwal Pengambilan</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Lengkapi informasi di bawah untuk menginformasikan peminjam.</p>
                 </div>
             </div>
 
@@ -108,7 +108,7 @@
                         </label>
                         <input type="date" name="tanggal_pengambilan" id="tanggal_pengambilan" 
                                value="{{ old('tanggal_pengambilan', $peminjaman->jadwalPengambilan?->tanggal_pengambilan ? Carbon::parse($peminjaman->jadwalPengambilan->tanggal_pengambilan)->format('Y-m-d') : date('Y-m-d')) }}" 
-                               class="w-full text-sm rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-slate-750 outline-none transition focus:border-slate-300 focus:bg-white" 
+                               class="w-full text-sm rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-slate-700 outline-none transition focus:border-slate-300 focus:bg-white" 
                                required>
                     </div>
 
@@ -125,7 +125,7 @@
                         @endphp
                         <input type="time" name="jam_pengambilan" id="jam_pengambilan" 
                                value="{{ old('jam_pengambilan', $jam) }}" 
-                               class="w-full text-sm rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-slate-750 outline-none transition focus:border-slate-300 focus:bg-white" 
+                               class="w-full text-sm rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-slate-700 outline-none transition focus:border-slate-300 focus:bg-white" 
                                required>
                     </div>
                 </div>
@@ -139,7 +139,7 @@
                         $lokasi = old('lokasi_pengambilan', $peminjaman->jadwalPengambilan?->lokasi_pengambilan ?? 'Meja Sirkulasi Lantai 1');
                     @endphp
                     <select name="lokasi_pengambilan" id="lokasi_pengambilan" 
-                            class="w-full text-sm rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-slate-750 outline-none transition focus:border-slate-300 focus:bg-white" 
+                            class="w-full text-sm rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-slate-700 outline-none transition focus:border-slate-300 focus:bg-white" 
                             required>
                         <option value="Meja Sirkulasi Lantai 1" {{ $lokasi === 'Meja Sirkulasi Lantai 1' ? 'selected' : '' }}>Meja Sirkulasi Lantai 1</option>
                         <option value="Meja Layanan Lantai 1" {{ $lokasi === 'Meja Layanan Lantai 1' ? 'selected' : '' }}>Meja Layanan Lantai 1</option>
@@ -154,7 +154,7 @@
                     </label>
                     <textarea name="pesan" id="pesan" rows="4" 
                               placeholder="Contoh: Harap membawa kartu mahasiswa asli saat pengambilan..." 
-                              class="w-full text-sm rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-slate-750 outline-none transition focus:border-slate-300 focus:bg-white">{{ old('pesan', $peminjaman->jadwalPengambilan?->pesan) }}</textarea>
+                              class="w-full text-sm rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-slate-700 outline-none transition focus:border-slate-300 focus:bg-white">{{ old('pesan', $peminjaman->jadwalPengambilan?->pesan) }}</textarea>
                 </div>
 
                 <!-- Action Buttons -->

@@ -2,19 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\EksemplarBuku;
 use App\Models\JadwalPengambilan;
 use App\Models\Notifikasi;
 use App\Models\Peminjaman;
+use App\Models\SanksiAnggota;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PetugasPeminjamanController extends Controller
 {
+    /**
+     * Display a listing of loan applications.
     /**
      * Display a listing of loan applications.
      */
@@ -27,29 +32,25 @@ class PetugasPeminjamanController extends Controller
         $query = Peminjaman::with(['anggota', 'detailPeminjaman.buku']);
 
         // Filter status
-        if ($statusFilter !== 'semua') {
-            if ($statusFilter === 'menunggu') {
-                $query->whereIn('status_peminjaman', ['menunggu', 'pending', 'pengajuan', 'diajukan']);
-            } elseif ($statusFilter === 'disetujui') {
-                $query->whereIn('status_peminjaman', ['disetujui', 'Disetujui']);
-            } elseif ($statusFilter === 'ditolak') {
-                $query->whereIn('status_peminjaman', ['ditolak', 'Ditolak']);
-            } else {
-                $query->where('status_peminjaman', $statusFilter);
-            }
+        if ($statusFilter === 'menunggu') {
+            $query->where('status_peminjaman', 'diajukan');
+        } elseif ($statusFilter === 'disetujui') {
+            $query->where('status_peminjaman', 'siap_diambil');
+        } elseif ($statusFilter === 'ditolak') {
+            $query->where('status_peminjaman', 'ditolak');
         }
 
         // Search filter
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('kode_peminjaman', 'like', '%' . $search . '%')
-                  ->orWhereHas('anggota', function ($q2) use ($search) {
-                      $q2->where('nama_lengkap', 'like', '%' . $search . '%')
-                         ->orWhere('no_anggota', 'like', '%' . $search . '%');
-                  })
-                  ->orWhereHas('detailPeminjaman.buku', function ($q3) use ($search) {
-                      $q3->where('judul', 'like', '%' . $search . '%');
-                  });
+                $q->where('kode_peminjaman', 'like', '%'.$search.'%')
+                    ->orWhereHas('anggota', function ($q2) use ($search) {
+                        $q2->where('nama_lengkap', 'like', '%'.$search.'%')
+                            ->orWhere('no_anggota', 'like', '%'.$search.'%');
+                    })
+                    ->orWhereHas('detailPeminjaman.buku', function ($q3) use ($search) {
+                        $q3->where('judul', 'like', '%'.$search.'%');
+                    });
             });
         }
 
@@ -57,10 +58,10 @@ class PetugasPeminjamanController extends Controller
 
         // Calculate statistics
         $stats = [
-            'menunggu' => Peminjaman::whereIn('status_peminjaman', ['menunggu', 'pending', 'pengajuan', 'diajukan'])->count(),
-            'disetujui_hari_ini' => Peminjaman::whereIn('status_peminjaman', ['disetujui', 'Disetujui'])->whereDate('updated_at', today())->count(),
-            'ditolak_hari_ini' => Peminjaman::whereIn('status_peminjaman', ['ditolak', 'Ditolak'])->whereDate('updated_at', today())->count(),
-            'total_sirkulasi' => Peminjaman::whereIn('status_peminjaman', ['aktif', 'Aktif', 'Dipinjam', 'dipinjam', 'terlambat'])->count(),
+            'menunggu' => Peminjaman::where('status_peminjaman', 'diajukan')->count(),
+            'disetujui_hari_ini' => Peminjaman::where('status_peminjaman', 'siap_diambil')->whereDate('updated_at', today())->count(),
+            'ditolak_hari_ini' => Peminjaman::where('status_peminjaman', 'ditolak')->whereDate('updated_at', today())->count(),
+            'total_sirkulasi' => Peminjaman::whereIn('status_peminjaman', ['aktif', 'terlambat'])->count(),
         ];
 
         return view('petugas.peminjaman.index', compact('peminjamans', 'stats', 'statusFilter', 'search'));
@@ -76,10 +77,16 @@ class PetugasPeminjamanController extends Controller
 
         // Calculate active loan count for this member
         $bukuDipinjamCount = Peminjaman::where('id_anggota', $anggota->id_anggota)
-            ->whereIn('status_peminjaman', ['aktif', 'Aktif', 'Dipinjam', 'dipinjam', 'terlambat'])
+            ->whereIn('status_peminjaman', ['aktif', 'terlambat'])
             ->count();
 
-        return view('petugas.peminjaman.show', compact('peminjaman', 'anggota', 'bukuDipinjamCount'));
+        // Check active sanctions
+        $sanksiAktif = SanksiAnggota::where('id_anggota', $anggota->id_anggota)
+            ->where('status_sanksi', 'aktif')
+            ->where('tanggal_selesai', '>=', today()->toDateString())
+            ->first();
+
+        return view('petugas.peminjaman.show', compact('peminjaman', 'anggota', 'bukuDipinjamCount', 'sanksiAktif'));
     }
 
     /**
@@ -87,7 +94,7 @@ class PetugasPeminjamanController extends Controller
      */
     public function reject(Peminjaman $peminjaman): RedirectResponse
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
         $petugas = $user->petugas;
 
@@ -97,16 +104,22 @@ class PetugasPeminjamanController extends Controller
                 'id_petugas' => $petugas?->id_petugas,
             ]);
 
+            foreach ($peminjaman->detailPeminjaman as $detail) {
+                $detail->update([
+                    'status_detail' => 'ditolak',
+                ]);
+            }
+
             // Create notification for member
             if ($peminjaman->anggota?->user) {
                 Notifikasi::create([
                     'id_user' => $peminjaman->anggota->user->id_user,
                     'id_peminjaman' => $peminjaman->id_peminjaman,
-                    'judul' => 'Pengajuan Peminjaman Ditolak',
-                    'isi' => 'Pengajuan peminjaman Anda dengan kode ' . $peminjaman->kode_peminjaman . ' telah ditolak oleh petugas.',
-                    'jenis_notifikasi' => 'Sistem',
-                    'status_notifikasi' => 'Terkirim',
-                    'status_baca' => 'Belum Dibaca',
+                    'judul' => 'Peminjaman Ditolak',
+                    'isi' => 'Pengajuan peminjaman Anda dengan kode '.$peminjaman->kode_peminjaman.' telah ditolak oleh petugas.',
+                    'jenis_notifikasi' => 'peminjaman_ditolak',
+                    'status_notifikasi' => 'terkirim',
+                    'status_baca' => 'belum_dibaca',
                     'dikirim_pada' => now(),
                 ]);
             }
@@ -114,7 +127,7 @@ class PetugasPeminjamanController extends Controller
 
         return redirect()
             ->route('petugas.peminjaman.index')
-            ->with('success', 'Pengajuan peminjaman #' . $peminjaman->kode_peminjaman . ' berhasil ditolak.');
+            ->with('success', 'Pengajuan peminjaman #'.$peminjaman->kode_peminjaman.' berhasil ditolak.');
     }
 
     /**
@@ -123,6 +136,7 @@ class PetugasPeminjamanController extends Controller
     public function approveForm(Peminjaman $peminjaman): View
     {
         $peminjaman->load(['anggota', 'detailPeminjaman.buku', 'jadwalPengambilan']);
+
         return view('petugas.peminjaman.approve', compact('peminjaman'));
     }
 
@@ -138,57 +152,131 @@ class PetugasPeminjamanController extends Controller
             'pesan' => 'nullable|string',
         ]);
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
         $petugas = $user->petugas;
 
-        DB::transaction(function () use ($request, $peminjaman, $petugas) {
-            // Determine due date
+        try {
+            DB::transaction(function () use ($request, $peminjaman, $petugas) {
+                $detail = $peminjaman->detailPeminjaman->first();
+                if (! $detail) {
+                    throw new \Exception('Detail peminjaman tidak ditemukan.');
+                }
+
+                // Choose available exemplar using lockForUpdate()
+                $eksemplar = EksemplarBuku::where('id_buku', $detail->id_buku)
+                    ->where('status_eksemplar', 'tersedia')
+                    ->lockForUpdate()
+                    ->first();
+
+                if (! $eksemplar) {
+                    throw new \Exception('Maaf, tidak ada eksemplar buku yang tersedia saat ini.');
+                }
+
+                // Update exemplar status to 'dipesan'
+                $eksemplar->update([
+                    'status_eksemplar' => 'dipesan',
+                ]);
+
+                // Save exemplar reference and update detail status to 'dipesan'
+                $detail->update([
+                    'id_eksemplar_buku' => $eksemplar->id_eksemplar_buku,
+                    'status_detail' => 'dipesan',
+                ]);
+
+                // Determine due date
+                $lamaPinjam = $peminjaman->aturanPeminjaman?->lama_pinjam_hari ?? 14;
+                $tanggalJatuhTempo = Carbon::parse($request->tanggal_pengambilan)->addDays($lamaPinjam)->toDateString();
+
+                $peminjaman->update([
+                    'status_peminjaman' => 'siap_diambil',
+                    'id_petugas' => $petugas?->id_petugas,
+                    'tanggal_jatuh_tempo' => $tanggalJatuhTempo,
+                ]);
+
+                // Save pickup schedule
+                $jadwal = JadwalPengambilan::updateOrCreate(
+                    ['id_peminjaman' => $peminjaman->id_peminjaman],
+                    [
+                        'id_petugas' => $petugas?->id_petugas,
+                        'tanggal_pengambilan' => $request->tanggal_pengambilan,
+                        'jam_mulai' => $request->jam_pengambilan,
+                        'jam_selesai' => date('H:i', strtotime($request->jam_pengambilan) + 3600),
+                        'lokasi_pengambilan' => $request->lokasi_pengambilan,
+                        'pesan' => $request->pesan,
+                        'status_jadwal' => 'disetujui',
+                        'dikirim_pada' => now(),
+                    ]
+                );
+
+                // Create notification for member
+                if ($peminjaman->anggota?->user) {
+                    $bukuJudul = $detail->buku?->judul ?? 'buku';
+                    $tanggalFormatted = Carbon::parse($request->tanggal_pengambilan)->translatedFormat('d M Y');
+                    Notifikasi::create([
+                        'id_user' => $peminjaman->anggota->user->id_user,
+                        'id_peminjaman' => $peminjaman->id_peminjaman,
+                        'id_jadwal_pengambilan' => $jadwal->id_jadwal_pengambilan,
+                        'judul' => 'Peminjaman Disetujui',
+                        'isi' => "Buku '{$bukuJudul}' siap diambil pada {$tanggalFormatted} pukul {$request->jam_pengambilan} WIB di {$request->lokasi_pengambilan}.",
+                        'jenis_notifikasi' => 'peminjaman_disetujui',
+                        'status_notifikasi' => 'terkirim',
+                        'status_baca' => 'belum_dibaca',
+                        'dikirim_pada' => now(),
+                    ]);
+                }
+            });
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return redirect()
+            ->route('petugas.peminjaman.index')
+            ->with('success', 'Pengajuan peminjaman #'.$peminjaman->kode_peminjaman.' berhasil disetujui dan jadwal pengambilan telah diatur.');
+    }
+
+    /**
+     * Mark borrowing as active when user picks up the book.
+     */
+    public function markAsPickedUp(Peminjaman $peminjaman): RedirectResponse
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $petugas = $user->petugas;
+
+        if ($peminjaman->status_peminjaman !== 'siap_diambil') {
+            return back()->with('error', 'Peminjaman harus berstatus siap diambil.');
+        }
+
+        DB::transaction(function () use ($peminjaman, $petugas) {
             $lamaPinjam = $peminjaman->aturanPeminjaman?->lama_pinjam_hari ?? 14;
-            $tanggalJatuhTempo = Carbon::parse($request->tanggal_pengambilan)->addDays($lamaPinjam)->toDateString();
+            $tanggalDiambil = now();
+            $tanggalJatuhTempo = $tanggalDiambil->copy()->addDays($lamaPinjam)->toDateString();
 
             $peminjaman->update([
-                'status_peminjaman' => 'disetujui',
-                'id_petugas' => $petugas?->id_petugas,
+                'status_peminjaman' => 'aktif',
+                'tanggal_diambil' => $tanggalDiambil,
                 'tanggal_jatuh_tempo' => $tanggalJatuhTempo,
+                'id_petugas' => $petugas?->id_petugas,
             ]);
 
-            // Save pickup schedule
-            $jadwal = JadwalPengambilan::updateOrCreate(
-                ['id_peminjaman' => $peminjaman->id_peminjaman],
-                [
-                    'id_petugas' => $petugas?->id_petugas,
-                    'tanggal_pengambilan' => $request->tanggal_pengambilan,
-                    'jam_mulai' => $request->jam_pengambilan,
-                    'jam_selesai' => date('H:i', strtotime($request->jam_pengambilan) + 3600),
-                    'lokasi_pengambilan' => $request->lokasi_pengambilan,
-                    'pesan' => $request->pesan,
-                    'status_jadwal' => 'disetujui',
-                    'dikirim_pada' => now(),
-                ]
-            );
-
-            // Create notification for member
-            if ($peminjaman->anggota?->user) {
-                $bukuJudul = $peminjaman->detailPeminjaman->first()?->buku?->judul ?? 'buku';
-                $tanggalFormatted = Carbon::parse($request->tanggal_pengambilan)->translatedFormat('d M Y');
-                Notifikasi::create([
-                    'id_user' => $peminjaman->anggota->user->id_user,
-                    'id_peminjaman' => $peminjaman->id_peminjaman,
-                    'id_jadwal_pengambilan' => $jadwal->id_jadwal_pengambilan,
-                    'judul' => 'Pengajuan Peminjaman Disetujui',
-                    'isi' => "Pengajuan peminjaman Anda untuk buku '{$bukuJudul}' telah disetujui. Silakan ambil buku pada {$tanggalFormatted} pukul {$request->jam_pengambilan} WIB di {$request->lokasi_pengambilan}.",
-                    'jenis_notifikasi' => 'Sistem',
-                    'status_notifikasi' => 'Terkirim',
-                    'status_baca' => 'Belum Dibaca',
-                    'dikirim_pada' => now(),
+            // Update details and exemplars
+            foreach ($peminjaman->detailPeminjaman as $detail) {
+                $detail->update([
+                    'status_detail' => 'dipinjam',
                 ]);
+
+                if ($detail->id_eksemplar_buku) {
+                    EksemplarBuku::where('id_eksemplar_buku', $detail->id_eksemplar_buku)->update([
+                        'status_eksemplar' => 'dipinjam',
+                    ]);
+                }
             }
         });
 
         return redirect()
-            ->route('petugas.peminjaman.index')
-            ->with('success', 'Pengajuan peminjaman #' . $peminjaman->kode_peminjaman . ' berhasil disetujui dan jadwal pengambilan telah diatur.');
+            ->route('petugas.peminjaman.show', $peminjaman->id_peminjaman)
+            ->with('success', 'Buku telah berhasil ditandai sebagai diambil. Peminjaman kini aktif.');
     }
 
     /**
@@ -200,33 +288,25 @@ class PetugasPeminjamanController extends Controller
             $output = fopen('php://output', 'w');
             fputcsv($output, ['Kode Peminjaman', 'No Anggota', 'Nama Anggota', 'Judul Buku', 'ISBN', 'Tanggal Pengajuan', 'Status Peminjaman']);
 
-            $statusFilter = strtolower($request->query('status', 'semua'));
+            $statusFilter = strtolower($request->query('status', 'diajukan'));
             $search = $request->query('search');
 
             $query = Peminjaman::with(['anggota', 'detailPeminjaman.buku']);
 
             if ($statusFilter !== 'semua') {
-                if ($statusFilter === 'menunggu') {
-                    $query->whereIn('status_peminjaman', ['menunggu', 'pending', 'pengajuan', 'diajukan']);
-                } elseif ($statusFilter === 'disetujui') {
-                    $query->whereIn('status_peminjaman', ['disetujui', 'Disetujui']);
-                } elseif ($statusFilter === 'ditolak') {
-                    $query->whereIn('status_peminjaman', ['ditolak', 'Ditolak']);
-                } else {
-                    $query->where('status_peminjaman', $statusFilter);
-                }
+                $query->where('status_peminjaman', $statusFilter);
             }
 
             if ($search) {
                 $query->where(function ($q) use ($search) {
-                    $q->where('kode_peminjaman', 'like', '%' . $search . '%')
-                      ->orWhereHas('anggota', function ($q2) use ($search) {
-                          $q2->where('nama_lengkap', 'like', '%' . $search . '%')
-                             ->orWhere('no_anggota', 'like', '%' . $search . '%');
-                      })
-                      ->orWhereHas('detailPeminjaman.buku', function ($q3) use ($search) {
-                          $q3->where('judul', 'like', '%' . $search . '%');
-                      });
+                    $q->where('kode_peminjaman', 'like', '%'.$search.'%')
+                        ->orWhereHas('anggota', function ($q2) use ($search) {
+                            $q2->where('nama_lengkap', 'like', '%'.$search.'%')
+                                ->orWhere('no_anggota', 'like', '%'.$search.'%');
+                        })
+                        ->orWhereHas('detailPeminjaman.buku', function ($q3) use ($search) {
+                            $q3->where('judul', 'like', '%'.$search.'%');
+                        });
                 });
             }
 

@@ -1,4 +1,4 @@
-@extends('layouts.anggota')
+@extends('layouts.public')
 
 @section('title', 'Profil Anggota')
 

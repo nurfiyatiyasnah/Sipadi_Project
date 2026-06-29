@@ -227,6 +227,20 @@
                 </a>
             </div>
         @endif
+
+        @if($status === 'siap_diambil')
+            <!-- Actions Section for Ready to Pick Up -->
+            <div class="flex items-center justify-end gap-4 border-t border-slate-100 pt-6">
+                <!-- Mark as Picked Up Action -->
+                <form action="{{ route('petugas.peminjaman.ambil', $peminjaman->id_peminjaman) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menandai buku ini telah diambil oleh anggota?')">
+                    @csrf
+                    <button type="submit" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl transition shadow-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-hand-holding-hand"></i> Tandai Diambil (Serahkan Buku)
+                    </button>
+                </form>
+            </div>
+        @endif
+
     </div>
 </div>
 @endsection

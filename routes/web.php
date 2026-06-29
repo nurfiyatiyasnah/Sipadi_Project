@@ -3,14 +3,15 @@
 use App\Http\Controllers\AduanController;
 use App\Http\Controllers\AgendaEventController;
 use App\Http\Controllers\AnggotaController;
+use App\Http\Controllers\AnggotaDashboardController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\BukuController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EKartuController;
 use App\Http\Controllers\PengajuanPeminjamanController;
+use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\PetugasPeminjamanController;
 use App\Http\Controllers\PetugasPengembalianController;
-use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicAgendaController;
 use App\Http\Controllers\PublicBeritaController;
@@ -89,6 +90,7 @@ Route::middleware(['auth', 'role:Anggota'])->group(function () {
     Route::get('/beranda', function () {
         return redirect()->route('landing');
     })->name('anggota.dashboard');
+    Route::get('/peminjaman-saya', [AnggotaDashboardController::class, 'peminjamanSaya'])->name('anggota.peminjaman-saya');
     Route::get('/e-kartu', [EKartuController::class, 'show'])->name('anggota.e-kartu');
     Route::get('/e-kartu/download', [EKartuController::class, 'download'])->name('anggota.e-kartu.download');
     Route::get('/aduan/tambah', [AduanController::class, 'create'])->name('aduan.create');
@@ -97,6 +99,10 @@ Route::middleware(['auth', 'role:Anggota'])->group(function () {
     // Pengajuan Peminjaman
     Route::get('/peminjaman/{buku}/ajukan', [PengajuanPeminjamanController::class, 'create'])->name('peminjaman.create');
     Route::post('/peminjaman/{buku}/ajukan', [PengajuanPeminjamanController::class, 'store'])->name('peminjaman.store');
+
+    // Notifikasi & Tiket Peminjaman
+    Route::get('/anggota/notifikasi', [AnggotaDashboardController::class, 'indexNotifikasi'])->name('anggota.notifikasi.index');
+    Route::get('/anggota/notifikasi/{notifikasi}', [AnggotaDashboardController::class, 'readNotifikasi'])->name('anggota.notifikasi.read');
 });
 
 Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')->group(function () {
@@ -166,6 +172,7 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
     Route::post('/peminjaman/{peminjaman}/tolak', [PetugasPeminjamanController::class, 'reject'])->name('peminjaman.tolak');
     Route::get('/peminjaman/{peminjaman}/setujui', [PetugasPeminjamanController::class, 'approveForm'])->name('peminjaman.approve-form');
     Route::post('/peminjaman/{peminjaman}/setujui', [PetugasPeminjamanController::class, 'approve'])->name('peminjaman.approve');
+    Route::post('/peminjaman/{peminjaman}/ambil', [PetugasPeminjamanController::class, 'markAsPickedUp'])->name('peminjaman.ambil');
 
     // Pengembalian routes for Petugas
     Route::get('/pengembalian', [PetugasPengembalianController::class, 'index'])->name('pengembalian.index');

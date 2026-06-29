@@ -283,6 +283,7 @@
         <div class="sipadi-nav-links">
             <a href="{{ route('anggota.dashboard') }}" class="sipadi-nav-link {{ request()->routeIs('anggota.dashboard') ? 'active' : '' }}">Beranda</a>
             <a href="{{ route('katalog') }}" class="sipadi-nav-link {{ request()->routeIs('katalog*') ? 'active' : '' }}">Katalog</a>
+            <a href="{{ route('anggota.peminjaman-saya') }}" class="sipadi-nav-link {{ request()->routeIs('anggota.peminjaman-saya') ? 'active' : '' }}">Peminjaman Saya</a>
             
             <!-- Layanan Dropdown -->
             <div class="relative inline-block text-left" x-data="{ open: false }" @click.outside="open = false" @close.stop="open = false">

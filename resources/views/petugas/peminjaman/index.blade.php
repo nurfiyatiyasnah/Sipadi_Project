@@ -170,16 +170,26 @@
                                 @php
                                     $status = strtolower($p->status_peminjaman);
                                     $badge = 'bg-slate-50 text-slate-600';
-                                    if (in_array($status, ['menunggu', 'pending', 'pengajuan', 'diajukan'])) {
+                                    $statusLabel = str_replace('_', ' ', $p->status_peminjaman);
+                                    if ($status === 'diajukan') {
                                         $badge = 'bg-amber-50 text-amber-600';
-                                    } elseif (in_array($status, ['disetujui', 'aktif', 'Dipinjam', 'dipinjam'])) {
+                                        $statusLabel = 'Diajukan';
+                                    } elseif ($status === 'siap_diambil') {
+                                        $badge = 'bg-blue-50 text-blue-600';
+                                        $statusLabel = 'Siap Diambil';
+                                    } elseif (in_array($status, ['aktif', 'terlambat'])) {
                                         $badge = 'bg-emerald-50 text-emerald-600';
-                                    } elseif (in_array($status, ['ditolak', 'batal'])) {
+                                        $statusLabel = $status === 'aktif' ? 'Aktif' : 'Terlambat';
+                                    } elseif ($status === 'selesai') {
+                                        $badge = 'bg-slate-100 text-slate-650';
+                                        $statusLabel = 'Selesai';
+                                    } elseif (in_array($status, ['ditolak', 'dibatalkan'])) {
                                         $badge = 'bg-rose-50 text-rose-600';
+                                        $statusLabel = $status === 'ditolak' ? 'Ditolak' : 'Dibatalkan';
                                     }
                                 @endphp
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold capitalize {{ $badge }}">
-                                    {{ $p->status_peminjaman }}
+                                    {{ $statusLabel }}
                                 </span>
                             </td>
 

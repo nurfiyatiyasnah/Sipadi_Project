@@ -105,63 +105,35 @@
                         </div>
                     </div>
 
-                    <!-- Jadwal Pengambilan Card -->
+                    <!-- Catatan Pengajuan Card -->
                     <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
                         <h2 class="text-lg font-bold text-[#04241e] flex items-center gap-2 mb-5">
-                            <i class="fa-solid fa-calendar-days text-sm text-[#1e463c]/60"></i>
-                            Jadwal Pengambilan
+                            <i class="fa-regular fa-comment-dots text-sm text-[#1e463c]/60"></i>
+                            Catatan Pengajuan (Opsional)
                         </h2>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <!-- Tanggal Pengambilan -->
+                        <div class="space-y-4">
                             <div>
-                                <label for="tanggal_pengambilan" class="block text-xs font-semibold text-slate-400 mb-1.5">Tanggal Pengambilan</label>
-                                <div class="relative">
-                                    <i class="fa-regular fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"></i>
-                                    <input 
-                                        type="date" 
-                                        id="tanggal_pengambilan" 
-                                        name="tanggal_pengambilan"
-                                        value="{{ old('tanggal_pengambilan', date('Y-m-d')) }}"
-                                        min="{{ date('Y-m-d') }}"
-                                        class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-[#1e463c]/20 focus:border-[#1e463c] outline-none transition"
-                                    >
-                                </div>
-                                @error('tanggal_pengambilan')
-                                    <p class="text-xs text-rose-500 mt-1 font-semibold">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <!-- Waktu Pengambilan -->
-                            <div>
-                                <label for="jam_pengambilan" class="block text-xs font-semibold text-slate-400 mb-1.5">Waktu Pengambilan</label>
-                                <div class="relative">
-                                    <i class="fa-regular fa-clock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"></i>
-                                    <select 
-                                        id="jam_pengambilan" 
-                                        name="jam_pengambilan"
-                                        class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-[#1e463c]/20 focus:border-[#1e463c] outline-none transition appearance-none cursor-pointer"
-                                    >
-                                        <option value="" disabled {{ old('jam_pengambilan') ? '' : 'selected' }}>Pilih Jam</option>
-                                        <option value="08:00" {{ old('jam_pengambilan') === '08:00' ? 'selected' : '' }}>08:00 WIB</option>
-                                        <option value="09:00" {{ old('jam_pengambilan') === '09:00' ? 'selected' : '' }}>09:00 WIB</option>
-                                        <option value="10:00" {{ old('jam_pengambilan') === '10:00' ? 'selected' : '' }}>10:00 WIB</option>
-                                        <option value="11:00" {{ old('jam_pengambilan') === '11:00' ? 'selected' : '' }}>11:00 WIB</option>
-                                        <option value="13:00" {{ old('jam_pengambilan') === '13:00' ? 'selected' : '' }}>13:00 WIB</option>
-                                        <option value="14:00" {{ old('jam_pengambilan') === '14:00' ? 'selected' : '' }}>14:00 WIB</option>
-                                        <option value="15:00" {{ old('jam_pengambilan') === '15:00' ? 'selected' : '' }}>15:00 WIB</option>
-                                    </select>
-                                    <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
-                                </div>
-                                @error('jam_pengambilan')
+                                <label for="catatan_pengajuan" class="block text-xs font-semibold text-slate-400 mb-1.5">Pesan/Catatan Tambahan</label>
+                                <textarea 
+                                    id="catatan_pengajuan" 
+                                    name="catatan_pengajuan"
+                                    rows="3"
+                                    placeholder="Tulis pesan atau catatan tambahan untuk petugas jika ada..."
+                                    class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-[#1e463c]/20 focus:border-[#1e463c] outline-none transition resize-none"
+                                >{{ old('catatan_pengajuan') }}</textarea>
+                                @error('catatan_pengajuan')
                                     <p class="text-xs text-rose-500 mt-1 font-semibold">{{ $message }}</p>
                                 @enderror
                             </div>
                         </div>
 
-                        <p class="text-[11px] text-slate-400 mt-3 font-semibold">
-                            * Buku hanya disimpan selama 3 hari kerja.
-                        </p>
+                        <div class="mt-4 p-4 bg-emerald-50/50 border border-emerald-100 rounded-xl flex items-start gap-3">
+                            <i class="fa-solid fa-circle-info text-emerald-600 mt-0.5"></i>
+                            <p class="text-xs text-emerald-800 leading-relaxed font-semibold">
+                                Jadwal pengambilan akan dikirim setelah petugas menyetujui pengajuan peminjaman Anda.
+                            </p>
+                        </div>
                     </div>
 
                     <!-- Syarat & Ketentuan Card -->

@@ -6,9 +6,8 @@ use App\Models\Anggota;
 use App\Models\AturanPeminjaman;
 use App\Models\Buku;
 use App\Models\DetailPeminjaman;
-use App\Models\JadwalPengambilan;
+use App\Models\EksemplarBuku;
 use App\Models\KategoriBuku;
-use App\Models\Notifikasi;
 use App\Models\Peminjaman;
 use App\Models\Petugas;
 use App\Models\Role;
@@ -31,7 +30,7 @@ class PetugasPeminjamanTest extends TestCase
         $peminjaman = Peminjaman::create([
             'kode_peminjaman' => 'PMJ-202310-045',
             'id_anggota' => $anggota->anggota->id_anggota,
-            'status_peminjaman' => 'menunggu',
+            'status_peminjaman' => 'diajukan',
             'tanggal_pengajuan' => now(),
         ]);
 
@@ -39,7 +38,7 @@ class PetugasPeminjamanTest extends TestCase
             'id_peminjaman' => $peminjaman->id_peminjaman,
             'id_buku' => $buku->id_buku,
             'jumlah' => 1,
-            'status_detail' => 'menunggu',
+            'status_detail' => 'diajukan',
         ]);
 
         $response = $this->actingAs($petugas)
@@ -62,7 +61,7 @@ class PetugasPeminjamanTest extends TestCase
         $peminjaman = Peminjaman::create([
             'kode_peminjaman' => 'PMJ-202310-089',
             'id_anggota' => $anggota->anggota->id_anggota,
-            'status_peminjaman' => 'menunggu',
+            'status_peminjaman' => 'diajukan',
             'tanggal_pengajuan' => now(),
         ]);
 
@@ -70,7 +69,7 @@ class PetugasPeminjamanTest extends TestCase
             'id_peminjaman' => $peminjaman->id_peminjaman,
             'id_buku' => $buku->id_buku,
             'jumlah' => 1,
-            'status_detail' => 'menunggu',
+            'status_detail' => 'diajukan',
         ]);
 
         $response = $this->actingAs($petugas)
@@ -89,10 +88,20 @@ class PetugasPeminjamanTest extends TestCase
         $petugas = $this->createPetugasUser();
         $anggota = $this->createAnggotaUser('Budi Santoso');
 
+        $kategori = KategoriBuku::factory()->create();
+        $buku = Buku::factory()->for($kategori, 'kategori')->create();
+
         $peminjaman = Peminjaman::create([
             'kode_peminjaman' => 'PMJ-202310-089',
             'id_anggota' => $anggota->anggota->id_anggota,
-            'status_peminjaman' => 'menunggu',
+            'status_peminjaman' => 'diajukan',
+        ]);
+
+        DetailPeminjaman::create([
+            'id_peminjaman' => $peminjaman->id_peminjaman,
+            'id_buku' => $buku->id_buku,
+            'jumlah' => 1,
+            'status_detail' => 'diajukan',
         ]);
 
         $response = $this->actingAs($petugas)
@@ -106,7 +115,7 @@ class PetugasPeminjamanTest extends TestCase
         $this->assertDatabaseHas('notifikasi', [
             'id_user' => $anggota->id_user,
             'id_peminjaman' => $peminjaman->id_peminjaman,
-            'judul' => 'Pengajuan Peminjaman Ditolak',
+            'judul' => 'Peminjaman Ditolak',
         ]);
     }
 
@@ -121,21 +130,21 @@ class PetugasPeminjamanTest extends TestCase
         $peminjaman = Peminjaman::create([
             'kode_peminjaman' => 'PMJ-202310-092',
             'id_anggota' => $anggota->anggota->id_anggota,
-            'status_peminjaman' => 'menunggu',
+            'status_peminjaman' => 'diajukan',
         ]);
 
         DetailPeminjaman::create([
             'id_peminjaman' => $peminjaman->id_peminjaman,
             'id_buku' => $buku->id_buku,
             'jumlah' => 1,
-            'status_detail' => 'menunggu',
+            'status_detail' => 'diajukan',
         ]);
 
         $response = $this->actingAs($petugas)
             ->get(route('petugas.peminjaman.approve-form', $peminjaman->id_peminjaman));
 
         $response->assertOk()
-            ->assertSee('Jadwal Pengambilan Buku')
+            ->assertSee('Setujui & Atur Jadwal', false)
             ->assertSee('Ahmad Rifai')
             ->assertSee('The Art of Computer Programming');
     }
@@ -148,6 +157,11 @@ class PetugasPeminjamanTest extends TestCase
         $kategori = KategoriBuku::factory()->create();
         $buku = Buku::factory()->for($kategori, 'kategori')->create(['judul' => 'The Art of Computer Programming']);
 
+        $eksemplar = EksemplarBuku::factory()->create([
+            'id_buku' => $buku->id_buku,
+            'status_eksemplar' => 'tersedia',
+        ]);
+
         $aturan = AturanPeminjaman::create([
             'nama_aturan' => 'Aturan Default',
             'lama_pinjam_hari' => 14,
@@ -158,14 +172,14 @@ class PetugasPeminjamanTest extends TestCase
             'kode_peminjaman' => 'PMJ-202310-092',
             'id_anggota' => $anggota->anggota->id_anggota,
             'id_aturan' => $aturan->id_aturan_peminjaman,
-            'status_peminjaman' => 'menunggu',
+            'status_peminjaman' => 'diajukan',
         ]);
 
         DetailPeminjaman::create([
             'id_peminjaman' => $peminjaman->id_peminjaman,
             'id_buku' => $buku->id_buku,
             'jumlah' => 1,
-            'status_detail' => 'menunggu',
+            'status_detail' => 'diajukan',
         ]);
 
         $response = $this->actingAs($petugas)
@@ -177,9 +191,18 @@ class PetugasPeminjamanTest extends TestCase
             ]);
 
         $response->assertRedirect(route('petugas.peminjaman.index'));
-        
+
         $peminjaman->refresh();
-        $this->assertEquals('disetujui', $peminjaman->status_peminjaman);
+        $this->assertEquals('siap_diambil', $peminjaman->status_peminjaman);
+
+        // Verify exemplar status is set to dipesan
+        $eksemplar->refresh();
+        $this->assertEquals('dipesan', $eksemplar->status_eksemplar);
+
+        // Verify detail_peminjaman has exemplar and status_detail is dipesan
+        $detail = $peminjaman->detailPeminjaman->first();
+        $this->assertEquals($eksemplar->id_eksemplar_buku, $detail->id_eksemplar_buku);
+        $this->assertEquals('dipesan', $detail->status_detail);
 
         // Verify schedule is created
         $this->assertDatabaseHas('jadwal_pengambilan', [
@@ -192,8 +215,57 @@ class PetugasPeminjamanTest extends TestCase
         $this->assertDatabaseHas('notifikasi', [
             'id_user' => $anggota->id_user,
             'id_peminjaman' => $peminjaman->id_peminjaman,
-            'judul' => 'Pengajuan Peminjaman Disetujui',
+            'judul' => 'Peminjaman Disetujui',
         ]);
+    }
+
+    public function test_petugas_dapat_menandai_buku_diambil(): void
+    {
+        $petugas = $this->createPetugasUser();
+        $anggota = $this->createAnggotaUser('Ahmad Rifai');
+
+        $kategori = KategoriBuku::factory()->create();
+        $buku = Buku::factory()->for($kategori, 'kategori')->create(['judul' => 'The Art of Computer Programming']);
+
+        $eksemplar = EksemplarBuku::factory()->create([
+            'id_buku' => $buku->id_buku,
+            'status_eksemplar' => 'dipesan',
+        ]);
+
+        $aturan = AturanPeminjaman::create([
+            'nama_aturan' => 'Aturan Default',
+            'lama_pinjam_hari' => 14,
+            'status_aktif' => true,
+        ]);
+
+        $peminjaman = Peminjaman::create([
+            'kode_peminjaman' => 'PMJ-202310-093',
+            'id_anggota' => $anggota->anggota->id_anggota,
+            'id_aturan' => $aturan->id_aturan_peminjaman,
+            'status_peminjaman' => 'siap_diambil',
+        ]);
+
+        DetailPeminjaman::create([
+            'id_peminjaman' => $peminjaman->id_peminjaman,
+            'id_buku' => $buku->id_buku,
+            'id_eksemplar_buku' => $eksemplar->id_eksemplar_buku,
+            'jumlah' => 1,
+            'status_detail' => 'dipesan',
+        ]);
+
+        $response = $this->actingAs($petugas)
+            ->post(route('petugas.peminjaman.ambil', $peminjaman->id_peminjaman));
+
+        $response->assertRedirect(route('petugas.peminjaman.show', $peminjaman->id_peminjaman));
+
+        $peminjaman->refresh();
+        $this->assertEquals('aktif', $peminjaman->status_peminjaman);
+
+        $detail = $peminjaman->detailPeminjaman->first();
+        $this->assertEquals('dipinjam', $detail->status_detail);
+
+        $eksemplar->refresh();
+        $this->assertEquals('dipinjam', $eksemplar->status_eksemplar);
     }
 
     public function test_petugas_dapat_mengekspor_daftar_peminjaman_ke_csv(): void
@@ -204,7 +276,7 @@ class PetugasPeminjamanTest extends TestCase
         $peminjaman = Peminjaman::create([
             'kode_peminjaman' => 'PMJ-202310-045',
             'id_anggota' => $anggota->anggota->id_anggota,
-            'status_peminjaman' => 'menunggu',
+            'status_peminjaman' => 'diajukan',
         ]);
 
         $response = $this->actingAs($petugas)
@@ -243,7 +315,7 @@ class PetugasPeminjamanTest extends TestCase
         Anggota::factory()->create([
             'id_user' => $user->id_user,
             'nama_lengkap' => $nama,
-            'no_anggota' => 'ANG-' . rand(1000, 9999),
+            'no_anggota' => 'ANG-'.rand(1000, 9999),
         ]);
 
         return $user->load('anggota');
