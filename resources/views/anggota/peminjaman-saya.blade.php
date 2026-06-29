@@ -5,14 +5,14 @@
     window.autoOpenTicket = @json($autoOpenTicket ?? null);
 </script>
 
-<div class="max-w-6xl mx-auto px-4 py-8" x-data="{ activeTicket: window.autoOpenTicket }">
+<div class="max-w-7xl mx-auto px-6 lg:px-12 py-12" x-data="{ activeTicket: window.autoOpenTicket }">
     <!-- Header Block -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight flex items-center gap-3">
-            <i class="fa-solid fa-book-bookmark text-[#0f4c3a]"></i>
+    <div class="border-b border-slate-200/60 pb-5 mb-8">
+        <h1 class="font-serif text-4xl font-bold text-[#04241e] tracking-tight flex items-center gap-3">
+            <i class="fa-solid fa-book-bookmark text-[#04241e]"></i>
             Peminjaman Saya
         </h1>
-        <p class="text-sm text-slate-500 mt-1.5">Pantau status pengajuan, jadwal pengambilan, dan riwayat peminjaman buku Anda.</p>
+        <p class="text-sm text-slate-500 mt-2">Pantau status pengajuan, jadwal pengambilan, dan riwayat peminjaman buku Anda.</p>
     </div>
 
     <!-- Alert Success / Error -->
@@ -31,17 +31,17 @@
     @endif
 
     <!-- Borrowing List -->
-    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-3xl border border-slate-200/80 shadow-md shadow-[#04241e]/5 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="bg-slate-50 border-b border-slate-100">
-                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Buku</th>
-                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Kode Peminjaman</th>
-                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Tanggal Pengajuan</th>
-                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Jatuh Tempo</th>
-                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Status</th>
-                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400 text-center">Aksi / Info</th>
+                    <tr class="bg-[#04241e]/5 border-b border-slate-200">
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Buku</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Kode Peminjaman</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Tanggal Pengajuan</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Jatuh Tempo</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Status</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center">Aksi / Info</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-slate-700">
@@ -88,7 +88,7 @@
                                             @endphp
                                             <img src="{{ $imageUrl }}" alt="{{ $buku->judul }}" class="w-full h-full object-cover">
                                         @else
-                                            <div class="w-full h-full bg-gradient-to-br from-[#0f4c3a] to-[#1a6b50] p-1 text-white flex flex-col justify-center text-center">
+                                            <div class="w-full h-full bg-gradient-to-br from-[#04241e] to-[#0f4c3a] p-1 text-white flex flex-col justify-center text-center">
                                                 <i class="fa-solid fa-book text-sm"></i>
                                             </div>
                                         @endif
@@ -140,7 +140,7 @@
                                             lokasi: '{{ addslashes($p->jadwalPengambilan?->lokasi_pengambilan ?? 'Meja Sirkulasi') }}',
                                             pesan: '{{ addslashes($p->jadwalPengambilan?->pesan ?? 'Harap tunjukkan tiket ini ke petugas.') }}'
                                         }"
-                                        class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#0f4c3a] hover:bg-[#1a6b50] text-white text-xs font-bold rounded-lg shadow-sm transition"
+                                        class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#04241e] hover:bg-[#06342c] text-white text-xs font-bold rounded-lg shadow-sm transition"
                                     >
                                         <i class="fa-solid fa-ticket"></i> Tiket Pengambilan
                                     </button>
@@ -204,7 +204,7 @@
             x-transition:leave-end="opacity-0 scale-95"
         >
             <!-- Header Ticket -->
-            <div class="bg-[#0f4c3a] text-white p-6 text-center relative">
+            <div class="bg-[#04241e] text-white p-6 text-center relative">
                 <button @click="activeTicket = null" class="absolute right-4 top-4 text-white/70 hover:text-white transition">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
@@ -212,7 +212,7 @@
                     <i class="fa-solid fa-qrcode text-xl text-white"></i>
                 </div>
                 <h3 class="font-extrabold text-lg tracking-tight">TIKET PENGAMBILAN</h3>
-                <p class="text-[10px] text-emerald-200 mt-1 uppercase tracking-wider font-semibold">Tunjukkan tiket ini kepada petugas perpustakaan</p>
+                <p class="text-[10px] text-[#ffdc7c] mt-1 uppercase tracking-wider font-semibold">Tunjukkan tiket ini kepada petugas perpustakaan</p>
             </div>
 
             <!-- Body Ticket -->

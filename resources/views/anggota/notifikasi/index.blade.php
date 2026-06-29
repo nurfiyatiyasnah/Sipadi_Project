@@ -2,14 +2,14 @@
 @section('title', 'Notifikasi Saya - SIPADI Bukittinggi')
 
 @section('content')
-<div class="max-w-4xl mx-auto px-4 py-8">
+<div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
     <!-- Header Block -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight flex items-center gap-3">
-            <i class="fa-solid fa-bell text-[#0f4c3a]"></i>
+    <div class="border-b border-slate-200/60 pb-5 mb-8">
+        <h1 class="font-serif text-4xl font-bold text-[#04241e] tracking-tight flex items-center gap-3">
+            <i class="fa-solid fa-bell text-[#04241e]"></i>
             Notifikasi Saya
         </h1>
-        <p class="text-sm text-slate-500 mt-1.5">Lihat seluruh riwayat pesan, info peminjaman, dan tanggapan dari petugas.</p>
+        <p class="text-sm text-slate-500 mt-2">Lihat seluruh riwayat pesan, info peminjaman, dan tanggapan dari petugas.</p>
     </div>
 
     <!-- Alert Success / Error -->
@@ -55,7 +55,7 @@
                 }
             @endphp
 
-            <div class="border rounded-2xl p-5 shadow-sm transition duration-200 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between {{ $colorTheme }}">
+            <div class="border border-slate-200/80 rounded-3xl p-5 shadow-sm transition duration-200 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between {{ $colorTheme }}">
                 <div class="flex gap-4 items-start">
                     <span class="flex h-12 w-12 items-center justify-center rounded-2xl border text-xl flex-shrink-0 {{ $iconClass }}">
                         <!-- Icon mapped in PHP -->
@@ -95,7 +95,7 @@
                 </div>
             </div>
         @empty
-            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-16 text-center">
+            <div class="bg-white rounded-3xl border border-slate-200/80 shadow-md shadow-[#04241e]/5 p-16 text-center">
                 <span class="flex h-16 w-16 items-center justify-center rounded-full bg-slate-50 text-slate-300 text-3xl mx-auto mb-4">
                     <i class="fa-solid fa-bell-slash"></i>
                 </span>

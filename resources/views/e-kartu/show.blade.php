@@ -42,7 +42,7 @@
     </div>
 
     <!-- Card Container Box -->
-    <div class="bg-[#f0f2f5] border border-slate-200/60 rounded-[2.5rem] p-8 lg:p-12 shadow-sm">
+    <div class="bg-white border border-slate-200/80 rounded-[2.5rem] p-8 lg:p-12 shadow-md shadow-[#04241e]/5">
         <div class="grid grid-cols-1 min-[1200px]:grid-cols-[auto_1fr] gap-12 xl:gap-16 items-start">
             
             <!-- Left: Card Display Wrapper -->
@@ -102,7 +102,7 @@
             <div class="flex flex-col gap-8 no-print h-full justify-between w-full max-w-xl mx-auto min-[1200px]:mx-0">
                 
                 <!-- Status Keanggotaan Card -->
-                <div class="bg-white border border-slate-100 rounded-[1.8rem] p-8 shadow-sm flex-1">
+                <div class="bg-slate-50 border border-slate-200/60 rounded-3xl p-8 shadow-sm flex-1">
                     <div class="flex items-center gap-3">
                         <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
                             <i class="fa-solid fa-circle-check text-2xl"></i>
@@ -129,13 +129,13 @@
                 <!-- Action Buttons -->
                 <div class="grid grid-cols-2 gap-4">
                     <!-- Download PDF -->
-                    <a href="{{ route('anggota.e-kartu.download') }}" class="flex items-center justify-center gap-2 rounded-2xl bg-[#04241e] hover:bg-[#06342c] px-6 py-4 text-base font-bold text-white shadow-md hover:shadow-lg transition duration-300">
+                    <a href="{{ route('anggota.e-kartu.download') }}" class="flex items-center justify-center gap-2 rounded-3xl bg-[#04241e] hover:bg-[#06342c] px-6 py-4 text-base font-bold text-white shadow-md hover:shadow-lg transition duration-300">
                         <i class="fa-solid fa-download"></i>
                         Unduh PDF
                     </a>
 
                     <!-- Print Card -->
-                    <button onclick="window.print()" class="flex items-center justify-center gap-2 rounded-2xl border border-[#04241e] hover:bg-slate-50 bg-white px-6 py-4 text-base font-bold text-[#04241e] shadow-sm hover:shadow-md transition duration-300">
+                    <button onclick="window.print()" class="flex items-center justify-center gap-2 rounded-3xl border border-[#04241e] hover:bg-slate-50 bg-white px-6 py-4 text-base font-bold text-[#04241e] shadow-sm hover:shadow-md transition duration-300">
                         <i class="fa-solid fa-print"></i>
                         Cetak Kartu
                     </button>

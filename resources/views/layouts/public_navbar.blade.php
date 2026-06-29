@@ -1,5 +1,5 @@
 @php
-    $isBeranda = request()->routeIs('landing');
+    $isBeranda = request()->routeIs('landing') || request()->routeIs('anggota.dashboard');
     $isKatalog = request()->routeIs('katalog') || request()->routeIs('katalog.show');
     $isInformasiActive = request()->routeIs('berita.*') || request()->routeIs('agenda.*');
     
@@ -20,7 +20,7 @@
         <!-- Nav Links -->
         <nav class="hidden md:flex items-center gap-8 text-sm font-semibold">
             <!-- Beranda -->
-            <a href="{{ route('landing') }}" class="{{ $isBeranda ? 'text-[#ffdc7c] border-b-2 border-[#ffdc7c] pb-1' : 'text-slate-300 hover:text-white transition' }}">Beranda</a>
+            <a href="{{ Auth::check() && !Auth::user()->isPetugas() ? route('anggota.dashboard') : route('landing') }}" class="{{ $isBeranda ? 'text-[#ffdc7c] border-b-2 border-[#ffdc7c] pb-1' : 'text-slate-300 hover:text-white transition' }}">Beranda</a>
             
             <!-- Katalog -->
             <a href="{{ route('katalog') }}" class="{{ $isKatalog ? 'text-[#ffdc7c] border-b-2 border-[#ffdc7c] pb-1' : 'text-slate-300 hover:text-white transition' }}">Katalog</a>
@@ -90,77 +90,79 @@
                 @endif
 
                 <!-- Vertical Divider (Left of Bell) -->
-                <div class="h-8 w-px bg-slate-700/80 mx-1"></div>
+                @if (!Auth::user()->isPetugas())
+                    <div class="h-8 w-px bg-slate-700/80 mx-1"></div>
 
-                <!-- Notification Bell Dropdown -->
-                <div class="relative" x-data="{ open: false }" @click.outside="open = false" @close.stop="open = false">
-                    <button @click="open = ! open" type="button" class="relative text-slate-300 hover:text-white transition focus:outline-none cursor-pointer flex items-center justify-center h-9 w-9 rounded-full hover:bg-white/10">
-                        <i class="fa-regular fa-bell text-lg"></i>
-                        @if (isset($unreadNotificationsCount) && $unreadNotificationsCount > 0)
-                            <span class="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-extrabold text-white ring-2 ring-[#04241e]">
-                                {{ $unreadNotificationsCount }}
-                            </span>
-                        @endif
-                    </button>
+                    <!-- Notification Bell Dropdown -->
+                    <div class="relative" x-data="{ open: false }" @click.outside="open = false" @close.stop="open = false">
+                        <button @click="open = ! open" type="button" class="relative text-slate-300 hover:text-white transition focus:outline-none cursor-pointer flex items-center justify-center h-9 w-9 rounded-full hover:bg-white/10">
+                            <i class="fa-regular fa-bell text-lg"></i>
+                            @if (isset($unreadNotificationsCount) && $unreadNotificationsCount > 0)
+                                <span class="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-extrabold text-white ring-2 ring-[#04241e]">
+                                    {{ $unreadNotificationsCount }}
+                                </span>
+                            @endif
+                        </button>
 
-                    <!-- Dropdown Menu -->
-                    <div x-show="open"
-                         x-transition:enter="transition ease-out duration-200"
-                         x-transition:enter-start="opacity-0 scale-95"
-                         x-transition:enter-end="opacity-100 scale-100"
-                         x-transition:leave="transition ease-in duration-75"
-                         x-transition:leave-start="opacity-100 scale-100"
-                         x-transition:leave-end="opacity-0 scale-95"
-                         class="absolute right-0 z-50 mt-3 w-80 rounded-2xl bg-[#09221d] border border-slate-700/60 p-2 shadow-xl"
-                         style="display: none;">
-                         
-                         <div class="px-4 py-2.5 border-b border-slate-800 flex justify-between items-center">
-                             <span class="text-xs font-bold text-white uppercase tracking-wider">Notifikasi</span>
-                             @if (isset($unreadNotificationsCount) && $unreadNotificationsCount > 0)
-                                 <span class="bg-[#ffdc7c]/10 text-[#ffdc7c] px-2 py-0.5 rounded-full text-[10px] font-bold">
-                                     {{ $unreadNotificationsCount }} Baru
-                                 </span>
-                             @endif
-                         </div>
-
-                         <div class="max-h-80 overflow-y-auto py-1">
-                             @if (isset($latestNotifications) && $latestNotifications->isNotEmpty())
-                                 @foreach ($latestNotifications as $notif)
-                                     @php
-                                         $isUnread = in_array($notif->status_baca, ['belum_dibaca', 'Belum Dibaca']);
-                                     @endphp
-                                     <a href="{{ route('anggota.notifikasi.read', $notif->id_notifikasi) }}" class="block px-4 py-3 hover:bg-white/5 rounded-xl transition text-left relative">
-                                         <div class="flex justify-between items-start gap-2">
-                                             <p class="text-sm font-bold {{ $isUnread ? 'text-[#ffdc7c]' : 'text-slate-200' }}">{{ $notif->judul }}</p>
-                                             @if ($isUnread)
-                                                 <span class="h-2 w-2 rounded-full bg-red-500 mt-1 flex-shrink-0" title="Belum dibaca"></span>
-                                             @endif
-                                         </div>
-                                         <p class="text-xs text-slate-400 mt-1 line-clamp-2 leading-relaxed">
-                                             {{ $notif->isi }}
-                                         </p>
-                                         <span class="block text-[10px] text-slate-500 mt-1.5 font-medium">
-                                             {{ $notif->dikirim_pada ? $notif->dikirim_pada->diffForHumans() : $notif->created_at->diffForHumans() }}
-                                         </span>
-                                     </a>
-                                 @endforeach
-                             @else
-                                 <div class="py-8 text-center">
-                                     <span class="block text-2xl text-slate-600 mb-2">
-                                         <i class="fa-regular fa-bell-slash"></i>
+                        <!-- Dropdown Menu -->
+                        <div x-show="open"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 scale-95"
+                             x-transition:enter-end="opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="opacity-100 scale-100"
+                             x-transition:leave-end="opacity-0 scale-95"
+                             class="absolute right-0 z-50 mt-3 w-80 rounded-2xl bg-[#09221d] border border-slate-700/60 p-2 shadow-xl"
+                             style="display: none;">
+                             
+                             <div class="px-4 py-2.5 border-b border-slate-800 flex justify-between items-center">
+                                 <span class="text-xs font-bold text-white uppercase tracking-wider">Notifikasi</span>
+                                 @if (isset($unreadNotificationsCount) && $unreadNotificationsCount > 0)
+                                     <span class="bg-[#ffdc7c]/10 text-[#ffdc7c] px-2 py-0.5 rounded-full text-[10px] font-bold">
+                                         {{ $unreadNotificationsCount }} Baru
                                      </span>
-                                     <p class="text-xs text-slate-500">Tidak ada notifikasi baru</p>
-                                 </div>
-                             @endif
-                         </div>
+                                 @endif
+                             </div>
 
-                         <div class="border-t border-slate-800 p-1.5">
-                             <a href="{{ route('anggota.notifikasi.index') }}" class="block text-center rounded-xl bg-white/5 hover:bg-white/10 py-2.5 text-xs font-bold text-white transition">
-                                 Lihat Semua Notifikasi
-                             </a>
-                         </div>
+                             <div class="max-h-80 overflow-y-auto py-1">
+                                 @if (isset($latestNotifications) && $latestNotifications->isNotEmpty())
+                                     @foreach ($latestNotifications as $notif)
+                                         @php
+                                             $isUnread = in_array($notif->status_baca, ['belum_dibaca', 'Belum Dibaca']);
+                                         @endphp
+                                         <a href="{{ route('anggota.notifikasi.read', $notif->id_notifikasi) }}" class="block px-4 py-3 hover:bg-white/5 rounded-xl transition text-left relative">
+                                             <div class="flex justify-between items-start gap-2">
+                                                 <p class="text-sm font-bold {{ $isUnread ? 'text-[#ffdc7c]' : 'text-slate-200' }}">{{ $notif->judul }}</p>
+                                                 @if ($isUnread)
+                                                     <span class="h-2 w-2 rounded-full bg-red-500 mt-1 flex-shrink-0" title="Belum dibaca"></span>
+                                                 @endif
+                                             </div>
+                                             <p class="text-xs text-slate-400 mt-1 line-clamp-2 leading-relaxed">
+                                                 {{ $notif->isi }}
+                                             </p>
+                                             <span class="block text-[10px] text-slate-500 mt-1.5 font-medium">
+                                                 {{ $notif->dikirim_pada ? $notif->dikirim_pada->diffForHumans() : $notif->created_at->diffForHumans() }}
+                                             </span>
+                                         </a>
+                                     @endforeach
+                                 @else
+                                     <div class="py-8 text-center">
+                                         <span class="block text-2xl text-slate-600 mb-2">
+                                             <i class="fa-regular fa-bell-slash"></i>
+                                         </span>
+                                         <p class="text-xs text-slate-500">Tidak ada notifikasi baru</p>
+                                     </div>
+                                 @endif
+                             </div>
+
+                             <div class="border-t border-slate-800 p-1.5">
+                                 <a href="{{ route('anggota.notifikasi.index') }}" class="block text-center rounded-xl bg-white/5 hover:bg-white/10 py-2.5 text-xs font-bold text-white transition">
+                                     Lihat Semua Notifikasi
+                                 </a>
+                             </div>
+                        </div>
                     </div>
-                </div>
+                @endif
 
                 <!-- Vertical Divider (Right of Bell) -->
                 <div class="h-8 w-px bg-slate-700/80 mx-1"></div>

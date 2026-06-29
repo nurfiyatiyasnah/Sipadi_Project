@@ -156,7 +156,7 @@
             <!-- Stats Boxes Cards Row -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Stat 1: Buku Dipinjam -->
-                <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex items-center gap-4 transition hover:shadow-md">
+                <div class="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex items-center gap-4 transition hover:shadow-md">
                     <div class="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
                         <i class="fa-solid fa-book-open text-lg"></i>
                     </div>
@@ -167,7 +167,7 @@
                 </div>
 
                 <!-- Stat 2: Keterlambatan -->
-                <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex items-center gap-4 transition hover:shadow-md">
+                <div class="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex items-center gap-4 transition hover:shadow-md">
                     <div class="h-12 w-12 rounded-xl {{ $keterlambatanCount > 0 ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600' }} flex items-center justify-center">
                         <i class="fa-solid fa-triangle-exclamation text-lg"></i>
                     </div>

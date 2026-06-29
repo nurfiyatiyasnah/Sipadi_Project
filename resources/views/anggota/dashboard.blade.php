@@ -1,8 +1,20 @@
-@extends('layouts.anggota')
+@extends('layouts.public')
 @section('title', 'Dashboard - SIPADI Bukittinggi')
 
 @push('styles')
 <style>
+    :root {
+        --sipadi-green-dark: #04241e;
+        --sipadi-green: #0f4c3a;
+        --sipadi-green-light: #1a6b50;
+        --sipadi-green-accent: #22c55e;
+        --sipadi-bg: #f6f5e9;
+        --sipadi-card: #ffffff;
+        --sipadi-text: #061b3a;
+        --sipadi-text-muted: #6b7280;
+        --sipadi-border: #e5e7eb;
+    }
+
     /* ===== Dashboard Page Styles ===== */
 
     .dashboard-container {

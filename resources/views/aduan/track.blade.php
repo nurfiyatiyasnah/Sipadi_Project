@@ -31,7 +31,7 @@
             <div class="space-y-8">
                 
                 <!-- Search Card -->
-                <div class="bg-white border border-slate-200/50 rounded-[1.8rem] p-6 lg:p-8 shadow-sm">
+                <div class="bg-white border border-slate-200/50 rounded-3xl p-6 lg:p-8 shadow-sm">
                     <div class="flex items-center gap-3">
                         <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-500 flex-shrink-0">
                             <i class="fa-solid fa-magnifying-glass"></i>
@@ -56,7 +56,7 @@
 
                 <!-- Detail Card (Only if aduan is loaded) -->
                 @if ($aduan)
-                    <div class="bg-white border border-slate-200/50 rounded-[1.8rem] p-6 lg:p-8 shadow-sm space-y-6">
+                    <div class="bg-white border border-slate-200/50 rounded-3xl p-6 lg:p-8 shadow-sm space-y-6">
                         <h3 class="text-lg font-bold text-[#04241e] border-b border-slate-100 pb-3">Detail Aduan</h3>
                         
                         <div class="space-y-4">
@@ -104,7 +104,7 @@
                     </div>
                 @elseif($ticketCode)
                     <!-- Searched but not found -->
-                    <div class="bg-white border border-slate-200/50 rounded-[1.8rem] p-6 lg:p-8 text-center shadow-sm">
+                    <div class="bg-white border border-slate-200/50 rounded-3xl p-6 lg:p-8 text-center shadow-sm">
                         <span class="flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-500 mx-auto text-xl mb-4">
                             <i class="fa-solid fa-circle-exclamation"></i>
                         </span>
@@ -118,7 +118,7 @@
             <div class="space-y-8">
                 @if ($aduan)
                     <!-- Status Proses (Timeline) -->
-                    <div class="bg-white border border-slate-200/50 rounded-[1.8rem] p-6 lg:p-8 shadow-sm">
+                    <div class="bg-white border border-slate-200/50 rounded-3xl p-6 lg:p-8 shadow-sm">
                         <h3 class="text-lg font-bold text-[#04241e] border-b border-slate-100 pb-3 mb-6">Status Proses</h3>
                         
                         <!-- Timeline List -->
@@ -198,7 +198,7 @@
 
                     <!-- Tanggapan Petugas -->
                     @if ($aduan->tanggapan->isNotEmpty())
-                        <div class="bg-white border border-slate-200/50 rounded-[1.8rem] p-6 lg:p-8 shadow-sm">
+                        <div class="bg-white border border-slate-200/50 rounded-3xl p-6 lg:p-8 shadow-sm">
                             <h3 class="text-lg font-bold text-[#04241e] border-b border-slate-100 pb-3 mb-6 flex items-center gap-2">
                                 <i class="fa-regular fa-comment-dots"></i>
                                 Tanggapan Petugas
@@ -245,7 +245,7 @@
 
                 @else
                     <!-- Public empty / initial state -->
-                    <div class="bg-white border border-slate-200/50 rounded-[1.8rem] p-12 text-center shadow-sm flex flex-col items-center justify-center h-full min-h-[300px]">
+                    <div class="bg-white border border-slate-200/50 rounded-3xl p-12 text-center shadow-sm flex flex-col items-center justify-center h-full min-h-[300px]">
                         <span class="flex h-16 w-16 items-center justify-center rounded-full bg-slate-50 text-slate-300 text-3xl mb-4">
                             <i class="fa-solid fa-ticket-simple"></i>
                         </span>
