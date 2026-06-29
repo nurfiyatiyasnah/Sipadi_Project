@@ -173,14 +173,14 @@ class KatalogSeeder extends Seeder
                     'tahun_terbit' => $b['tahun_terbit'],
                     'deskripsi' => $b['deskripsi'],
                     'gambar_cover' => $b['gambar_cover'],
-                    'status_katalog' => 'Aktif',
+                    'status_katalog' => 'aktif',
                 ]);
 
                 foreach ($b['copies'] as $index => $c) {
                     EksemplarBuku::create([
                         'id_buku' => $buku->id_buku,
                         'kode_eksemplar' => 'EKS-'.Str::upper(Str::random(6)).'-'.($index + 1),
-                        'status_eksemplar' => $c['status'],
+                        'status_eksemplar' => strtolower($c['status']),
                         'kondisi_eksemplar' => 'Baik',
                         'lokasi_rak' => $c['rak'],
                         'tanggal_masuk' => now(),

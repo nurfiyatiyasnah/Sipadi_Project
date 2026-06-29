@@ -98,4 +98,5 @@
     <p class="mt-6 text-sm text-gray-500">
         Persentase ketersediaan seluruh eksemplar: {{ $stats['persen'] }}%.
     </p>
+    @livewire('koleksi-buku-index')
 @endsection

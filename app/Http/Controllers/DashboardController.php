@@ -268,7 +268,8 @@ class DashboardController extends Controller
         }
 
         if ($request->filled('status')) {
-            $query->where('status_katalog', $request->status);
+            $statusValue = strtolower($request->status);
+            $query->whereIn('status_katalog', [$statusValue, ucfirst($statusValue)]);
         }
 
         $totalBuku = Buku::count();
@@ -291,32 +292,42 @@ class DashboardController extends Controller
         return view('admin.books.koleksi', compact('stats', 'categories', 'books'));
     }
 
-    public function export(): StreamedResponse
+    public function export(Request $request): StreamedResponse
     {
-        return response()->streamDownload(function (): void {
+        return response()->streamDownload(function () use ($request): void {
             $output = fopen('php://output', 'w');
             fputcsv($output, ['Kode', 'Judul', 'ISBN', 'Penulis', 'Kategori', 'Total Eksemplar', 'Tersedia', 'Status Katalog']);
 
-            Buku::query()
+            $query = Buku::query()
                 ->with('kategori')
                 ->withCount('eksemplar')
                 ->withCount([
                     'eksemplar as eksemplar_tersedia_count' => fn ($query) => $query
                         ->whereIn('status_eksemplar', ['tersedia', 'Tersedia']),
                 ])
-                ->orderBy('id_buku')
-                ->each(function (Buku $buku) use ($output): void {
-                    fputcsv($output, [
-                        $buku->kode_buku,
-                        $buku->judul,
-                        $buku->isbn,
-                        $buku->penulis,
-                        $buku->kategori?->nama_kategori,
-                        $buku->eksemplar_count,
-                        $buku->eksemplar_tersedia_count,
-                        $buku->status_katalog,
-                    ]);
-                });
+                ->orderBy('id_buku');
+
+            if ($request->filled('kategori')) {
+                $query->where('id_kategori', $request->kategori);
+            }
+
+            if ($request->filled('status')) {
+                $statusValue = strtolower($request->status);
+                $query->whereIn('status_katalog', [$statusValue, ucfirst($statusValue)]);
+            }
+
+            $query->each(function (Buku $buku) use ($output): void {
+                fputcsv($output, [
+                    $buku->kode_buku,
+                    $buku->judul,
+                    $buku->isbn,
+                    $buku->penulis,
+                    $buku->kategori?->nama_kategori,
+                    $buku->eksemplar_count,
+                    $buku->eksemplar_tersedia_count,
+                    $buku->status_katalog,
+                ]);
+            });
 
             fclose($output);
         }, 'koleksi_buku.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);

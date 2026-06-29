@@ -21,6 +21,8 @@ class EksemplarBuku extends Model
         'kondisi_eksemplar',
         'lokasi_rak',
         'tanggal_masuk',
+        'sumber_perolehan',
+        'catatan',
     ];
 
     /**

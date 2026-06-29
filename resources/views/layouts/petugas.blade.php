@@ -24,7 +24,7 @@
             $navigationItems = [
                 ['Dashboard', 'fa-solid fa-table-cells-large', 'petugas.dashboard', 'petugas.dashboard'],
                 ['Anggota', 'fa-solid fa-user-group', 'petugas.anggota.index', 'petugas.anggota.*'],
-                ['Buku', 'fa-solid fa-book', 'petugas.koleksi', 'petugas.koleksi'],
+                ['Buku', 'fa-solid fa-book', 'petugas.koleksi', ['petugas.koleksi', 'petugas.buku.*']],
                 ['Peminjaman', 'fa-solid fa-right-left', null, null],
                 ['Agenda', 'fa-regular fa-calendar', 'petugas.agenda.index', 'petugas.agenda.*'],
                 ['Berita', 'fa-regular fa-newspaper', 'petugas.berita.index', 'petugas.berita.*'],
