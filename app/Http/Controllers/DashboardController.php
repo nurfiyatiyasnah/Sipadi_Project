@@ -234,7 +234,6 @@ class DashboardController extends Controller
                 'waktu' => '-',
             ],
         ];
-    }
 
         $aksi_cepat = [
             ['label' => 'Tambah Buku'],
