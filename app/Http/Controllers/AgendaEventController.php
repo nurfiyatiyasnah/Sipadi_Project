@@ -38,7 +38,6 @@ class AgendaEventController extends Controller
             'total' => AgendaEvent::count(),
             'terbit' => AgendaEvent::where('status_event', 'terbit')->count(),
             'draft' => AgendaEvent::where('status_event', 'draft')->count(),
-            'menunggu_review' => AgendaEvent::where('status_event', 'menunggu_review')->count(),
         ];
 
         return view('agenda.index', compact('events', 'stats'));
@@ -77,9 +76,7 @@ class AgendaEventController extends Controller
 
         $message = $validated['status_event'] === 'draft'
             ? 'Agenda berhasil disimpan sebagai draft.'
-            : ($validated['status_event'] === 'menunggu_review'
-                ? 'Agenda berhasil dikirim untuk review.'
-                : 'Agenda berhasil diterbitkan.');
+            : 'Agenda berhasil diterbitkan.';
 
         return redirect()->route('petugas.agenda.index')->with('success', $message);
     }

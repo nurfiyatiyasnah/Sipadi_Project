@@ -53,7 +53,6 @@
                     <option value="">Semua Status</option>
                     <option value="terbit" @selected(request('status') === 'terbit')>Dipublikasi</option>
                     <option value="draft" @selected(request('status') === 'draft')>Draft</option>
-                    <option value="menunggu_review" @selected(request('status') === 'menunggu_review')>Menunggu Review</option>
                 </select>
             </div>
  
@@ -123,13 +122,9 @@
                                     <span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200">
                                         Dipublikasi
                                     </span>
-                                @elseif ($event->status_event === 'draft')
+                                @else
                                     <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 border border-slate-200">
                                         Draft
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 border border-amber-200">
-                                        Menunggu Review
                                     </span>
                                 @endif
                             </td>
