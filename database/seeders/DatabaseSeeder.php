@@ -113,7 +113,7 @@ class DatabaseSeeder extends Seeder
                 'tanggal_mulai' => '2024-12-05',
                 'jam_mulai' => '08:30:00',
                 'jam_selesai' => '16:00:00',
-                'status_event' => 'menunggu_review',
+                'status_event' => 'draft',
                 'kategori' => 'Workshop Mahasiswa',
                 'tampilkan_beranda' => false,
                 'created_by' => $petugas->id_petugas,

@@ -28,7 +28,7 @@ class StoreAgendaEventRequest extends FormRequest
             'lokasi' => ['required', 'string', 'max:2048'],
             'tanggal_waktu' => ['required', 'date'],
             'gambar' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:5120'],
-            'status_event' => ['required', 'string', 'in:draft,terbit,menunggu_review'],
+            'status_event' => ['required', 'string', 'in:draft,terbit'],
             'kategori' => ['nullable', 'string', 'max:255'],
             'tampilkan_beranda' => ['nullable', 'boolean'],
         ];
