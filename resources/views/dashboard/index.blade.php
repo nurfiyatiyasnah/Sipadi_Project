@@ -92,7 +92,7 @@
         <a href="{{ route('petugas.agenda.create') }}" class="flex items-center justify-center px-6 py-3 rounded-xl bg-[#7c6312] text-white font-semibold text-sm hover:bg-[#66510c] transition shadow-sm">
             <i class="fa-regular fa-calendar mr-2.5"></i> Tambah Agenda
         </a>
-        <a href="#" class="flex items-center justify-center px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition shadow-sm">
+        <a href="{{ route('petugas.peminjaman.index') }}" class="flex items-center justify-center px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition shadow-sm">
             <i class="fa-regular fa-eye mr-2.5"></i> Lihat Pengajuan
         </a>
         <a href="{{ route('petugas.aduan.index') }}" class="flex items-center justify-center px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition shadow-sm">

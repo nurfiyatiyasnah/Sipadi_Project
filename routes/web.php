@@ -8,6 +8,8 @@ use App\Http\Controllers\BukuController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EKartuController;
 use App\Http\Controllers\PengajuanPeminjamanController;
+use App\Http\Controllers\PetugasPeminjamanController;
+use App\Http\Controllers\PetugasPengembalianController;
 use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicAgendaController;
@@ -156,6 +158,23 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
     Route::get('/pengumuman/{pengumuman}/edit', [PengumumanController::class, 'edit'])->name('pengumuman.edit');
     Route::put('/pengumuman/{pengumuman}', [PengumumanController::class, 'update'])->name('pengumuman.update');
     Route::delete('/pengumuman/{pengumuman}', [PengumumanController::class, 'destroy'])->name('pengumuman.destroy');
+
+    // Peminjaman routes for Petugas
+    Route::get('/peminjaman', [PetugasPeminjamanController::class, 'index'])->name('peminjaman.index');
+    Route::get('/peminjaman/export', [PetugasPeminjamanController::class, 'export'])->name('peminjaman.export');
+    Route::get('/peminjaman/{peminjaman}', [PetugasPeminjamanController::class, 'show'])->name('peminjaman.show');
+    Route::post('/peminjaman/{peminjaman}/tolak', [PetugasPeminjamanController::class, 'reject'])->name('peminjaman.tolak');
+    Route::get('/peminjaman/{peminjaman}/setujui', [PetugasPeminjamanController::class, 'approveForm'])->name('peminjaman.approve-form');
+    Route::post('/peminjaman/{peminjaman}/setujui', [PetugasPeminjamanController::class, 'approve'])->name('peminjaman.approve');
+
+    // Pengembalian routes for Petugas
+    Route::get('/pengembalian', [PetugasPengembalianController::class, 'index'])->name('pengembalian.index');
+    Route::get('/pengembalian/riwayat', [PetugasPengembalianController::class, 'riwayat'])->name('pengembalian.riwayat');
+    Route::get('/pengembalian/export-csv', [PetugasPengembalianController::class, 'exportCsv'])->name('pengembalian.export-csv');
+    Route::get('/pengembalian/{peminjaman}', [PetugasPengembalianController::class, 'show'])->name('pengembalian.show');
+    Route::get('/pengembalian/{peminjaman}/proses', [PetugasPengembalianController::class, 'prosesForm'])->name('pengembalian.proses-form');
+    Route::post('/pengembalian/{peminjaman}/sanksi', [PetugasPengembalianController::class, 'prosesSanksi'])->name('pengembalian.proses-sanksi');
+    Route::post('/pengembalian/{peminjaman}/simpan', [PetugasPengembalianController::class, 'store'])->name('pengembalian.store');
 });
 
 Route::middleware('auth')->group(function () {
