@@ -283,8 +283,30 @@
         <div class="sipadi-nav-links">
             <a href="{{ route('anggota.dashboard') }}" class="sipadi-nav-link {{ request()->routeIs('anggota.dashboard') ? 'active' : '' }}">Beranda</a>
             <a href="{{ route('katalog') }}" class="sipadi-nav-link {{ request()->routeIs('katalog*') ? 'active' : '' }}">Katalog</a>
-            <a href="#" class="sipadi-nav-link">Layanan</a>
-            <a href="#" class="sipadi-nav-link">Fasilitas</a>
+            
+            <!-- Layanan Dropdown -->
+            <div class="relative inline-block text-left" x-data="{ open: false }" @click.outside="open = false" @close.stop="open = false">
+                <button @click="open = ! open" class="sipadi-nav-link flex items-center gap-1.5 focus:outline-none">
+                    <span>Layanan</span>
+                    <i class="fa-solid fa-chevron-down text-[10px] transition duration-150" :class="{ 'rotate-180': open }"></i>
+                </button>
+                <div x-show="open"
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-75"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="absolute left-0 z-50 mt-2 w-48 rounded-xl bg-[#0a3d2e] border border-emerald-800 p-2 shadow-xl"
+                     style="display: none;">
+                     <a href="{{ route('landing') }}#koleksi" class="block rounded-lg px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition">Layanan Perpustakaan</a>
+                     <a href="{{ route('landing') }}#kontak" class="block rounded-lg px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition">Fasilitas</a>
+                     <a href="{{ route('aduan.create') }}" class="block rounded-lg px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition">Layanan Pengaduan</a>
+                     <a href="{{ route('aduan.track') }}" class="block rounded-lg px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition">Lacak Aduan</a>
+                </div>
+            </div>
+
+            <a href="{{ route('landing') }}#kontak" class="sipadi-nav-link">Fasilitas</a>
             <a href="{{ route('berita.public.index') }}" class="sipadi-nav-link {{ request()->routeIs('berita.public.*') ? 'active' : '' }}">Berita</a>
             <a href="{{ route('agenda.index') }}" class="sipadi-nav-link {{ request()->routeIs('agenda.*') ? 'active' : '' }}">Agenda</a>
         </div>

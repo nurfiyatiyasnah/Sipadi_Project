@@ -6,8 +6,6 @@ use App\Models\Buku;
 use App\Models\Notifikasi;
 use App\Models\Peminjaman;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class AnggotaDashboardController extends Controller
@@ -87,13 +85,13 @@ class AnggotaDashboardController extends Controller
             ->get();
 
         // Book recommendations (latest active books)
-        $rekomendasi = Buku::where('status_katalog', 'Aktif')
+        $rekomendasi = Buku::whereIn('status_katalog', ['aktif', 'Aktif'])
             ->latest('created_at')
             ->take(5)
             ->get()
             ->map(function ($buku) {
                 $totalEksemplar = $buku->eksemplar()->count();
-                $tersedia = $buku->eksemplar()->where('status_eksemplar', 'Tersedia')->count();
+                $tersedia = $buku->eksemplar()->whereIn('status_eksemplar', ['tersedia', 'Tersedia'])->count();
 
                 return (object) [
                     'id_buku' => $buku->id_buku,
