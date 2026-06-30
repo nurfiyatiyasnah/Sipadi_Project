@@ -239,6 +239,59 @@ class PengumumanTest extends TestCase
         Storage::disk('public')->assertMissing($gambarPath);
     }
 
+    public function test_petugas_dapat_mengubah_pengumuman_tanpa_mengubah_gambar_dan_lampiran(): void
+    {
+        Storage::fake('public');
+        $petugas = $this->createPetugasUser();
+        $gambarLama = Storage::disk('public')->putFile('pengumuman', $this->fakeImage('old.png'));
+        $lampiranLamaPath = Storage::disk('public')->putFile('pengumuman/lampiran', $this->fakeFile('old_doc.pdf'));
+        $lampiranLama = [
+            [
+                'name' => 'old_doc.pdf',
+                'path' => $lampiranLamaPath,
+                'size' => '100 KB',
+            ],
+        ];
+
+        $pengumuman = Pengumuman::create([
+            'judul' => 'Judul Pengumuman Lama',
+            'isi' => 'Konten lama.',
+            'id_petugas' => $petugas->petugas->id_petugas,
+            'slug' => 'judul-pengumuman-lama',
+            'tanggal_mulai' => now()->toDateString(),
+            'tanggal_selesai' => now()->addDays(5)->toDateString(),
+            'status_pengumuman' => 'terbit',
+            'prioritas' => 'Normal',
+            'target_pengguna' => 'Semua',
+            'gambar' => $gambarLama,
+            'file_lampiran' => $lampiranLama,
+        ]);
+
+        Storage::disk('public')->assertExists($gambarLama);
+        Storage::disk('public')->assertExists($lampiranLamaPath);
+
+        // Update without uploading new image or files
+        $response = $this->actingAs($petugas)
+            ->put(route('petugas.pengumuman.update', $pengumuman), [
+                'judul' => 'Judul Pengumuman Diperbarui',
+                'isi' => 'Konten baru yang diperbarui.',
+                'tanggal_mulai' => now()->toDateString(),
+                'tanggal_selesai' => now()->addDays(10)->toDateString(),
+                'prioritas' => 'Penting',
+                'target_pengguna' => 'Siswa / Mahasiswa',
+                'status_pengumuman' => 'terbit',
+            ]);
+
+        $response->assertRedirect(route('petugas.pengumuman.index'));
+        $pengumuman->refresh();
+
+        $this->assertEquals('Judul Pengumuman Diperbarui', $pengumuman->judul);
+        $this->assertEquals($gambarLama, $pengumuman->gambar);
+        $this->assertEquals($lampiranLama, $pengumuman->file_lampiran);
+        Storage::disk('public')->assertExists($gambarLama);
+        Storage::disk('public')->assertExists($lampiranLamaPath);
+    }
+
     public function test_anggota_tidak_dapat_mengakses_kelola_pengumuman(): void
     {
         $role = Role::create(['nama_role' => 'Anggota']);

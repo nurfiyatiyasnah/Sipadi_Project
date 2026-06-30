@@ -34,6 +34,7 @@
 
     <form method="POST" action="{{ route('petugas.pengumuman.store') }}" enctype="multipart/form-data">
         @csrf
+        <input type="hidden" name="target_pengguna" value="Semua">
         <div class="grid gap-6 xl:grid-cols-[1fr_380px]">
 
             {{-- Left Side: Main Content --}}
@@ -82,7 +83,7 @@
                 <div class="rounded-3xl bg-white p-6 shadow-sm space-y-5">
                     <h3 class="text-md font-bold text-[#0e1f30] border-b border-slate-100 pb-3">Konfigurasi Tayang</h3>
 
-                    <div class="grid gap-5 md:grid-cols-2">
+                    <div class="space-y-5">
                         {{-- Rentang Tanggal --}}
                         <div>
                             <label class="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-400">
@@ -166,20 +167,8 @@
                 </div>
 
                 {{-- Target & Visibilitas --}}
-                <div class="rounded-3xl bg-white p-6 shadow-sm space-y-5">
+                <div class="rounded-3xl bg-white p-6 shadow-sm space-y-4">
                     <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-3">Target & Visibilitas</h3>
-
-                    {{-- Target Pengguna --}}
-                    <div>
-                        <label for="target_pengguna" class="mb-2 block text-xs font-semibold text-slate-500">Target Pengguna</label>
-                        <select id="target_pengguna" name="target_pengguna"
-                                class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm focus:border-slate-300 focus:outline-none focus:ring-0">
-                            <option value="Semua">Semua</option>
-                            <option value="Siswa / Mahasiswa">Siswa / Mahasiswa</option>
-                            <option value="Dosen">Dosen</option>
-                            <option value="Petugas">Petugas</option>
-                        </select>
-                    </div>
 
                     {{-- Prioritas --}}
                     <div>
