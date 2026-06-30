@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,6 +22,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     protected $fillable = [
         'id_role',
+        'name',
         'email',
         'password',
         'status_akun',
@@ -39,6 +41,14 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
             'last_login_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Keep Laravel auth scaffolding compatible with the custom id_user key.
+     */
+    protected function id(): Attribute
+    {
+        return Attribute::get(fn (): mixed => $this->getAttribute($this->getKeyName()));
     }
 
     public function role(): BelongsTo

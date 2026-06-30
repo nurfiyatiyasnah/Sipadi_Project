@@ -2,6 +2,7 @@
 @section('title', 'Dashboard Admin')
 
 @section('content')
+
 <div class="mx-auto max-w-[1280px]">
     <!-- Hidden compatibility markers for existing tests -->
     <span class="sr-only">Panel Operasional Admin</span>
@@ -28,6 +29,7 @@
             </div>
         </div>
 
+
         <!-- Card 2: Total Buku -->
         <div class="bg-white rounded-2xl p-6 shadow-sm flex justify-between items-center transition hover:shadow-md">
             <div>
@@ -39,6 +41,7 @@
             </div>
         </div>
 
+
         <!-- Card 3: Pengajuan Peminjaman -->
         <div class="bg-white rounded-2xl p-6 shadow-sm flex justify-between items-center transition hover:shadow-md">
             <div>
@@ -49,6 +52,7 @@
                 <i class="fa-regular fa-comment-dots text-lg"></i>
             </div>
         </div>
+
 
         <!-- Card 4: Sedang Dipinjam -->
         <div class="bg-white rounded-2xl p-6 shadow-sm flex justify-between items-center transition hover:shadow-md">
@@ -86,13 +90,13 @@
 
     <!-- Quick Action Shortcut Buttons -->
     <div class="flex flex-wrap gap-4 mb-8">
-        <a href="#" class="flex items-center justify-center px-6 py-3 rounded-xl bg-[#1b2e46] text-white font-semibold text-sm hover:bg-[#122235] transition shadow-sm">
+        <a href="{{ route('petugas.buku.create') }}" class="flex items-center justify-center px-6 py-3 rounded-xl bg-[#1b2e46] text-white font-semibold text-sm hover:bg-[#122235] transition shadow-sm">
             <span class="mr-2 text-lg font-bold leading-none">+</span> Tambah Buku
         </a>
-        <a href="#" class="flex items-center justify-center px-6 py-3 rounded-xl bg-[#7c6312] text-white font-semibold text-sm hover:bg-[#66510c] transition shadow-sm">
+        <a href="{{ route('petugas.agenda.create') }}" class="flex items-center justify-center px-6 py-3 rounded-xl bg-[#7c6312] text-white font-semibold text-sm hover:bg-[#66510c] transition shadow-sm">
             <i class="fa-regular fa-calendar mr-2.5"></i> Tambah Agenda
         </a>
-        <a href="#" class="flex items-center justify-center px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition shadow-sm">
+        <a href="{{ route('petugas.peminjaman.index') }}" class="flex items-center justify-center px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition shadow-sm">
             <i class="fa-regular fa-eye mr-2.5"></i> Lihat Pengajuan
         </a>
         <a href="{{ route('petugas.aduan.index') }}" class="flex items-center justify-center px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition shadow-sm">
@@ -106,7 +110,6 @@
         <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm p-6">
             <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
                 <h3 class="text-lg font-bold text-slate-800">Aktivitas Peminjaman Terbaru</h3>
-                <a href="#" class="text-sm font-semibold text-[#7c6312] hover:underline">Lihat Semua</a>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">

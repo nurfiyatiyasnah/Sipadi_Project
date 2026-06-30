@@ -25,7 +25,8 @@
                 ['Dashboard', 'fa-solid fa-table-cells-large', 'petugas.dashboard', 'petugas.dashboard'],
                 ['Anggota', 'fa-solid fa-user-group', 'petugas.anggota.index', 'petugas.anggota.*'],
                 ['Buku', 'fa-solid fa-book', 'petugas.koleksi', ['petugas.koleksi', 'petugas.buku.*']],
-                ['Peminjaman', 'fa-solid fa-right-left', null, null],
+                ['Peminjaman', 'fa-solid fa-right-left', 'petugas.peminjaman.index', 'petugas.peminjaman.*'],
+                ['Pengembalian', 'fa-solid fa-right-left', 'petugas.pengembalian.index', 'petugas.pengembalian.*'],
                 ['Agenda', 'fa-regular fa-calendar', 'petugas.agenda.index', 'petugas.agenda.*'],
                 ['Berita', 'fa-regular fa-newspaper', 'petugas.berita.index', 'petugas.berita.*'],
                 ['Pengumuman', 'fa-solid fa-bullhorn', 'petugas.pengumuman.index', 'petugas.pengumuman.*'],
@@ -34,7 +35,7 @@
                 ['Profil Perpustakaan', 'fa-solid fa-building-columns', null, null],
                 ['Struktur Organisasi', 'fa-solid fa-sitemap', null, null],
                 ['Prestasi', 'fa-solid fa-trophy', null, null],
-                ['Layanan', 'fa-solid fa-handshake-angle', null, null],
+                ['Layanan', 'fa-solid fa-handshake-angle', 'petugas.layanan.index', 'petugas.layanan.*'],
                 ['Fasilitas', 'fa-solid fa-couch', null, null],
             ];
         @endphp
