@@ -87,6 +87,7 @@ class RegisteredUserController extends Controller
 
                 $user = User::create([
                     'id_role' => $roleAnggota->id_role,
+                    'name' => $data['nama_lengkap'],
                     'email' => $data['email'],
                     'password' => $data['password'],
                     'status_akun' => 'aktif',

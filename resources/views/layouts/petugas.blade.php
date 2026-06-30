@@ -35,7 +35,7 @@
                 ['Profil Perpustakaan', 'fa-solid fa-building-columns', null, null],
                 ['Struktur Organisasi', 'fa-solid fa-sitemap', null, null],
                 ['Prestasi', 'fa-solid fa-trophy', null, null],
-                ['Layanan', 'fa-solid fa-handshake-angle', null, null],
+                ['Layanan', 'fa-solid fa-handshake-angle', 'petugas.layanan.index', 'petugas.layanan.*'],
                 ['Fasilitas', 'fa-solid fa-couch', null, null],
             ];
         @endphp

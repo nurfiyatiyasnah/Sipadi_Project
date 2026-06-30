@@ -10,6 +10,7 @@ use App\Models\Petugas;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -39,8 +40,9 @@ class DatabaseSeeder extends Seeder
         $petugasUser = User::updateOrCreate(
             ['email' => 'petugas@sipadi.test'],
             [
+                'name' => 'Petugas SIPADI',
                 'id_role' => $rolePetugas->id_role,
-                'password' => 'password',
+                'password' => Hash::make('password'),
                 'status_akun' => 'aktif',
             ]
         );

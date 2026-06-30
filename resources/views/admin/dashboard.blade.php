@@ -2,6 +2,7 @@
 @section('title', 'Dashboard Admin')
 
 @section('content')
+
 <div class="mx-auto max-w-[1280px]">
     <!-- Hidden compatibility markers for existing tests -->
     <span class="sr-only">Panel Operasional Admin</span>
@@ -28,6 +29,7 @@
             </div>
         </div>
 
+
         <!-- Card 2: Total Buku -->
         <div class="bg-white rounded-2xl p-6 shadow-sm flex justify-between items-center transition hover:shadow-md">
             <div>
@@ -39,6 +41,7 @@
             </div>
         </div>
 
+
         <!-- Card 3: Pengajuan Peminjaman -->
         <div class="bg-white rounded-2xl p-6 shadow-sm flex justify-between items-center transition hover:shadow-md">
             <div>
@@ -49,6 +52,7 @@
                 <i class="fa-regular fa-comment-dots text-lg"></i>
             </div>
         </div>
+
 
         <!-- Card 4: Sedang Dipinjam -->
         <div class="bg-white rounded-2xl p-6 shadow-sm flex justify-between items-center transition hover:shadow-md">

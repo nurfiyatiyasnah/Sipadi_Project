@@ -54,10 +54,22 @@
                         <label for="judul" class="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-400">
                             Judul Pengumuman <span class="text-red-500">*</span>
                         </label>
-                        <input id="judul" type="text" name="judul" value="{{ old('judul', $pengumuman->judul) }}"
-                               placeholder="Masukkan judul pengumuman"
-                               class="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm focus:border-slate-300 focus:outline-none focus:ring-0 @error('judul') border-red-400 @enderror"
-                               required>
+                       <input
+                            id="judul"
+                            type="text"
+                            name="judul"
+                            value="{{ old('judul', $pengumuman->judul) }}"
+                            placeholder="Masukkan judul pengumuman"
+                            @class([
+                                'h-12 w-full rounded-xl border bg-slate-50 px-4 text-sm focus:border-slate-300 focus:outline-none focus:ring-0',
+                                'border-slate-200' => !$errors->has('judul'),
+                                'border-red-400' => $errors->has('judul'),
+                            ])
+                            required
+                        >
+                        @error('judul')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Isi --}}

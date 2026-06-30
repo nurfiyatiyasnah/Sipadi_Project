@@ -1,7 +1,9 @@
 @php
     $isBeranda = request()->routeIs('landing') || request()->routeIs('anggota.dashboard');
     $isKatalog = request()->routeIs('katalog') || request()->routeIs('katalog.show');
+    $isLayanan = request()->routeIs('layanan.*');
     $isInformasiActive = request()->routeIs('berita.*') || request()->routeIs('agenda.*');
+    $isTentang = request()->routeIs('tentang');
     
     $pengumumanKategoriId = \App\Models\KategoriBerita::where('nama_kategori', 'Pengumuman')->first()?->id_kategori_berita;
 @endphp
@@ -51,7 +53,7 @@
 
             <!-- Layanan Dropdown -->
             <div class="relative" x-data="{ open: false }" @click.outside="open = false" @close.stop="open = false">
-                <button @click="open = ! open" class="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-300 hover:text-white transition focus:outline-none">
+                <button @click="open = ! open" class="inline-flex items-center gap-1.5 text-sm font-semibold {{ $isLayanan ? 'text-[#ffdc7c]' : 'text-slate-300 hover:text-white transition' }} focus:outline-none">
                     <span>Layanan</span>
                     <i class="fa-solid fa-chevron-down text-[10px] transition duration-150" :class="{ 'rotate-180': open }"></i>
                 </button>
@@ -65,7 +67,7 @@
                      x-transition:leave-end="opacity-0 scale-95"
                      class="absolute left-0 z-50 mt-2 w-48 rounded-xl bg-[#04241e] border border-slate-700/60 p-2 shadow-xl"
                      style="display: none;">
-                     <a href="{{ route('landing') }}#koleksi" class="block rounded-lg px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition">Layanan Perpustakaan</a>
+                     <a href="{{ route('layanan.index') }}" class="block rounded-lg px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition">Layanan Perpustakaan</a>
                      <a href="{{ route('landing') }}#kontak" class="block rounded-lg px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition">Fasilitas</a>
                      <a href="{{ route('aduan.create') }}" class="block rounded-lg px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition">Layanan Pengaduan</a>
                      <a href="{{ route('aduan.track') }}" class="block rounded-lg px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition">Lacak Aduan</a>
@@ -73,7 +75,7 @@
             </div>
 
             <!-- Tentang Kami -->
-            <a href="{{ route('landing') }}#kontak" class="text-slate-300 hover:text-white transition">Tentang Kami</a>
+            <a href="{{ route('tentang') }}" class="{{ $isTentang ? 'text-[#ffdc7c] border-b-2 border-[#ffdc7c] pb-1' : 'text-slate-300 hover:text-white transition' }}">Tentang Kami</a>
         </nav>
 
         <!-- Action Buttons -->

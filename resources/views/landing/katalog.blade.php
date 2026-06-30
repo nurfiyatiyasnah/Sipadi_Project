@@ -250,7 +250,7 @@
                 <p class="text-slate-500 text-sm mt-2 max-w-md">Sistem Informasi Perpustakaan & Arsip Digital Kota Bukittinggi. Menghubungkan masyarakat dengan warisan budaya dan literasi terbaik.</p>
             </div>
             <div class="flex flex-wrap gap-6 text-sm font-semibold text-slate-600">
-                <a href="#" class="hover:text-[#04241e] transition">Tentang Kami</a>
+                <a href="{{ route('tentang') }}" class="hover:text-[#04241e] transition">Tentang Kami</a>
                 <a href="#" class="hover:text-[#04241e] transition">Kebijakan Privasi</a>
                 <a href="#" class="hover:text-[#04241e] transition">Syarat & Ketentuan</a>
                 <a href="#" class="hover:text-[#04241e] transition">Peta Situs</a>
