@@ -40,7 +40,7 @@
  
                 <!-- Footer Navigation -->
                 <div class="flex flex-wrap gap-x-8 gap-y-4 text-sm font-semibold text-slate-600">
-                    <a href="#" class="hover:text-[#04241e] transition">Tentang Kami</a>
+                    <a href="{{ route('tentang') }}" class="hover:text-[#04241e] transition">Tentang Kami</a>
                     <a href="#" class="hover:text-[#04241e] transition">Kebijakan Privasi</a>
                     <a href="#" class="hover:text-[#04241e] transition">Syarat & Ketentuan</a>
                     <a href="#" class="hover:text-[#04241e] transition">Peta Situs</a>

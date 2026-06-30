@@ -4,15 +4,18 @@ use App\Http\Controllers\AduanController;
 use App\Http\Controllers\AgendaEventController;
 use App\Http\Controllers\AnggotaController;
 use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\BookController;
 use App\Http\Controllers\BukuController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EKartuController;
+use App\Http\Controllers\LayananController;
 use App\Http\Controllers\PengajuanPeminjamanController;
 use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicAgendaController;
 use App\Http\Controllers\PublicBeritaController;
 use App\Http\Controllers\PublicKatalogController;
+use App\Http\Controllers\PublicLayananController;
 use App\Models\AgendaEvent;
 use App\Models\Anggota;
 use App\Models\Berita;
@@ -70,6 +73,9 @@ Route::get('/katalog', [PublicKatalogController::class, 'index'])->name('katalog
 Route::get('/katalog/{buku}', [PublicKatalogController::class, 'show'])->name('katalog.show');
 Route::get('/agenda', [PublicAgendaController::class, 'index'])->name('agenda.index');
 Route::get('/agenda/{slug}', [PublicAgendaController::class, 'show'])->name('agenda.show');
+Route::get('/layanan', [PublicLayananController::class, 'index'])->name('layanan.index');
+Route::get('/layanan/{layanan:slug}', [PublicLayananController::class, 'show'])->name('layanan.show');
+Route::view('/tentang-kami', 'landing.tentang')->name('tentang');
 Route::get('/aduan/lacak', [AduanController::class, 'track'])->name('aduan.track');
 
 Route::middleware(['auth'])->get('/dashboard', function () {
@@ -156,6 +162,14 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
     Route::get('/pengumuman/{pengumuman}/edit', [PengumumanController::class, 'edit'])->name('pengumuman.edit');
     Route::put('/pengumuman/{pengumuman}', [PengumumanController::class, 'update'])->name('pengumuman.update');
     Route::delete('/pengumuman/{pengumuman}', [PengumumanController::class, 'destroy'])->name('pengumuman.destroy');
+
+    Route::get('/layanan', [LayananController::class, 'index'])->name('layanan.index');
+    Route::get('/layanan/tambah', [LayananController::class, 'create'])->name('layanan.create');
+    Route::post('/layanan', [LayananController::class, 'store'])->name('layanan.store');
+    Route::get('/layanan/{layanan}', [LayananController::class, 'show'])->name('layanan.show');
+    Route::get('/layanan/{layanan}/edit', [LayananController::class, 'edit'])->name('layanan.edit');
+    Route::put('/layanan/{layanan}', [LayananController::class, 'update'])->name('layanan.update');
+    Route::delete('/layanan/{layanan}', [LayananController::class, 'destroy'])->name('layanan.destroy');
 });
 
 Route::middleware('auth')->prefix('admin')->group(function () {
