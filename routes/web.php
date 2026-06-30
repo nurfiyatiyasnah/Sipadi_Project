@@ -171,7 +171,6 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
     Route::put('/pengumuman/{pengumuman}', [PengumumanController::class, 'update'])->name('pengumuman.update');
     Route::delete('/pengumuman/{pengumuman}', [PengumumanController::class, 'destroy'])->name('pengumuman.destroy');
 
-<<<<<<< HEAD
     // Peminjaman routes for Petugas
     Route::get('/peminjaman', [PetugasPeminjamanController::class, 'index'])->name('peminjaman.index');
     Route::get('/peminjaman/export', [PetugasPeminjamanController::class, 'export'])->name('peminjaman.export');
@@ -189,7 +188,7 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
     Route::get('/pengembalian/{peminjaman}/proses', [PetugasPengembalianController::class, 'prosesForm'])->name('pengembalian.proses-form');
     Route::post('/pengembalian/{peminjaman}/sanksi', [PetugasPengembalianController::class, 'prosesSanksi'])->name('pengembalian.proses-sanksi');
     Route::post('/pengembalian/{peminjaman}/simpan', [PetugasPengembalianController::class, 'store'])->name('pengembalian.store');
-=======
+
     Route::get('/layanan', [LayananController::class, 'index'])->name('layanan.index');
     Route::get('/layanan/tambah', [LayananController::class, 'create'])->name('layanan.create');
     Route::post('/layanan', [LayananController::class, 'store'])->name('layanan.store');
@@ -207,7 +206,6 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/books/create', [BookController::class, 'create'])->name('books.create');
     Route::post('/books', [BookController::class, 'store'])->name('books.store');
     Route::get('/books/{buku}', [BookController::class, 'show'])->name('books.show');
->>>>>>> c984b77c5a200424c2b8d967f02d2ef324a39751
 });
 
 Route::middleware('auth')->group(function () {
