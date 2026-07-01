@@ -219,6 +219,35 @@ class PetugasPeminjamanTest extends TestCase
         ]);
     }
 
+    public function test_petugas_tidak_dapat_menyetujui_peminjaman_dengan_jadwal_tidak_valid(): void
+    {
+        $petugas = $this->createPetugasUser();
+        $anggota = $this->createAnggotaUser('Ahmad Rifai');
+
+        $peminjaman = Peminjaman::create([
+            'kode_peminjaman' => 'PMJ-202310-094',
+            'id_anggota' => $anggota->anggota->id_anggota,
+            'status_peminjaman' => 'diajukan',
+        ]);
+
+        $response = $this->actingAs($petugas)
+            ->from(route('petugas.peminjaman.approve-form', $peminjaman->id_peminjaman))
+            ->post(route('petugas.peminjaman.approve', $peminjaman->id_peminjaman), [
+                'tanggal_pengambilan' => now()->subDay()->toDateString(),
+            ]);
+
+        $response
+            ->assertRedirect(route('petugas.peminjaman.approve-form', $peminjaman->id_peminjaman))
+            ->assertSessionHasErrors([
+                'tanggal_pengambilan',
+                'jam_pengambilan',
+                'lokasi_pengambilan',
+            ]);
+
+        $peminjaman->refresh();
+        $this->assertEquals('diajukan', $peminjaman->status_peminjaman);
+    }
+
     public function test_petugas_dapat_menandai_buku_diambil(): void
     {
         $petugas = $this->createPetugasUser();

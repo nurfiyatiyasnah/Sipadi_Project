@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ApprovePeminjamanRequest;
 use App\Models\EksemplarBuku;
 use App\Models\JadwalPengambilan;
 use App\Models\Notifikasi;
@@ -18,8 +19,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PetugasPeminjamanController extends Controller
 {
-    /**
-     * Display a listing of loan applications.
     /**
      * Display a listing of loan applications.
      */
@@ -143,21 +142,16 @@ class PetugasPeminjamanController extends Controller
     /**
      * Approve and schedule pickup for the loan application.
      */
-    public function approve(Request $request, Peminjaman $peminjaman): RedirectResponse
+    public function approve(ApprovePeminjamanRequest $request, Peminjaman $peminjaman): RedirectResponse
     {
-        $request->validate([
-            'tanggal_pengambilan' => 'required|date|after_or_equal:today',
-            'jam_pengambilan' => 'required|string',
-            'lokasi_pengambilan' => 'required|string|max:100',
-            'pesan' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         /** @var User $user */
         $user = Auth::user();
         $petugas = $user->petugas;
 
         try {
-            DB::transaction(function () use ($request, $peminjaman, $petugas) {
+            DB::transaction(function () use ($validated, $peminjaman, $petugas) {
                 $detail = $peminjaman->detailPeminjaman->first();
                 if (! $detail) {
                     throw new \Exception('Detail peminjaman tidak ditemukan.');
@@ -186,7 +180,7 @@ class PetugasPeminjamanController extends Controller
 
                 // Determine due date
                 $lamaPinjam = $peminjaman->aturanPeminjaman?->lama_pinjam_hari ?? 14;
-                $tanggalJatuhTempo = Carbon::parse($request->tanggal_pengambilan)->addDays($lamaPinjam)->toDateString();
+                $tanggalJatuhTempo = Carbon::parse($validated['tanggal_pengambilan'])->addDays($lamaPinjam)->toDateString();
 
                 $peminjaman->update([
                     'status_peminjaman' => 'siap_diambil',
@@ -199,11 +193,11 @@ class PetugasPeminjamanController extends Controller
                     ['id_peminjaman' => $peminjaman->id_peminjaman],
                     [
                         'id_petugas' => $petugas?->id_petugas,
-                        'tanggal_pengambilan' => $request->tanggal_pengambilan,
-                        'jam_mulai' => $request->jam_pengambilan,
-                        'jam_selesai' => date('H:i', strtotime($request->jam_pengambilan) + 3600),
-                        'lokasi_pengambilan' => $request->lokasi_pengambilan,
-                        'pesan' => $request->pesan,
+                        'tanggal_pengambilan' => $validated['tanggal_pengambilan'],
+                        'jam_mulai' => $validated['jam_pengambilan'],
+                        'jam_selesai' => date('H:i', strtotime($validated['jam_pengambilan']) + 3600),
+                        'lokasi_pengambilan' => $validated['lokasi_pengambilan'],
+                        'pesan' => $validated['pesan'] ?? null,
                         'status_jadwal' => 'disetujui',
                         'dikirim_pada' => now(),
                     ]
@@ -212,13 +206,13 @@ class PetugasPeminjamanController extends Controller
                 // Create notification for member
                 if ($peminjaman->anggota?->user) {
                     $bukuJudul = $detail->buku?->judul ?? 'buku';
-                    $tanggalFormatted = Carbon::parse($request->tanggal_pengambilan)->translatedFormat('d M Y');
+                    $tanggalFormatted = Carbon::parse($validated['tanggal_pengambilan'])->translatedFormat('d M Y');
                     Notifikasi::create([
                         'id_user' => $peminjaman->anggota->user->id_user,
                         'id_peminjaman' => $peminjaman->id_peminjaman,
                         'id_jadwal_pengambilan' => $jadwal->id_jadwal_pengambilan,
                         'judul' => 'Peminjaman Disetujui',
-                        'isi' => "Buku '{$bukuJudul}' siap diambil pada {$tanggalFormatted} pukul {$request->jam_pengambilan} WIB di {$request->lokasi_pengambilan}.",
+                        'isi' => "Buku '{$bukuJudul}' siap diambil pada {$tanggalFormatted} pukul {$validated['jam_pengambilan']} WIB di {$validated['lokasi_pengambilan']}.",
                         'jenis_notifikasi' => 'peminjaman_disetujui',
                         'status_notifikasi' => 'terkirim',
                         'status_baca' => 'belum_dibaca',
