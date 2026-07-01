@@ -36,7 +36,7 @@
                 ['Struktur Organisasi', 'fa-solid fa-sitemap', 'petugas.organisasi.index', 'petugas.organisasi.*'],
                 ['Prestasi', 'fa-solid fa-trophy', null, null],
                 ['Layanan', 'fa-solid fa-handshake-angle', 'petugas.layanan.index', 'petugas.layanan.*'],
-                ['Fasilitas', 'fa-solid fa-couch', null, null],
+                ['Fasilitas', 'fa-solid fa-couch', 'petugas.fasilitas.index', 'petugas.fasilitas.*'],
                 ['Laporan', 'fa-solid fa-chart-column', null, null],
             ];
         @endphp

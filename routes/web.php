@@ -82,7 +82,12 @@ Route::get('/layanan', [PublicLayananController::class, 'index'])->name('layanan
 Route::get('/layanan/{layanan:slug}', [PublicLayananController::class, 'show'])->name('layanan.show');
 Route::get('/pengumuman', [PublicPengumumanController::class, 'index'])->name('pengumuman.public.index');
 Route::get('/pengumuman/{slug}', [PublicPengumumanController::class, 'show'])->name('pengumuman.public.show');
-Route::view('/tentang-kami', 'landing.tentang')->name('tentang');
+Route::get('/tentang-kami', function () {
+    $strukturOrganisasi = \App\Models\StrukturOrganisasi::orderBy('urutan')->get();
+    return view('landing.tentang', compact('strukturOrganisasi'));
+})->name('tentang');
+Route::get('/fasilitas', [\App\Http\Controllers\PublicFasilitasController::class, 'index'])->name('fasilitas.public.index');
+Route::get('/fasilitas/{id}', [\App\Http\Controllers\PublicFasilitasController::class, 'show'])->name('fasilitas.public.show');
 Route::get('/aduan/lacak', [AduanController::class, 'track'])->name('aduan.track');
 
 Route::middleware(['auth'])->get('/dashboard', function () {

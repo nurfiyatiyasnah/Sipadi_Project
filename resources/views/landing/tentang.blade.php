@@ -92,67 +92,22 @@
                 <p class="text-xs font-semibold text-slate-400">Bagan Organisasi Tahun 2026</p>
             </div>
 
-            <div class="mt-8 overflow-x-auto">
-                <div class="min-w-[1100px] pb-4">
-                    <div class="flex justify-center">
-                        <div class="w-60 rounded-3xl bg-white p-5 shadow-md text-center border border-slate-100 hover:shadow-lg transition duration-200">
-                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&q=80" class="mx-auto h-32 w-32 rounded-full border-4 border-emerald-800 object-cover" alt="Kepala Dinas">
-                            <h3 class="mt-4 font-bold text-[#04241e]">Nama Kepala Dinas</h3>
-                            <p class="text-sm text-slate-400 mt-1 font-semibold">Kepala Dinas</p>
-                        </div>
+            <div class="mt-8 flex flex-wrap justify-center gap-8">
+                @forelse($strukturOrganisasi as $org)
+                    <div class="w-60 rounded-3xl bg-white p-5 shadow-md text-center border border-slate-100 hover:shadow-lg hover:-translate-y-1 transition duration-200">
+                        @if($org->foto)
+                            <img src="{{ asset('storage/' . $org->foto) }}" class="mx-auto h-32 w-32 rounded-full border-4 border-emerald-800 object-cover" alt="{{ $org->jabatan }}">
+                        @else
+                            <div class="mx-auto flex h-32 w-32 items-center justify-center rounded-full border-4 border-emerald-800 bg-emerald-50 text-emerald-800">
+                                <i class="fa-solid fa-user text-4xl"></i>
+                            </div>
+                        @endif
+                        <h3 class="mt-4 font-bold text-[#04241e]">{{ $org->nama }}</h3>
+                        <p class="text-sm text-slate-400 mt-1 font-semibold">{{ $org->jabatan }}</p>
                     </div>
-
-                    <div class="mx-auto h-10 w-px bg-slate-200"></div>
-
-                    <div class="flex justify-center">
-                        <div class="w-60 rounded-3xl bg-white p-5 shadow-md text-center border border-slate-100 hover:shadow-lg transition duration-200">
-                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=300&q=80" class="mx-auto h-28 w-28 rounded-full border-4 border-slate-200 object-cover" alt="Sekretaris">
-                            <h3 class="mt-4 font-bold text-[#04241e]">Nama Sekretaris</h3>
-                            <p class="text-sm text-slate-400 mt-1 font-semibold">Sekretariat</p>
-                        </div>
-                    </div>
-
-                    <div class="mx-auto h-8 w-px bg-slate-200"></div>
-                    <div class="mx-auto h-px w-[850px] bg-slate-200"></div>
-
-                    <div class="grid grid-cols-4 gap-6 pt-2">
-                        <div class="flex flex-col items-center">
-                            <div class="h-8 w-px bg-slate-200"></div>
-                            <div class="w-56 rounded-3xl bg-white p-5 shadow-md text-center border border-slate-100 hover:-translate-y-1 hover:shadow-lg transition duration-200">
-                                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=300&q=80" class="mx-auto h-24 w-24 rounded-full border-4 border-emerald-800 object-cover" alt="Kabid Perpustakaan">
-                                <h3 class="mt-3 font-bold text-[#04241e]">Nama Kepala Bidang</h3>
-                                <p class="text-sm text-slate-400 mt-1 font-semibold">Bidang Perpustakaan</p>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col items-center">
-                            <div class="h-8 w-px bg-slate-200"></div>
-                            <div class="w-56 rounded-3xl bg-white p-5 shadow-md text-center border border-slate-100 hover:-translate-y-1 hover:shadow-lg transition duration-200">
-                                <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=300&q=80" class="mx-auto h-24 w-24 rounded-full border-4 border-emerald-800 object-cover" alt="Kabid Kearsipan">
-                                <h3 class="mt-3 font-bold text-[#04241e]">Nama Kepala Bidang</h3>
-                                <p class="text-sm text-slate-400 mt-1 font-semibold">Bidang Kearsipan</p>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col items-center">
-                            <div class="h-8 w-px bg-slate-200"></div>
-                            <div class="w-56 rounded-3xl bg-white p-5 shadow-md text-center border border-slate-100 hover:-translate-y-1 hover:shadow-lg transition duration-200">
-                                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80" class="mx-auto h-24 w-24 rounded-full border-4 border-emerald-800 object-cover" alt="Kabid Layanan">
-                                <h3 class="mt-3 font-bold text-[#04241e]">Nama Kepala Bidang</h3>
-                                <p class="text-sm text-slate-400 mt-1 font-semibold">Bidang Layanan</p>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col items-center">
-                            <div class="h-8 w-px bg-slate-200"></div>
-                            <div class="w-56 rounded-3xl bg-white p-5 shadow-md text-center border border-slate-100 hover:-translate-y-1 hover:shadow-lg transition duration-200">
-                                <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80" class="mx-auto h-24 w-24 rounded-full border-4 border-emerald-800 object-cover" alt="Kabid Digitalisasi">
-                                <h3 class="mt-3 font-bold text-[#04241e]">Nama Kepala Bidang</h3>
-                                <p class="text-sm text-slate-400 mt-1 font-semibold">Bidang Digitalisasi</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @empty
+                    <p class="text-slate-500 text-center w-full py-8">Struktur organisasi belum ditambahkan oleh admin.</p>
+                @endforelse
             </div>
         </section>
     </div>
