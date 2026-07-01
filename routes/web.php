@@ -4,6 +4,7 @@ use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EKartuController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StrukturOrganisasiController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -52,6 +53,8 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
         ->name('berita.publish');
     Route::delete('/berita/{berita}', [BeritaController::class, 'destroy'])
         ->name('berita.destroy');
+
+    Route::resource('organisasi', StrukturOrganisasiController::class)->except(['show']);
 });
 
 Route::middleware('auth')->group(function () {

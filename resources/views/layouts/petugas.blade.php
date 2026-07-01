@@ -33,7 +33,7 @@
                 ['Aduan', 'fa-message', null, null],
                 ['Peminjaman', 'fa-handshake', null, null],
                 ['Jadwal', 'fa-calendar-check', null, null],
-                ['Organisasi', 'fa-sitemap', null, null],
+                ['Organisasi', 'fa-sitemap', 'petugas.organisasi.index', 'petugas.organisasi.*'],
                 ['Laporan', 'fa-chart-column', null, null],
             ];
         @endphp
