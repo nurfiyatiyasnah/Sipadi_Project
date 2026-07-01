@@ -159,6 +159,7 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
         ->name('berita.destroy');
 
     Route::resource('organisasi', StrukturOrganisasiController::class)->except(['show']);
+    Route::resource('fasilitas', App\Http\Controllers\FasilitasController::class);
     Route::get('/agenda', [AgendaEventController::class, 'index'])->name('agenda.index');
     Route::get('/agenda/tambah', [AgendaEventController::class, 'create'])->name('agenda.create');
     Route::post('/agenda', [AgendaEventController::class, 'store'])->name('agenda.store');
