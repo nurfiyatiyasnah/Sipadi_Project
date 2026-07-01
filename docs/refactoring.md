@@ -29,7 +29,6 @@ Temuan utama:
 6. Jalankan formatter dan test relevan.
 
 ### Perubahan Yang Dilakukan
-
 File baru:
 - `app/Http/Requests/ApprovePeminjamanRequest.php`
 
@@ -78,7 +77,71 @@ Bug tersebut bukan bagian dari refactoring tahap ini karena memperbaikinya akan 
 
 ### Kandidat Tahap Berikutnya
 Tahap berikutnya yang aman:
-
 1. Refactor validasi inline lain yang tidak mengubah behavior, misalnya sebagian flow pengembalian atau pengajuan peminjaman.
 2. Ekstrak query duplikat di daftar/export peminjaman menjadi method private atau query scope.
 3. Tambahkan test kecil sebelum memindahkan logic transaksi yang lebih besar ke action/service.
+
+## Tahap 2 - Query Daftar dan Export Peminjaman
+Tanggal: 2026-07-01
+Status: selesai
+
+### Tujuan
+Tahap ini berfokus pada pengurangan duplikasi query di daftar dan export peminjaman petugas. Perubahan dibuat di controller yang sama agar scope tetap kecil dan mudah diverifikasi.
+
+### Audit Singkat
+Area yang diaudit pada tahap ini:
+- `app/Http/Controllers/PetugasPeminjamanController.php`
+- `resources/views/petugas/peminjaman/index.blade.php`
+- `tests/Feature/PetugasPeminjamanTest.php`
+
+Temuan utama:
+- Query dasar `Peminjaman::with(['anggota', 'detailPeminjaman.buku'])` dipakai ulang di `index` dan `export`.
+- Logic pencarian berdasarkan kode peminjaman, anggota, nomor anggota, dan judul buku juga terduplikasi.
+- Perilaku filter status berbeda antara halaman index dan export. Halaman index memakai label UI seperti `menunggu` lalu memetakannya ke `diajukan`, sedangkan export memakai nilai query string secara langsung. Perbedaan ini dipertahankan agar output existing tidak berubah.
+
+### Rencana Refactoring
+1. Ekstrak builder query dasar peminjaman ke private method.
+2. Ekstrak search condition ke private method.
+3. Ekstrak statistik peminjaman ke private method.
+4. Ekstrak format baris CSV ke private method.
+5. Pertahankan behavior filter status index dan export seperti sebelumnya.
+6. Jalankan formatter dan test peminjaman.
+
+### Perubahan Yang Dilakukan
+File diubah:
+- `app/Http/Controllers/PetugasPeminjamanController.php`
+- `docs/refactoring.md`
+
+Detail refactoring:
+- Menambahkan `INDEX_STATUS_FILTERS` untuk mapping status tab halaman index.
+- Menambahkan `loanApplicationsQuery()` sebagai query dasar daftar/export.
+- Menambahkan `applyLoanApplicationSearch()` untuk kondisi pencarian yang sebelumnya terduplikasi.
+- Menambahkan `loanApplicationStats()` untuk statistik header halaman.
+- Menambahkan `loanApplicationCsvRow()` untuk format data per baris CSV.
+
+### Kenapa Aman
+- Relationship eager loading tetap sama.
+- Filter status halaman index tetap memetakan `menunggu`, `disetujui`, dan `ditolak` ke nilai database yang sama seperti sebelumnya.
+- Filter status export tetap memakai nilai query string seperti sebelumnya.
+- Header CSV, nama file, urutan kolom, dan format tanggal tidak diubah.
+- Test fitur peminjaman petugas tetap lulus.
+
+### Verifikasi
+Perintah yang dijalankan:
+```bash
+vendor/bin/pint --dirty --format agent
+php artisan test --compact tests\Feature\PetugasPeminjamanTest.php
+```
+
+Hasil:
+- Pint: passed
+- `PetugasPeminjamanTest`: 9 tests passed, 43 assertions
+
+### Catatan Risiko
+Full test suite belum dijalankan karena baseline project masih memiliki failure existing pada profile page di `resources/views/layouts/app.blade.php`. Perubahan tahap ini tidak menyentuh area tersebut.
+
+### Kandidat Tahap Berikutnya
+Tahap berikutnya yang aman:
+1. Tambahkan test untuk export dengan query string status agar behavior lama terkunci sebelum refactor lanjutan.
+2. Refactor validasi inline di `PengajuanPeminjamanController` ke Form Request.
+3. Pecah logic transaksi approval/reject/ambil ke action class setelah behavior terkunci oleh test yang lebih lengkap.

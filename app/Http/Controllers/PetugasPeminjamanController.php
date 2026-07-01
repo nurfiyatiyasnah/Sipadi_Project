@@ -10,6 +10,7 @@ use App\Models\Peminjaman;
 use App\Models\SanksiAnggota;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +20,12 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PetugasPeminjamanController extends Controller
 {
+    private const INDEX_STATUS_FILTERS = [
+        'menunggu' => 'diajukan',
+        'disetujui' => 'siap_diambil',
+        'ditolak' => 'ditolak',
+    ];
+
     /**
      * Display a listing of loan applications.
      */
@@ -27,41 +34,14 @@ class PetugasPeminjamanController extends Controller
         $statusFilter = strtolower($request->query('status', 'semua'));
         $search = $request->query('search');
 
-        // Query loan applications
-        $query = Peminjaman::with(['anggota', 'detailPeminjaman.buku']);
+        $query = $this->loanApplicationsQuery($search);
 
-        // Filter status
-        if ($statusFilter === 'menunggu') {
-            $query->where('status_peminjaman', 'diajukan');
-        } elseif ($statusFilter === 'disetujui') {
-            $query->where('status_peminjaman', 'siap_diambil');
-        } elseif ($statusFilter === 'ditolak') {
-            $query->where('status_peminjaman', 'ditolak');
-        }
-
-        // Search filter
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('kode_peminjaman', 'like', '%'.$search.'%')
-                    ->orWhereHas('anggota', function ($q2) use ($search) {
-                        $q2->where('nama_lengkap', 'like', '%'.$search.'%')
-                            ->orWhere('no_anggota', 'like', '%'.$search.'%');
-                    })
-                    ->orWhereHas('detailPeminjaman.buku', function ($q3) use ($search) {
-                        $q3->where('judul', 'like', '%'.$search.'%');
-                    });
-            });
+        if (array_key_exists($statusFilter, self::INDEX_STATUS_FILTERS)) {
+            $query->where('status_peminjaman', self::INDEX_STATUS_FILTERS[$statusFilter]);
         }
 
         $peminjamans = $query->latest('id_peminjaman')->paginate(10)->withQueryString();
-
-        // Calculate statistics
-        $stats = [
-            'menunggu' => Peminjaman::where('status_peminjaman', 'diajukan')->count(),
-            'disetujui_hari_ini' => Peminjaman::where('status_peminjaman', 'siap_diambil')->whereDate('updated_at', today())->count(),
-            'ditolak_hari_ini' => Peminjaman::where('status_peminjaman', 'ditolak')->whereDate('updated_at', today())->count(),
-            'total_sirkulasi' => Peminjaman::whereIn('status_peminjaman', ['aktif', 'terlambat'])->count(),
-        ];
+        $stats = $this->loanApplicationStats();
 
         return view('petugas.peminjaman.index', compact('peminjamans', 'stats', 'statusFilter', 'search'));
     }
@@ -285,38 +265,77 @@ class PetugasPeminjamanController extends Controller
             $statusFilter = strtolower($request->query('status', 'diajukan'));
             $search = $request->query('search');
 
-            $query = Peminjaman::with(['anggota', 'detailPeminjaman.buku']);
+            $query = $this->loanApplicationsQuery($search);
 
             if ($statusFilter !== 'semua') {
                 $query->where('status_peminjaman', $statusFilter);
             }
 
-            if ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('kode_peminjaman', 'like', '%'.$search.'%')
-                        ->orWhereHas('anggota', function ($q2) use ($search) {
-                            $q2->where('nama_lengkap', 'like', '%'.$search.'%')
-                                ->orWhere('no_anggota', 'like', '%'.$search.'%');
-                        })
-                        ->orWhereHas('detailPeminjaman.buku', function ($q3) use ($search) {
-                            $q3->where('judul', 'like', '%'.$search.'%');
-                        });
-                });
-            }
-
-            $query->orderBy('id_peminjaman', 'desc')->each(function (Peminjaman $p) use ($output): void {
-                fputcsv($output, [
-                    $p->kode_peminjaman,
-                    $p->anggota?->no_anggota ?? '-',
-                    $p->anggota?->nama_lengkap ?? '-',
-                    $p->detailPeminjaman->first()?->buku?->judul ?? '-',
-                    $p->detailPeminjaman->first()?->buku?->isbn ?? '-',
-                    $p->tanggal_pengajuan ? $p->tanggal_pengajuan->format('Y-m-d H:i:s') : ($p->created_at ? $p->created_at->format('Y-m-d H:i:s') : '-'),
-                    $p->status_peminjaman,
-                ]);
+            $query->orderBy('id_peminjaman', 'desc')->each(function (Peminjaman $peminjaman) use ($output): void {
+                fputcsv($output, $this->loanApplicationCsvRow($peminjaman));
             });
 
             fclose($output);
         }, 'laporan_peminjaman.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    /**
+     * @return Builder<Peminjaman>
+     */
+    private function loanApplicationsQuery(mixed $search = null): Builder
+    {
+        $query = Peminjaman::with(['anggota', 'detailPeminjaman.buku']);
+
+        if ($search) {
+            $this->applyLoanApplicationSearch($query, $search);
+        }
+
+        return $query;
+    }
+
+    /**
+     * @param  Builder<Peminjaman>  $query
+     */
+    private function applyLoanApplicationSearch(Builder $query, mixed $search): void
+    {
+        $query->where(function (Builder $query) use ($search): void {
+            $query->where('kode_peminjaman', 'like', '%'.$search.'%')
+                ->orWhereHas('anggota', function (Builder $query) use ($search): void {
+                    $query->where('nama_lengkap', 'like', '%'.$search.'%')
+                        ->orWhere('no_anggota', 'like', '%'.$search.'%');
+                })
+                ->orWhereHas('detailPeminjaman.buku', function (Builder $query) use ($search): void {
+                    $query->where('judul', 'like', '%'.$search.'%');
+                });
+        });
+    }
+
+    /**
+     * @return array{menunggu: int, disetujui_hari_ini: int, ditolak_hari_ini: int, total_sirkulasi: int}
+     */
+    private function loanApplicationStats(): array
+    {
+        return [
+            'menunggu' => Peminjaman::where('status_peminjaman', 'diajukan')->count(),
+            'disetujui_hari_ini' => Peminjaman::where('status_peminjaman', 'siap_diambil')->whereDate('updated_at', today())->count(),
+            'ditolak_hari_ini' => Peminjaman::where('status_peminjaman', 'ditolak')->whereDate('updated_at', today())->count(),
+            'total_sirkulasi' => Peminjaman::whereIn('status_peminjaman', ['aktif', 'terlambat'])->count(),
+        ];
+    }
+
+    /**
+     * @return array<int, string|null>
+     */
+    private function loanApplicationCsvRow(Peminjaman $peminjaman): array
+    {
+        return [
+            $peminjaman->kode_peminjaman,
+            $peminjaman->anggota?->no_anggota ?? '-',
+            $peminjaman->anggota?->nama_lengkap ?? '-',
+            $peminjaman->detailPeminjaman->first()?->buku?->judul ?? '-',
+            $peminjaman->detailPeminjaman->first()?->buku?->isbn ?? '-',
+            $peminjaman->tanggal_pengajuan ? $peminjaman->tanggal_pengajuan->format('Y-m-d H:i:s') : ($peminjaman->created_at ? $peminjaman->created_at->format('Y-m-d H:i:s') : '-'),
+            $peminjaman->status_peminjaman,
+        ];
     }
 }
