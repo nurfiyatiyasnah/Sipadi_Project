@@ -175,7 +175,7 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
     Route::get('/pengumuman/{pengumuman}/edit', [PengumumanController::class, 'edit'])->name('pengumuman.edit');
     Route::put('/pengumuman/{pengumuman}', [PengumumanController::class, 'update'])->name('pengumuman.update');
     Route::delete('/pengumuman/{pengumuman}', [PengumumanController::class, 'destroy'])->name('pengumuman.destroy');
-
+    
     // Peminjaman routes for Petugas
     Route::get('/peminjaman', [PetugasPeminjamanController::class, 'index'])->name('peminjaman.index');
     Route::get('/peminjaman/export', [PetugasPeminjamanController::class, 'export'])->name('peminjaman.export');
@@ -211,6 +211,7 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/books/create', [BookController::class, 'create'])->name('books.create');
     Route::post('/books', [BookController::class, 'store'])->name('books.store');
     Route::get('/books/{buku}', [BookController::class, 'show'])->name('books.show');
+    
 });
 
 Route::middleware('auth')->group(function () {
