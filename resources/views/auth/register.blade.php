@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -142,6 +143,15 @@
                         <label for="alamat" class="mb-2 block text-sm font-bold text-slate-700">Alamat</label>
                         <textarea id="alamat" name="alamat" rows="3" required placeholder="Masukkan alamat tempat tinggal" class="w-full rounded-xl border border-slate-200 bg-[#f4f6fa] px-4 py-3 text-slate-700 focus:border-[#061b3a] focus:ring-4 focus:ring-[#061b3a]/10">{{ old('alamat', session('registration.data_diri.alamat')) }}</textarea>
                         <x-input-error :messages="$errors->get('alamat')" class="mt-2" />
+                    </div>
+
+                    <div>
+                        <label for="no_telepon" class="mb-2 block text-sm font-bold text-slate-700">Nomor HP</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input id="no_telepon" type="text" name="no_telepon" value="{{ old('no_telepon', session('registration.data_diri.no_telepon')) }}" required placeholder="Masukkan nomor HP aktif (cth: 081234567890)" class="w-full rounded-xl border border-slate-200 bg-[#f4f6fa] py-3 pl-11 pr-4 text-slate-700 focus:border-[#061b3a] focus:ring-4 focus:ring-[#061b3a]/10">
+                        </div>
+                        <x-input-error :messages="$errors->get('no_telepon')" class="mt-2" />
                     </div>
 
                     <div>

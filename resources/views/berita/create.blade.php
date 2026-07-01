@@ -43,10 +43,19 @@
                     <label for="judul" class="mb-3 block text-sm font-bold uppercase tracking-widest text-slate-600">
                         Judul Berita <span class="text-red-500">*</span>
                     </label>
-                    <input id="judul" type="text" name="judul" value="{{ old('judul') }}"
-                           placeholder="Masukkan judul berita..."
-                           class="h-14 w-full rounded-xl border border-slate-200 bg-slate-50 px-5 text-lg font-semibold focus:border-[#ffdc7c] focus:ring-[#ffdc7c] @error('judul') border-red-400 @enderror"
-                           required>
+                    <input
+                        id="judul"
+                        type="text"
+                        name="judul"
+                        value="{{ old('judul') }}"
+                        placeholder="Masukkan judul berita..."
+                        @class([
+                            'h-14 w-full rounded-xl border bg-slate-50 px-5 text-lg font-semibold focus:border-[#ffdc7c] focus:ring-[#ffdc7c]',
+                            'border-slate-200' =>!$errors->has('judul'),
+                            'border-red-400' => $errors->has('judul'),
+                        ])
+                        required
+                    >
                     @error('judul')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -57,9 +66,17 @@
                     <label for="isi" class="mb-3 block text-sm font-bold uppercase tracking-widest text-slate-600">
                         Isi Berita
                     </label>
-                    <textarea id="isi" name="isi" rows="14"
-                              placeholder="Tulis isi berita di sini..."
-                              class="w-full rounded-xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm leading-relaxed focus:border-[#ffdc7c] focus:ring-[#ffdc7c] @error('isi') border-red-400 @enderror">{{ old('isi') }}</textarea>
+                    <textarea
+                        id="isi"
+                        name="isi"
+                        rows="14"
+                        placeholder="Tulis isi berita di sini..."
+                        @class([
+                            'w-full rounded-xl border bg-slate-50 px-5 py-4 text-sm leading-relaxed focus:border-[#ffdc7c] focus:ring-[#ffdc7c]',
+                            'border-slate-200' => !$errors->has('isi'),
+                            'border-red-400' => $errors->has('isi'),
+                        ])
+                    >{{ old('isi') }}</textarea>
                     @error('isi')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -111,9 +128,16 @@
                     <label for="id_kategori_berita" class="mb-3 block text-sm font-bold uppercase tracking-widest text-slate-600">
                         Kategori <span class="text-red-500">*</span>
                     </label>
-                    <select id="id_kategori_berita" name="id_kategori_berita"
-                            class="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm focus:border-[#ffdc7c] focus:ring-[#ffdc7c] @error('id_kategori_berita') border-red-400 @enderror"
-                            required>
+                    <select
+                        id="id_kategori_berita"
+                        name="id_kategori_berita"
+                        @class([
+                            'h-12 w-full rounded-xl border bg-slate-50 px-4 text-sm focus:border-[#ffdc7c] focus:ring-[#ffdc7c]',
+                            'border-slate-200' => !$errors->has('id_kategori_berita'),
+                            'border-red-400' => $errors->has('id_kategori_berita'),
+                        ])
+                        required
+                    >
                         <option value="">Pilih kategori...</option>
                         @foreach ($kategoriList as $kat)
                             <option value="{{ $kat->id_kategori_berita }}" @selected(old('id_kategori_berita') == $kat->id_kategori_berita)>

@@ -87,6 +87,7 @@ class RegisteredUserController extends Controller
 
                 $user = User::create([
                     'id_role' => $roleAnggota->id_role,
+                    'name' => $data['nama_lengkap'],
                     'email' => $data['email'],
                     'password' => $data['password'],
                     'status_akun' => 'aktif',
@@ -100,6 +101,7 @@ class RegisteredUserController extends Controller
                     'jenis_kelamin' => $data['jenis_kelamin'],
                     'tanggal_lahir' => $data['tanggal_lahir'],
                     'alamat' => $data['alamat'],
+                    'no_telepon' => $data['no_telepon'],
                     'foto' => $fotoPath,
                     'tanggal_daftar' => now()->toDateString(),
                     'status_anggota' => 'aktif',
@@ -133,7 +135,25 @@ class RegisteredUserController extends Controller
         }
 
         return redirect()
-            ->route('anggota.e-kartu')
+            ->route('register.e-kartu')
             ->with('status', 'registration-success');
+    }
+
+    public function showEKartu(): View|RedirectResponse
+    {
+        /** @var User|null $user */
+        $user = Auth::user();
+        if (! $user || ! $user->isAnggota()) {
+            return redirect()->route('login');
+        }
+
+        $anggota = $user->anggota()->with('eKartuAnggota')->first();
+        if (! $anggota) {
+            return redirect()->route('register');
+        }
+
+        $eKartu = $anggota->eKartuAnggota;
+
+        return view('auth.register-e-kartu', compact('anggota', 'eKartu'));
     }
 }

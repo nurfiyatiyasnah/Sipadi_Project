@@ -275,4 +275,42 @@ class BeritaTest extends TestCase
 
         return UploadedFile::fake()->createWithContent($name, base64_decode($png));
     }
+
+    public function test_publik_dapat_melihat_daftar_berita(): void
+    {
+        $kategori = KategoriBerita::factory()->create(['nama_kategori' => 'Pengumuman']);
+        Berita::factory()->published()->create([
+            'judul' => 'Pengumuman Penting Hari Ini',
+            'id_kategori_berita' => $kategori->id_kategori_berita,
+        ]);
+        Berita::factory()->draft()->create([
+            'judul' => 'Draf Berita Tersembunyi',
+            'id_kategori_berita' => $kategori->id_kategori_berita,
+        ]);
+
+        $response = $this->get(route('berita.public.index'));
+
+        $response->assertOk()
+            ->assertSee('Pengumuman Penting Hari Ini')
+            ->assertDontSee('Draf Berita Tersembunyi');
+    }
+
+    public function test_publik_dapat_melihat_detail_berita(): void
+    {
+        $kategori = KategoriBerita::factory()->create(['nama_kategori' => 'Kegiatan']);
+        $berita = Berita::factory()->published()->create([
+            'judul' => 'Kegiatan Literasi Anak',
+            'slug' => 'kegiatan-literasi-anak',
+            'isi' => 'Ini adalah konten berita kegiatan literasi anak.',
+            'id_kategori_berita' => $kategori->id_kategori_berita,
+        ]);
+
+        $response = $this->get(route('berita.public.show', $berita->slug));
+
+        $response->assertOk()
+            ->assertSee('Kegiatan Literasi Anak')
+            ->assertSee('Ini adalah konten berita kegiatan literasi anak.')
+            ->assertSee('Kegiatan');
+    }
 }
+

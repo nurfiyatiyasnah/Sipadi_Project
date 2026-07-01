@@ -18,6 +18,7 @@ class DetailPeminjaman extends Model
     protected $fillable = [
         'id_peminjaman',
         'id_buku',
+        'id_eksemplar_buku',
         'jumlah',
         'status_detail',
     ];
@@ -30,6 +31,11 @@ class DetailPeminjaman extends Model
     public function buku(): BelongsTo
     {
         return $this->belongsTo(Buku::class, 'id_buku', 'id_buku');
+    }
+
+    public function eksemplar(): BelongsTo
+    {
+        return $this->belongsTo(EksemplarBuku::class, 'id_eksemplar_buku', 'id_eksemplar_buku');
     }
 
     public function detailPengembalian(): HasMany

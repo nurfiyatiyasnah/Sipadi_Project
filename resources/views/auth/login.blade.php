@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="description" content="Login ke Arsip Digital Bukittinggi - Gerbang Warisan Sejarah Kota Wisata">
-    <title>Login - Arsip Digital Bukittinggi</title>
+    <meta name="description" content="Login ke SIPADI">
+    <title>Login - SIPADI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,16 +56,7 @@
             transform: translateY(0);
         }
 
-        .btn-google {
-            border: 1.5px solid #e8eaef;
-            transition: all 0.3s ease;
-        }
 
-        .btn-google:hover {
-            border-color: #c5cae9;
-            background: #f8f9fc;
-            box-shadow: 0 2px 8px rgba(100, 100, 180, 0.08);
-        }
 
         .checkbox-custom {
             accent-color: #1a2332;
@@ -102,7 +93,7 @@
                 <img src="{{ asset('images/logo-kota.png') }}" alt="Logo Kota Bukittinggi" class="w-14 h-14 object-contain logo-float" id="logo-kota">
                 <img src="{{ asset('images/logo-dinas.png') }}" alt="Logo Dinas Perpustakaan" class="w-14 h-14 object-contain logo-float" id="logo-dinas">
             </div>
-            <h1 class="text-2xl font-semibold text-[#1a2332] tracking-tight">Arsip Digital Bukittinggi</h1>
+            <h1 class="text-2xl font-semibold text-[#1a2332] tracking-tight">SIPADI</h1>
             <p class="text-sm text-slate-500 mt-1">Gerbang Warisan Sejarah Kota Wisata</p>
         </div>
 
@@ -207,29 +198,11 @@
                 <!-- Login Button -->
                 <div>
                     <button type="submit" id="btn-login" class="btn-login w-full text-white py-3.5 rounded-full font-medium text-sm uppercase tracking-widest shadow-lg">
-                        Login ke Arsip
+                        Login
                     </button>
                 </div>
 
-                <!-- Divider -->
-                <div class="flex items-center gap-4 my-1">
-                    <div class="flex-1 h-px bg-slate-200"></div>
-                    <span class="text-xs text-slate-400 whitespace-nowrap">Atau masuk dengan</span>
-                    <div class="flex-1 h-px bg-slate-200"></div>
-                </div>
 
-                <!-- Google Login -->
-                <div>
-                    <a href="/auth/google" id="btn-google" class="btn-google flex items-center gap-3 justify-center w-full rounded-full py-3.5 bg-white">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24">
-                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
-                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                        </svg>
-                        <span class="text-sm text-slate-700 font-medium">Masuk dengan Google</span>
-                    </a>
-                </div>
 
                 <!-- Register Link -->
                 <p class="text-center text-sm text-slate-500 pt-1">

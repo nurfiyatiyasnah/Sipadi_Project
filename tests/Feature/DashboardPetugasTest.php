@@ -27,7 +27,7 @@ class DashboardPetugasTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertSee('Selamat Pagi, Administrator')
+            ->assertSee('Selamat Datang, Administrator')
             ->assertSee('Panel Operasional Admin')
             ->assertSee('Aksi Cepat')
             ->assertSee('Status Layanan')
@@ -87,6 +87,76 @@ class DashboardPetugasTest extends TestCase
 
         $this->assertStringContainsString('Sejarah Bukittinggi', $content);
         $this->assertStringContainsString('Sejarah', $content);
+    }
+
+    public function test_koleksi_filter_berdasarkan_kategori(): void
+    {
+        $petugas = $this->createUserWithRole('Petugas');
+        $teknologi = KategoriBuku::factory()->create(['nama_kategori' => 'Teknologi']);
+        $sejarah = KategoriBuku::factory()->create(['nama_kategori' => 'Sejarah']);
+        $bukuTeknologi = Buku::factory()->for($teknologi, 'kategori')->create(['judul' => 'Belajar PHP']);
+        Buku::factory()->for($sejarah, 'kategori')->create(['judul' => 'Sejarah Dunia']);
+
+        $response = $this->actingAs($petugas)
+            ->get(route('petugas.koleksi', ['kategori' => $teknologi->id_kategori]));
+
+        $response
+            ->assertOk()
+            ->assertSee('Belajar PHP')
+            ->assertDontSee('Sejarah Dunia');
+    }
+
+    public function test_koleksi_filter_status_katalog_case_insensitive(): void
+    {
+        $petugas = $this->createUserWithRole('Petugas');
+        $kategori = KategoriBuku::factory()->create();
+
+        // Buku with TitleCase 'Aktif' (like seeder)
+        Buku::factory()->for($kategori, 'kategori')->create([
+            'judul' => 'Buku Aktif TitleCase',
+            'status_katalog' => 'Aktif',
+        ]);
+
+        // Buku with lowercase 'aktif' (like factory default)
+        Buku::factory()->for($kategori, 'kategori')->create([
+            'judul' => 'Buku Aktif Lowercase',
+            'status_katalog' => 'aktif',
+        ]);
+
+        // Buku with nonaktif status
+        Buku::factory()->for($kategori, 'kategori')->create([
+            'judul' => 'Buku Nonaktif',
+            'status_katalog' => 'nonaktif',
+        ]);
+
+        // Filter with lowercase 'aktif' (as sent by the HTML form)
+        $response = $this->actingAs($petugas)
+            ->get(route('petugas.koleksi', ['status' => 'aktif']));
+
+        $response
+            ->assertOk()
+            ->assertSee('Buku Aktif TitleCase')
+            ->assertSee('Buku Aktif Lowercase')
+            ->assertDontSee('Buku Nonaktif');
+    }
+
+    public function test_ekspor_csv_menghormati_filter_aktif(): void
+    {
+        $petugas = $this->createUserWithRole('Petugas');
+        $teknologi = KategoriBuku::factory()->create(['nama_kategori' => 'Teknologi']);
+        $sejarah = KategoriBuku::factory()->create(['nama_kategori' => 'Sejarah']);
+        Buku::factory()->for($teknologi, 'kategori')->create(['judul' => 'Buku Teknologi']);
+        Buku::factory()->for($sejarah, 'kategori')->create(['judul' => 'Buku Sejarah']);
+
+        $response = $this->actingAs($petugas)
+            ->get(route('petugas.koleksi.export', ['kategori' => $teknologi->id_kategori]));
+
+        $response->assertOk()->assertDownload('koleksi_buku.csv');
+
+        $content = $response->streamedContent();
+
+        $this->assertStringContainsString('Buku Teknologi', $content);
+        $this->assertStringNotContainsString('Buku Sejarah', $content);
     }
 
     private function createUserWithRole(string $namaRole): User

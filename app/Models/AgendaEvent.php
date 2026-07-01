@@ -25,6 +25,8 @@ class AgendaEvent extends Model
         'jam_selesai',
         'gambar',
         'status_event',
+        'kategori',
+        'tampilkan_beranda',
         'created_by',
     ];
 
@@ -36,6 +38,7 @@ class AgendaEvent extends Model
         return [
             'tanggal_mulai' => 'date',
             'tanggal_selesai' => 'date',
+            'tampilkan_beranda' => 'boolean',
         ];
     }
 

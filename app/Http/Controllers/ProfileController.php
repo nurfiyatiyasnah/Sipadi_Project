@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\DetailPeminjaman;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,8 +19,29 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user()->load(['anggota', 'petugas']);
+
+        if ($user->isAnggota() && $user->anggota) {
+            $anggota = $user->anggota;
+
+            // 1. Buku Dipinjam: Count total books in active loans
+            $bukuDipinjamCount = DetailPeminjaman::whereHas('peminjaman', function ($q) use ($anggota) {
+                $q->where('id_anggota', $anggota->id_anggota)->where('status_peminjaman', 'aktif');
+            })->count();
+
+            // 2. Keterlambatan: Count total overdue records
+            $keterlambatanCount = $anggota->keterlambatan()->count();
+
+            return view('profile.anggota', compact(
+                'user',
+                'anggota',
+                'bukuDipinjamCount',
+                'keterlambatanCount'
+            ));
+        }
+
         return view('profile.edit', [
-            'user' => $request->user()->load(['anggota', 'petugas']),
+            'user' => $user,
         ]);
     }
 

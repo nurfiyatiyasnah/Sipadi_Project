@@ -56,8 +56,8 @@
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     <input id="search" type="text" name="search" value="{{ request('search') }}"
-                           placeholder="Ketik judul berita..."
-                           class="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pl-11 pr-4 text-sm focus:border-[#ffdc7c] focus:ring-[#ffdc7c]">
+                            placeholder="Ketik judul berita..."
+                            class="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pl-11 pr-4 text-sm focus:border-[#ffdc7c] focus:ring-[#ffdc7c]">
                 </div>
             </div>
             <div class="w-48">

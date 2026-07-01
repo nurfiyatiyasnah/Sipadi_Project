@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->timestamp('email_verified_at')->nullable()->after('email');
-            $table->rememberToken()->after('password');
+        Schema::table('agenda_event', function (Blueprint $table) {
+            $table->text('lokasi')->nullable()->change();
         });
     }
 
@@ -22,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['email_verified_at', 'remember_token']);
+        Schema::table('agenda_event', function (Blueprint $table) {
+            $table->string('lokasi', 150)->nullable()->change();
         });
     }
 };

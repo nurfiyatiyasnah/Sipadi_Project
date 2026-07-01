@@ -34,6 +34,7 @@ class RegistrasiAnggotaTest extends TestCase
             'jenis_kelamin' => 'Laki-laki',
             'tanggal_lahir' => '2000-01-01',
             'alamat' => 'Bukittinggi',
+            'no_telepon' => '081234567890',
         ])->assertRedirect(route('register.akun'));
 
         $response = $this->post(route('register.akun.store'), [
@@ -53,9 +54,9 @@ class RegistrasiAnggotaTest extends TestCase
         $this->assertSame($anggota->nik, $eKartu->no_anggota);
         $response
             ->assertSessionHas('status', 'registration-success')
-            ->assertRedirect(route('anggota.e-kartu'));
+            ->assertRedirect(route('register.e-kartu'));
 
-        $this->get(route('anggota.e-kartu'))
+        $this->get(route('register.e-kartu'))
             ->assertOk()
             ->assertSee('E-Kartu Anggota')
             ->assertSee('E-Kartu Anggota Anda Sudah Aktif');
@@ -71,6 +72,7 @@ class RegistrasiAnggotaTest extends TestCase
             'jenis_kelamin' => 'Perempuan',
             'tanggal_lahir' => '2001-02-02',
             'alamat' => 'Bukittinggi',
+            'no_telepon' => '081234567890',
             'foto' => UploadedFile::fake()->createWithContent(
                 'siti.png',
                 base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=')
@@ -88,9 +90,9 @@ class RegistrasiAnggotaTest extends TestCase
 
         $this->assertNotNull($anggota->foto);
         Storage::disk('public')->assertExists($anggota->foto);
-        $response->assertRedirect(route('anggota.e-kartu'));
+        $response->assertRedirect(route('register.e-kartu'));
 
-        $this->get(route('anggota.e-kartu'))
+        $this->get(route('register.e-kartu'))
             ->assertOk()
             ->assertSee('storage/'.$anggota->foto, false);
     }
@@ -108,6 +110,7 @@ class RegistrasiAnggotaTest extends TestCase
             'jenis_kelamin' => 'Laki-laki',
             'tanggal_lahir' => '2000-01-01',
             'alamat' => 'Bukittinggi',
+            'no_telepon' => '081234567890',
         ]);
 
         $response
@@ -129,6 +132,7 @@ class RegistrasiAnggotaTest extends TestCase
                 'jenis_kelamin' => 'Laki-laki',
                 'tanggal_lahir' => '2000-01-01',
                 'alamat' => 'Bukittinggi',
+                'no_telepon' => '081234567890',
             ]);
 
         $response
@@ -147,6 +151,7 @@ class RegistrasiAnggotaTest extends TestCase
             'jenis_kelamin' => 'Laki-laki',
             'tanggal_lahir' => '2000-01-01',
             'alamat' => 'Bukittinggi',
+            'no_telepon' => '081234567890',
         ])->assertRedirect(route('register.akun'));
 
         $response = $this->from(route('register.akun'))->post(route('register.akun.store'), [
@@ -172,6 +177,7 @@ class RegistrasiAnggotaTest extends TestCase
             'jenis_kelamin' => 'Laki-laki',
             'tanggal_lahir' => '2000-01-01',
             'alamat' => 'Bukittinggi',
+            'no_telepon' => '081234567890',
             'foto' => UploadedFile::fake()->create('profil.png', 100),
         ])->assertRedirect(route('register.akun'));
 
@@ -204,7 +210,7 @@ class RegistrasiAnggotaTest extends TestCase
             'terms' => '1',
         ]);
 
-        $response->assertRedirect(route('anggota.e-kartu'));
+        $response->assertRedirect(route('register.e-kartu'));
 
         // Cek database
         $anggota = Anggota::where('nik', '1375010101010004')->firstOrFail();
