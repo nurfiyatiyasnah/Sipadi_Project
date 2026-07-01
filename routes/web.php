@@ -16,12 +16,12 @@ use App\Http\Controllers\PetugasPeminjamanController;
 use App\Http\Controllers\PetugasPengembalianController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StrukturOrganisasiController;
+use App\Models\AgendaEvent;
 use App\Http\Controllers\PublicAgendaController;
 use App\Http\Controllers\PublicBeritaController;
 use App\Http\Controllers\PublicKatalogController;
 use App\Http\Controllers\PublicLayananController;
 use App\Http\Controllers\PublicPengumumanController;
-use App\Models\AgendaEvent;
 use App\Models\Anggota;
 use App\Models\Berita;
 use App\Models\Buku;
@@ -194,7 +194,6 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
     Route::get('/pengembalian/{peminjaman}/proses', [PetugasPengembalianController::class, 'prosesForm'])->name('pengembalian.proses-form');
     Route::post('/pengembalian/{peminjaman}/sanksi', [PetugasPengembalianController::class, 'prosesSanksi'])->name('pengembalian.proses-sanksi');
     Route::post('/pengembalian/{peminjaman}/simpan', [PetugasPengembalianController::class, 'store'])->name('pengembalian.store');
-
     Route::get('/layanan', [LayananController::class, 'index'])->name('layanan.index');
     Route::get('/layanan/tambah', [LayananController::class, 'create'])->name('layanan.create');
     Route::post('/layanan', [LayananController::class, 'store'])->name('layanan.store');

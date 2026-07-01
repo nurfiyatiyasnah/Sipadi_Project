@@ -15,6 +15,7 @@
     <!-- Header / Navbar -->
     @include('layouts.public_navbar')
 
+
     <!-- Hero / Banner Section -->
     <section class="bg-[#04241e] text-white py-12 lg:py-20 overflow-hidden relative">
         <!-- Subtle Pattern Overlay -->
@@ -38,6 +39,7 @@
                             Literasi Digital dan Arsip Daerah: Inovasi Baru SIPADI untuk Bukittinggi
                         </h3>
                         <p class="mt-3 text-slate-500 text-sm leading-relaxed">
+                            SIPADI menghadirkan layanan perpustakaan dan arsip digital yang lebih modern, memudahkan masyarakat mengakses buku, dokumen, dan informasi literasi secara terpadu.
                             SIPADI menghadirkan layanan perpustakaan dan arsip digital yang lebih modern, memudahkan masyarakat mengakses buku, dokumen, dan information literasi secara terpadu.
                         </p>
                     </div>
