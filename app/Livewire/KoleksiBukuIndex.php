@@ -6,6 +6,7 @@ use App\Models\Buku;
 use App\Models\EksemplarBuku;
 use App\Models\KategoriBuku;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -78,6 +79,7 @@ class KoleksiBukuIndex extends Component
         }
     }
 
+    #[Layout('layouts.petugas')]
     public function render()
     {
         $query = Buku::query()
@@ -121,7 +123,6 @@ class KoleksiBukuIndex extends Component
         ];
         $stats['persen'] = round($stats['tersedia'] / max($stats['eksemplar'], 1) * 100, 1);
 
-        return view('livewire.koleksi-buku-index', compact('books', 'categories', 'stats'))
-            ->layout('layouts.petugas');
-    }
+        return view('livewire.koleksi-buku-index', compact('books', 'categories', 'stats')); 
+    }    
 }
