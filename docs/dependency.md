@@ -1,11 +1,8 @@
 # Analisis Dependency SIPADI
-
 Dokumen ini merangkum dependency, file/folder hasil instalasi, konfigurasi runtime, dan bagian aplikasi yang ditemukan pada proyek SIPADI per 30 Juni 2026.
 
 ## Sumber Analisis
-
 Analisis dilakukan dari file dan command berikut:
-
 - `composer.json` dan `composer.lock`
 - `package.json` dan `package-lock.json`
 - `php artisan about`
@@ -17,7 +14,6 @@ Analisis dilakukan dari file dan command berikut:
 File `.env` tidak dirinci di dokumen ini karena dapat berisi kredensial lokal.
 
 ## Ringkasan Stack
-
 | Area | Teknologi | Versi/Status |
 | --- | --- | --- |
 | Runtime backend | PHP | 8.2.12 |
@@ -40,11 +36,9 @@ File `.env` tidak dirinci di dokumen ini karena dapat berisi kredensial lokal.
 | Package manager frontend | NPM | 11.9.0 |
 
 ## Dependency Composer Langsung
-
 Dependency backend dipasang melalui `composer install` dan dikunci di `composer.lock`.
 
 ### Production
-
 | Package | Constraint | Versi Terpasang | Fungsi di Proyek |
 | --- | --- | --- | --- |
 | `php` | `^8.2` | 8.2.12 CLI lokal | Runtime Laravel. |
@@ -54,7 +48,6 @@ Dependency backend dipasang melalui `composer install` dan dikunci di `composer.
 | `barryvdh/laravel-dompdf` | `^3.1` | 3.1.2 | Wrapper Dompdf untuk PDF. Terpasang, tetapi pemakaian langsung belum ditemukan pada kode saat ini. |
 
 ### Development
-
 | Package | Constraint | Versi Terpasang | Fungsi di Proyek |
 | --- | --- | --- | --- |
 | `fakerphp/faker` | `^1.23` | 1.24.1 | Data palsu untuk factory dan test. |
@@ -68,9 +61,7 @@ Dependency backend dipasang melalui `composer install` dan dikunci di `composer.
 | `phpunit/phpunit` | `^11.5.50` | 11.5.55 | Framework test PHPUnit. |
 
 ### Ringkasan Composer Lock
-
 `composer.lock` mencatat 123 package total:
-
 - 84 production/transitive package.
 - 39 development/transitive package.
 - Package penting yang ikut terpasang secara transitif: `dompdf/dompdf`, `guzzlehttp/guzzle`, `monolog/monolog`, `nesbot/carbon`, `ramsey/uuid`, `symfony/*`, `league/flysystem`, `vlucas/phpdotenv`, `laravel/prompts`, dan `psy/psysh`.
@@ -78,9 +69,7 @@ Dependency backend dipasang melalui `composer install` dan dikunci di `composer.
 Lockfile adalah sumber daftar lengkap package transitif. Jangan mengubah `vendor/` secara manual; ubah dependency melalui `composer.json` lalu jalankan `composer update` atau `composer install` sesuai kebutuhan.
 
 ## Dependency NPM Langsung
-
 Dependency frontend dipasang melalui `npm install` dan dikunci di `package-lock.json`.
-
 | Package | Constraint | Versi Terpasang | Fungsi di Proyek |
 | --- | --- | --- | --- |
 | `vite` | `^7.0.7` | 7.3.5 | Build tool frontend. |
@@ -95,18 +84,15 @@ Dependency frontend dipasang melalui `npm install` dan dikunci di `package-lock.
 | `@tailwindcss/vite` | `^4.0.0` | 4.3.0 | Plugin Tailwind Vite v4. Terpasang, tetapi belum dipakai di `vite.config.js`. |
 
 ### Ringkasan NPM Lock
-
 `package-lock.json` memakai `lockfileVersion` 3 dan mencatat 231 entry package. Semua dependency NPM proyek ini berada di `devDependencies` karena aplikasi menggunakan Laravel Blade sebagai entry utama, bukan aplikasi frontend terpisah.
 
 Catatan penting:
-
 - Tailwind aktif melalui `postcss.config.js` dengan `tailwindcss` dan `autoprefixer`.
 - `vite.config.js` hanya memuat `laravel-vite-plugin`.
 - `@tailwindcss/vite` v4 terpasang, tetapi tidak aktif pada konfigurasi Vite saat ini.
 - Karena `@tailwindcss/vite` membawa paket Tailwind v4 transitif, lockfile memuat Tailwind v3 dan v4 sekaligus. Yang dipakai oleh konfigurasi proyek saat ini adalah Tailwind v3.4.19.
 
 ## File dan Folder Hasil Instalasi
-
 Folder berikut adalah hasil instalasi, build, cache, atau runtime generated files.
 
 | Path | Isi | Status |
@@ -120,7 +106,6 @@ Folder berikut adalah hasil instalasi, build, cache, atau runtime generated file
 | `storage/logs/` | 3 file | Log aplikasi Laravel. |
 
 Folder yang biasanya dikontrol source code:
-
 | Root | Folder | File | Keterangan |
 | --- | ---: | ---: | --- |
 | `app` | 11 | 78 | Kode aplikasi utama. |
@@ -134,14 +119,11 @@ Folder yang biasanya dikontrol source code:
 | `tests` | 3 | 26 | Test PHPUnit. |
 
 ## Konfigurasi Build Frontend
-
 Entry Vite:
-
 - `resources/css/app.css`
 - `resources/js/app.js`
 
 Konfigurasi terkait:
-
 - `vite.config.js` memakai `laravel-vite-plugin` dengan refresh otomatis.
 - `resources/css/app.css` berisi direktif `@tailwind base`, `@tailwind components`, dan `@tailwind utilities`.
 - `tailwind.config.js` memindai Blade di `resources/views/**/*.blade.php`, view pagination Laravel, dan compiled views di `storage/framework/views/*.php`.
@@ -150,7 +132,6 @@ Konfigurasi terkait:
 - `resources/js/bootstrap.js` memasang Axios ke `window.axios` dan header `X-Requested-With`.
 
 ## Struktur Aplikasi Laravel
-
 Ringkasan file di folder `app`:
 
 | Area | Jumlah File | Catatan |
@@ -165,11 +146,9 @@ Ringkasan file di folder `app`:
 | Other App Classes | 1 | `EKartuPngRenderer`. |
 
 ## Route dan Modul Fitur
-
 `php artisan route:list --except-vendor` menemukan 93 route aplikasi.
 
 Modul public:
-
 - Landing page.
 - Berita public.
 - Katalog public.
@@ -177,7 +156,6 @@ Modul public:
 - Pelacakan aduan.
 
 Modul anggota:
-
 - Dashboard anggota.
 - Peminjaman saya.
 - E-kartu.
@@ -186,7 +164,6 @@ Modul anggota:
 - Notifikasi anggota.
 
 Modul petugas:
-
 - Dashboard petugas.
 - Manajemen aduan dan arsip.
 - Manajemen anggota.
@@ -200,17 +177,14 @@ Modul petugas:
 Autentikasi menggunakan route Breeze dengan login, register bertahap, reset password, verifikasi email, konfirmasi password, update password, dan logout.
 
 ## Database dan Migration
-
 Status migrasi lokal: 50 migration sudah `Ran`.
 
 Koneksi aktif dari konfigurasi lokal:
-
 - Database: `pgsql`
 - Queue: `database`
 - Session: `database`
 
 Kelompok tabel dari migration:
-
 | Kelompok | Tabel/Fungsi |
 | --- | --- |
 | Auth dan role | `users`, `roles`, kolom role user, support auth tambahan. |
@@ -227,20 +201,16 @@ Kelompok tabel dari migration:
 Factory tersedia untuk beberapa entitas utama seperti `User`, `Anggota`, `Petugas`, `Buku`, `EksemplarBuku`, `KategoriBuku`, `Berita`, `KategoriBerita`, dan `EKartuAnggota`.
 
 Seeder yang ditemukan:
-
 - `DatabaseSeeder`
 - `KatalogSeeder`
 
 ## Storage dan File Upload
-
 Konfigurasi filesystem menggunakan disk:
-
 - `local`: `storage/app/private`
 - `public`: `storage/app/public`, diekspos melalui `public/storage`
 - `s3`: tersedia di konfigurasi, tetapi bergantung pada environment AWS
 
 Pemakaian storage yang ditemukan:
-
 - Upload gambar berita.
 - Upload gambar pengumuman dan lampiran pengumuman.
 - Upload gambar agenda.
@@ -254,15 +224,12 @@ Pemakaian storage yang ditemukan:
 Dependency PDF `barryvdh/laravel-dompdf` dan `dompdf/dompdf` sudah terpasang.
 
 Kondisi pemakaian saat ini:
-
 - Belum ditemukan pemanggilan langsung `Dompdf`, `Pdf`, atau facade PDF pada kode aplikasi.
 - `EKartuController::download()` saat ini menghasilkan file `image/png` dari `App\EKartuPngRenderer`, bukan PDF.
 - Beberapa view masih menampilkan teks terkait PDF, sehingga dependency Dompdf kemungkinan disiapkan untuk kebutuhan export PDF berikutnya.
 
 ## Laravel Boost dan MCP
-
 Proyek memiliki konfigurasi Laravel Boost:
-
 - `.mcp.json` mendaftarkan server MCP `laravel-boost` dengan command `php artisan boost:mcp`.
 - `boost.json` mengaktifkan guideline, MCP, dan skill:
   - `laravel-best-practices`
@@ -270,17 +237,14 @@ Proyek memiliki konfigurasi Laravel Boost:
   - `tailwindcss-development`
 
 Package terkait Boost yang terpasang:
-
 - `laravel/boost`
 - `laravel/mcp`
 - `laravel/roster`
 
 ## Testing
-
 Testing menggunakan PHPUnit.
 
 Ringkasan:
-
 - 26 file test.
 - 50 migration tersedia dan seluruhnya sudah berjalan di database lokal.
 - `phpunit.xml` memakai SQLite in-memory untuk environment testing.
@@ -293,14 +257,12 @@ Ringkasan:
   - `MAIL_MAILER=array`
 
 Command yang relevan:
-
 ```bash
 php artisan test --compact
 vendor/bin/pint --dirty --format agent
 ```
 
 ## Composer Scripts
-
 Script penting dari `composer.json`:
 
 | Script | Fungsi |
@@ -312,7 +274,6 @@ Script penting dari `composer.json`:
 | `post-update-cmd` | Publish Laravel assets dan menjalankan `php artisan boost:update`. |
 
 ## NPM Scripts
-
 Script dari `package.json`:
 
 | Script | Fungsi |
@@ -321,7 +282,6 @@ Script dari `package.json`:
 | `npm run build` | Build asset production ke `public/build`. |
 
 ## Catatan Pemeliharaan
-
 - `composer.lock` dan `package-lock.json` wajib ikut commit agar versi dependency konsisten.
 - `vendor/`, `node_modules/`, `storage/framework/`, dan `public/build/` adalah hasil install/build/cache; jangan diedit manual.
 - Jika UI tidak berubah setelah edit Blade/CSS/JS, jalankan `npm run dev` saat development atau `npm run build` untuk output production.

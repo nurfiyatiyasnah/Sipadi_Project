@@ -1,11 +1,7 @@
 # Daftar Fitur SIPADI
-
-Dokumen ini merangkum fitur SIPADI berdasarkan struktur route, controller, Livewire component, view, model, seeder, dan test yang ada di proyek per 30 Juni 2026.
-
 SIPADI adalah aplikasi Sistem Informasi Perpustakaan Digital untuk pengunjung, anggota, dan petugas perpustakaan. Fitur utama aplikasi mencakup publikasi informasi perpustakaan, katalog buku, registrasi anggota, e-kartu, peminjaman, pengembalian, aduan, notifikasi, dan pengelolaan konten.
 
 ## Ringkasan Aktor
-
 | Aktor | Deskripsi | Akses Utama |
 | --- | --- | --- |
 | Pengunjung | Pengguna belum login yang mengakses informasi public. | Landing page, katalog, berita, agenda, tracking aduan. |
@@ -13,12 +9,10 @@ SIPADI adalah aplikasi Sistem Informasi Perpustakaan Digital untuk pengunjung, a
 | Petugas | Pengelola sistem dengan role `Petugas`. | Dashboard petugas, anggota, koleksi buku, berita, agenda, pengumuman, aduan, peminjaman, pengembalian, export laporan. |
 
 Role aplikasi memakai middleware `role`:
-
 - `role:Anggota` untuk area anggota.
 - `role:Petugas` untuk area petugas/admin.
 
 ## Ringkasan Route
-
 Route aplikasi aktif berjumlah 93 route non-vendor.
 
 | Kelompok Route | Prefix/Contoh | Modul |
@@ -32,31 +26,19 @@ Route aplikasi aktif berjumlah 93 route non-vendor.
 ## Fitur Public
 
 ### Landing Page
-
 Halaman utama menampilkan informasi ringkas aplikasi dan data yang diambil dari database.
 
 Fitur:
-
 - Menampilkan berita terbaru yang sudah terbit.
 - Menampilkan agenda/event terbaru dengan status terbit.
 - Menampilkan statistik koleksi buku, jumlah eksemplar, dan anggota aktif.
 - Menampilkan pilihan buku terbaru beserta kategori dan ketersediaan eksemplar.
 - Menjadi pintu masuk ke katalog, berita, agenda, login, dan registrasi.
 
-Route:
-
-- `GET /`
-
-Controller/handler:
-
-- Closure di `routes/web.php`
-
 ### Katalog Public
-
 Katalog public digunakan pengunjung dan anggota untuk mencari buku.
 
 Fitur:
-
 - Menampilkan daftar buku dengan pagination 12 item per halaman.
 - Pencarian berdasarkan judul, penulis, dan ISBN.
 - Filter kategori.
@@ -74,99 +56,41 @@ Fitur:
 - Menampilkan rekomendasi buku dari kategori yang sama.
 - Menampilkan lokasi rak dari eksemplar pertama jika tersedia.
 
-Route:
-
-- `GET /katalog`
-- `GET /katalog/{buku}`
-
-Controller:
-
-- `PublicKatalogController@index`
-- `PublicKatalogController@show`
-
 ### Berita Public
-
 Fitur:
-
 - Menampilkan daftar berita yang sudah diterbitkan.
 - Menampilkan detail berita berdasarkan slug.
 - Menampilkan kategori berita.
 - Mendukung tampilan berita unggulan dan berita terbaru melalui view public.
 
-Route:
-
-- `GET /berita`
-- `GET /berita/{slug}`
-
-Controller:
-
-- `PublicBeritaController@index`
-- `PublicBeritaController@show`
-
 ### Agenda Public
-
 Fitur:
-
 - Menampilkan daftar agenda/event public.
 - Menampilkan detail agenda berdasarkan slug.
 - Menampilkan agenda berstatus terbit.
 - View agenda public memiliki logika tampilan kalender/list berbasis Alpine.js.
 
-Route:
-
-- `GET /agenda`
-- `GET /agenda/{slug}`
-
-Controller:
-
-- `PublicAgendaController@index`
-- `PublicAgendaController@show`
-
 ### Pelacakan Aduan
-
 Fitur:
-
 - Pengguna dapat melacak aduan berdasarkan kode tiket.
 - Menampilkan data aduan dan tanggapan petugas jika tiket ditemukan.
 - Kode tiket memakai format `AD-YYYY-MM-XXX`.
 
-Route:
-
-- `GET /aduan/lacak`
-
-Controller:
-
-- `AduanController@track`
-
 ## Fitur Autentikasi dan Registrasi
-
 Autentikasi menggunakan scaffolding Laravel Breeze yang telah disesuaikan untuk kebutuhan anggota perpustakaan.
 
 ### Login dan Logout
-
 Fitur:
-
 - Login menggunakan email dan password.
 - Update waktu login terakhir.
 - Menolak login akun nonaktif.
 - Logout dengan invalidasi session.
-
-Route:
-
-- `GET /login`
-- `POST /login`
-- `POST /logout`
-
-Controller:
-
-- `AuthenticatedSessionController`
 
 ### Registrasi Anggota Bertahap
 
 Registrasi anggota dilakukan dalam dua tahap.
 
 Tahap 1, data diri:
-
 - NIK.
 - Nama lengkap.
 - Jenis kelamin.
@@ -176,12 +100,13 @@ Tahap 1, data diri:
 - Foto anggota opsional.
 
 Tahap 2, data akun:
-
 - Email.
 - Password.
 
-Fitur:
+Tahap 3, E-kartu:
+- Mendownload E-kartu
 
+Fitur:
 - Data tahap pertama disimpan sementara di session.
 - Foto sementara disimpan di `registrasi/temp`.
 - Setelah akun dibuat, foto dipindahkan ke `anggota/foto`.
@@ -190,23 +115,8 @@ Fitur:
 - User langsung login setelah registrasi berhasil.
 - User diarahkan ke halaman e-kartu setelah registrasi.
 
-Route:
-
-- `GET /register`
-- `POST /register`
-- `GET /register/akun`
-- `POST /register/akun`
-- `GET /register/e-kartu`
-- `GET /register/e-kartu/login`
-
-Controller:
-
-- `RegisteredUserController`
-
 ### Reset Password dan Verifikasi Email
-
 Fitur:
-
 - Permintaan reset password.
 - Reset password menggunakan token.
 - Verifikasi email dengan signed URL.
@@ -214,77 +124,18 @@ Fitur:
 - Konfirmasi password.
 - Update password.
 
-Route:
-
-- `GET /forgot-password`
-- `POST /forgot-password`
-- `GET /reset-password/{token}`
-- `POST /reset-password`
-- `GET /verify-email`
-- `GET /verify-email/{id}/{hash}`
-- `POST /email/verification-notification`
-- `GET /confirm-password`
-- `POST /confirm-password`
-- `PUT /password`
-
-Controller:
-
-- `PasswordResetLinkController`
-- `NewPasswordController`
-- `EmailVerificationPromptController`
-- `VerifyEmailController`
-- `EmailVerificationNotificationController`
-- `ConfirmablePasswordController`
-- `PasswordController`
-
 ## Fitur Anggota
 
-### Dashboard Anggota
-
-Fitur:
-
-- Sapaan dinamis berdasarkan waktu:
-  - pagi
-  - siang
-  - sore
-  - malam
-- Menampilkan buku yang sedang dipinjam.
-- Menampilkan sisa hari menuju jatuh tempo.
-- Menampilkan buku yang menunggu pengambilan.
-- Menampilkan notifikasi terbaru yang belum dibaca.
-- Menampilkan rekomendasi buku aktif terbaru.
-
-Route:
-
-- `GET /beranda`
-
-Catatan:
-
-- Route `anggota.dashboard` saat ini mengarah ke landing page.
-- Method `AnggotaDashboardController@index` tersedia untuk dashboard anggota, tetapi route aktif `/beranda` melakukan redirect ke landing.
-
 ### Peminjaman Saya
-
 Fitur:
-
 - Menampilkan riwayat peminjaman anggota.
 - Menampilkan status setiap peminjaman.
 - Menampilkan detail buku pada setiap transaksi.
 - Menampilkan jadwal pengambilan jika peminjaman sudah disetujui.
 - Mendukung auto-open tiket pengambilan melalui query `ticket`.
 
-Route:
-
-- `GET /peminjaman-saya`
-
-Controller:
-
-- `AnggotaDashboardController@peminjamanSaya`
-
 ### Pengajuan Peminjaman Buku
-
 Fitur:
-
 - Anggota dapat mengajukan peminjaman dari detail katalog.
 - Sistem memvalidasi:
   - user harus memiliki data anggota
@@ -299,20 +150,8 @@ Fitur:
 - Sistem membuat record `peminjaman` dan `detail_peminjaman`.
 - Status awal pengajuan adalah `diajukan`.
 
-Route:
-
-- `GET /peminjaman/{buku}/ajukan`
-- `POST /peminjaman/{buku}/ajukan`
-
-Controller:
-
-- `PengajuanPeminjamanController@create`
-- `PengajuanPeminjamanController@store`
-
 ### E-Kartu Anggota
-
 Fitur:
-
 - Menampilkan e-kartu anggota.
 - Membuat e-kartu otomatis jika belum ada.
 - Nomor anggota berasal dari NIK/no anggota.
@@ -320,24 +159,8 @@ Fitur:
 - Masa berlaku default diambil dari `config/sipadi.php`.
 - Download e-kartu sebagai file PNG.
 
-Route:
-
-- `GET /e-kartu`
-- `GET /e-kartu/download`
-
-Controller:
-
-- `EKartuController@show`
-- `EKartuController@download`
-
-Renderer:
-
-- `App\EKartuPngRenderer`
-
 ### Aduan Anggota
-
 Fitur:
-
 - Anggota login dapat mengirim aduan.
 - Validasi kategori aduan dan isi aduan.
 - Lampiran opsional dengan format:
@@ -351,60 +174,24 @@ Fitur:
 - Prioritas awal aduan adalah `sedang`.
 - Setelah submit, anggota diarahkan ke halaman lacak aduan.
 
-Route:
-
-- `GET /aduan/tambah`
-- `POST /aduan/tambah`
-
-Controller:
-
-- `AduanController@create`
-- `AduanController@store`
-
 ### Notifikasi Anggota
-
 Fitur:
-
 - Menampilkan daftar notifikasi anggota.
 - Menandai notifikasi sebagai dibaca.
 - Notifikasi peminjaman disetujui dapat mengarahkan anggota ke tiket pengambilan.
 - Akses notifikasi dibatasi ke pemilik notifikasi.
 
-Route:
-
-- `GET /anggota/notifikasi`
-- `GET /anggota/notifikasi/{notifikasi}`
-
-Controller:
-
-- `AnggotaDashboardController@indexNotifikasi`
-- `AnggotaDashboardController@readNotifikasi`
-
 ### Profil Anggota
-
 Fitur:
-
 - Edit informasi profil.
 - Update password.
 - Hapus akun.
 - View profil anggota juga mendukung tampilan QR/e-kartu melalui modal berbasis Alpine.js.
 
-Route:
-
-- `GET /profile`
-- `PATCH /profile`
-- `DELETE /profile`
-
-Controller:
-
-- `ProfileController`
-
 ## Fitur Petugas
 
 ### Dashboard Petugas
-
 Fitur:
-
 - Menampilkan statistik:
   - total anggota
   - koleksi buku
@@ -422,18 +209,8 @@ Fitur:
 - Menampilkan peminjaman terbaru.
 - Menampilkan agenda terdekat.
 
-Route:
-
-- `GET /petugas/dashboard`
-
-Controller:
-
-- `DashboardController@index`
-
 ### Manajemen Anggota
-
 Fitur:
-
 - Menampilkan daftar anggota dengan pagination.
 - Pencarian berdasarkan nama atau NIK.
 - Filter status anggota.
@@ -459,24 +236,8 @@ Fitur:
   - diblokir
 - Status `Diblokir` membuat status anggota menjadi nonaktif.
 
-Route:
-
-- `GET /petugas/anggota`
-- `GET /petugas/anggota/{anggota}`
-- `GET /petugas/anggota/{anggota}/edit`
-- `PUT /petugas/anggota/{anggota}`
-
-Controller:
-
-- `AnggotaController@index`
-- `AnggotaController@show`
-- `AnggotaController@edit`
-- `AnggotaController@update`
-
 ### Manajemen Koleksi Buku
-
 Fitur daftar koleksi:
-
 - Menampilkan daftar buku dengan Livewire.
 - Pencarian berdasarkan:
   - judul
@@ -494,19 +255,7 @@ Fitur daftar koleksi:
   - persentase ketersediaan
 - Export data koleksi ke CSV.
 
-Route:
-
-- `GET /petugas/koleksi`
-- `GET /petugas/koleksi/export`
-
-Controller/Component:
-
-- `DashboardController@koleksi`
-- `DashboardController@export`
-- `KoleksiBukuIndex`
-
 Fitur tambah buku:
-
 - Input judul, ISBN, penulis, penerbit, kategori, tahun terbit, deskripsi, cover, dan stok awal.
 - Validasi ISBN unik.
 - Validasi cover image.
@@ -514,44 +263,17 @@ Fitur tambah buku:
 - Membuat eksemplar awal berdasarkan stok awal.
 - Membuat mutasi stok awal.
 
-Route:
-
-- `GET /petugas/buku/tambah`
-
-Component:
-
-- `BukuCreate`
-
 Fitur edit buku:
-
 - Edit data bibliografi.
 - Ganti cover buku.
 - Menghapus cover lama jika cover lokal diganti.
 
-Route:
-
-- `GET /petugas/buku/{id}/edit`
-
-Component:
-
-- `BukuEdit`
-
 Fitur detail buku:
-
 - Menampilkan detail buku.
 - Menampilkan eksemplar.
 - Menampilkan riwayat peminjaman terkait buku.
 
-Route:
-
-- `GET /petugas/buku/{id}`
-
-Component:
-
-- `BukuDetail`
-
 Fitur tambah stok:
-
 - Menambah eksemplar buku.
 - Input jumlah stok tambahan.
 - Input sumber perolehan.
@@ -561,28 +283,13 @@ Fitur tambah stok:
 - Mencatat mutasi stok.
 - Menggunakan transaksi dan lock pada buku untuk mencegah konflik penambahan stok.
 
-Route:
-
-- `GET /petugas/buku/{id}/tambah-stok`
-
-Component:
-
-- `TambahStokBuku`
-
 Fitur hapus/nonaktifkan buku:
-
 - Jika buku sedang dipinjam, buku tidak dapat dihapus atau dinonaktifkan.
 - Jika buku memiliki eksemplar atau riwayat peminjaman, status katalog diubah menjadi nonaktif.
 - Jika tidak memiliki eksemplar/riwayat, buku dapat dihapus permanen.
 
-Component:
-
-- `KoleksiBukuIndex@deleteBook`
-
 ### Manajemen Berita
-
 Fitur:
-
 - Menampilkan daftar berita dengan pagination.
 - Pencarian berita.
 - Filter kategori.
@@ -596,24 +303,8 @@ Fitur:
 - Publish berita draft.
 - Hapus berita dan gambar terkait.
 
-Route:
-
-- `GET /petugas/berita`
-- `GET /petugas/berita/tambah`
-- `POST /petugas/berita`
-- `GET /petugas/berita/{berita}/edit`
-- `PUT /petugas/berita/{berita}`
-- `PATCH /petugas/berita/{berita}/publish`
-- `DELETE /petugas/berita/{berita}`
-
-Controller:
-
-- `BeritaController`
-
 ### Manajemen Agenda/Event
-
 Fitur:
-
 - Menampilkan daftar agenda/event.
 - Pencarian berdasarkan judul.
 - Filter status.
@@ -627,24 +318,8 @@ Fitur:
 - Melihat detail agenda dan agenda terkait.
 - Hapus agenda dan gambar terkait.
 
-Route:
-
-- `GET /petugas/agenda`
-- `GET /petugas/agenda/tambah`
-- `POST /petugas/agenda`
-- `GET /petugas/agenda/{agenda}`
-- `GET /petugas/agenda/{agenda}/edit`
-- `PUT /petugas/agenda/{agenda}`
-- `DELETE /petugas/agenda/{agenda}`
-
-Controller:
-
-- `AgendaEventController`
-
 ### Manajemen Pengumuman
-
 Fitur:
-
 - Menampilkan daftar pengumuman.
 - Pencarian berdasarkan judul atau isi.
 - Filter status:
@@ -667,24 +342,8 @@ Fitur:
 - Menampilkan pengumuman terbaru lain.
 - Hapus pengumuman, gambar, dan lampiran terkait.
 
-Route:
-
-- `GET /petugas/pengumuman`
-- `GET /petugas/pengumuman/tambah`
-- `POST /petugas/pengumuman`
-- `GET /petugas/pengumuman/{pengumuman}`
-- `GET /petugas/pengumuman/{pengumuman}/edit`
-- `PUT /petugas/pengumuman/{pengumuman}`
-- `DELETE /petugas/pengumuman/{pengumuman}`
-
-Controller:
-
-- `PengumumanController`
-
 ### Manajemen Aduan
-
 Fitur:
-
 - Menampilkan daftar aduan anggota.
 - Filter status:
   - menunggu
@@ -702,23 +361,8 @@ Fitur:
 - Mengembalikan aduan dari arsip.
 - Menampilkan daftar arsip aduan.
 
-Route:
-
-- `GET /petugas/aduan`
-- `GET /petugas/aduan/arsip`
-- `GET /petugas/aduan/{aduan}`
-- `GET /petugas/aduan/{aduan}/tanggapi`
-- `POST /petugas/aduan/{aduan}/tanggapi`
-- `POST /petugas/aduan/{aduan}/arsip`
-
-Controller:
-
-- `AduanController`
-
 ### Manajemen Peminjaman
-
 Fitur:
-
 - Menampilkan daftar pengajuan peminjaman.
 - Filter status:
   - menunggu
@@ -750,24 +394,8 @@ Fitur:
 - Mengubah status eksemplar menjadi `dipinjam`.
 - Export daftar peminjaman ke CSV.
 
-Route:
-
-- `GET /petugas/peminjaman`
-- `GET /petugas/peminjaman/export`
-- `GET /petugas/peminjaman/{peminjaman}`
-- `POST /petugas/peminjaman/{peminjaman}/tolak`
-- `GET /petugas/peminjaman/{peminjaman}/setujui`
-- `POST /petugas/peminjaman/{peminjaman}/setujui`
-- `POST /petugas/peminjaman/{peminjaman}/ambil`
-
-Controller:
-
-- `PetugasPeminjamanController`
-
 ### Manajemen Pengembalian
-
 Fitur:
-
 - Menampilkan daftar peminjaman aktif/terlambat.
 - Filter status:
   - semua
@@ -808,22 +436,7 @@ Fitur:
 - Filter riwayat berdasarkan status peminjaman, status pengembalian, sanksi, kondisi buku, dan rentang tanggal.
 - Export riwayat pengembalian ke CSV.
 
-Route:
-
-- `GET /petugas/pengembalian`
-- `GET /petugas/pengembalian/riwayat`
-- `GET /petugas/pengembalian/export-csv`
-- `GET /petugas/pengembalian/{peminjaman}`
-- `GET /petugas/pengembalian/{peminjaman}/proses`
-- `POST /petugas/pengembalian/{peminjaman}/sanksi`
-- `POST /petugas/pengembalian/{peminjaman}/simpan`
-
-Controller:
-
-- `PetugasPengembalianController`
-
 ## Laporan dan Export
-
 | Fitur | Format | Route | Isi Utama |
 | --- | --- | --- | --- |
 | Export koleksi buku | CSV | `/petugas/koleksi/export` | Kode, judul, ISBN, penulis, kategori, total eksemplar, tersedia, status katalog. |
@@ -831,18 +444,14 @@ Controller:
 | Export pengembalian | CSV | `/petugas/pengembalian/export-csv` | Kode transaksi, anggota, buku, tanggal pinjam, tanggal kembali, keterlambatan, kondisi buku, sanksi. |
 
 ## Notifikasi Sistem
-
 Notifikasi disimpan di tabel `notifikasi`.
-
 Jenis notifikasi yang tampak di kode:
-
 - `peminjaman_ditolak`
 - `peminjaman_disetujui`
 - `pengembalian_berhasil`
 - `sanksi_aktif`
 
 Fitur notifikasi:
-
 - Status baca:
   - belum dibaca
   - dibaca
@@ -855,7 +464,6 @@ Fitur notifikasi:
 ## Aturan Bisnis Utama
 
 ### Keanggotaan
-
 - Anggota baru otomatis berstatus `aktif`.
 - Nomor anggota menggunakan NIK.
 - E-kartu otomatis dibuat saat registrasi.
@@ -863,7 +471,6 @@ Fitur notifikasi:
 - Anggota diblokir akan diperlakukan sebagai nonaktif.
 
 ### Peminjaman
-
 - Hanya anggota aktif yang dapat mengajukan peminjaman.
 - Anggota dengan sanksi aktif tidak dapat mengajukan peminjaman.
 - Anggota tidak dapat mengajukan buku yang sama jika masih memiliki pengajuan/peminjaman aktif.
@@ -874,22 +481,18 @@ Fitur notifikasi:
 - Saat buku diambil, peminjaman menjadi `aktif` dan eksemplar menjadi `dipinjam`.
 
 ### Pengembalian
-
 - Pengembalian hanya diproses untuk status `aktif` atau `terlambat`.
 - Jika terlambat, sistem menghitung total hari terlambat.
 - Sanksi keterlambatan memakai pola 1 hari terlambat = 1 hari nonaktif peminjaman.
 - Kondisi buku menentukan status eksemplar setelah kembali.
 
 ### Aduan
-
 - Hanya anggota terdaftar yang dapat membuat aduan.
 - Aduan dapat dilacak dengan kode tiket.
 - Petugas dapat menanggapi, menyelesaikan, mengarsipkan, dan mengembalikan aduan dari arsip.
 
 ## Data Awal dari Seeder
-
 Seeder utama membuat data awal berikut:
-
 - Aturan peminjaman default:
   - lama pinjam 14 hari
   - maksimal 5 buku per peminjaman
@@ -911,9 +514,7 @@ Seeder utama membuat data awal berikut:
 - Contoh katalog buku dan eksemplar.
 
 ## Test Coverage yang Tersedia
-
 File test fitur yang ditemukan:
-
 - `AduanTest`
 - `AnggotaManagementTest`
 - `AnggotaNotifikasiTest`
@@ -945,9 +546,7 @@ php artisan test --compact
 ```
 
 ## Catatan Status Fitur
-
 Fitur yang sudah tampak jelas dari route/controller/view:
-
 - Public landing page.
 - Public katalog, berita, dan agenda.
 - Registrasi anggota.
@@ -967,7 +566,6 @@ Fitur yang sudah tampak jelas dari route/controller/view:
 - Export CSV koleksi, peminjaman, dan pengembalian.
 
 Fitur yang datanya/modelnya ada, tetapi route CRUD khusus belum tampak pada route aktif:
-
 - Manajemen fasilitas.
 - Manajemen layanan.
 - Manajemen prestasi.
@@ -977,7 +575,6 @@ Fitur yang datanya/modelnya ada, tetapi route CRUD khusus belum tampak pada rout
 - Manajemen role/permission dinamis dari UI.
 
 Fitur yang disebut di README tetapi belum terlihat sebagai modul route lengkap:
-
 - Profil perpustakaan.
 - Struktur organisasi.
 - Struktur kepegawaian.
@@ -986,7 +583,6 @@ Fitur yang disebut di README tetapi belum terlihat sebagai modul route lengkap:
 - Export laporan PDF.
 
 ## Matriks Akses Ringkas
-
 | Fitur | Pengunjung | Anggota | Petugas |
 | --- | --- | --- | --- |
 | Landing page | Ya | Ya | Ya |
@@ -1013,7 +609,6 @@ Fitur yang disebut di README tetapi belum terlihat sebagai modul route lengkap:
 ## Alur Utama Sistem
 
 ### Alur Registrasi Anggota
-
 1. Pengunjung membuka halaman registrasi.
 2. Pengunjung mengisi data diri.
 3. Sistem menyimpan data diri sementara di session.
@@ -1023,7 +618,6 @@ Fitur yang disebut di README tetapi belum terlihat sebagai modul route lengkap:
 7. Anggota diarahkan ke halaman e-kartu.
 
 ### Alur Peminjaman Buku
-
 1. Anggota membuka katalog.
 2. Anggota mencari dan memilih buku.
 3. Anggota membuka form pengajuan peminjaman.
@@ -1037,7 +631,6 @@ Fitur yang disebut di README tetapi belum terlihat sebagai modul route lengkap:
 11. Status peminjaman menjadi aktif.
 
 ### Alur Pengembalian Buku
-
 1. Petugas membuka daftar pengembalian.
 2. Petugas memilih peminjaman aktif/terlambat.
 3. Petugas mengisi tanggal pengembalian dan kondisi buku.
@@ -1049,7 +642,6 @@ Fitur yang disebut di README tetapi belum terlihat sebagai modul route lengkap:
 9. Sistem mengirim notifikasi ke anggota.
 
 ### Alur Aduan
-
 1. Anggota membuka form aduan.
 2. Anggota memilih kategori dan menulis isi aduan.
 3. Anggota menambahkan lampiran opsional.
