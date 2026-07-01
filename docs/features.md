@@ -1,4 +1,4 @@
-# Daftar Fitur SIPADI
+y# Daftar Fitur SIPADI
 
 Dokumen ini merangkum fitur SIPADI berdasarkan struktur route, controller, Livewire component, view, model, seeder, dan test yang ada di proyek per 30 Juni 2026.
 

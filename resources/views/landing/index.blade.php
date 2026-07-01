@@ -15,46 +15,6 @@
     <!-- Header / Navbar -->
     @include('layouts.public_navbar')
 
-            <!-- Nav Links -->
-            <nav class="hidden md:flex items-center gap-8 text-sm font-semibold">
-                <a href="{{ route('landing') }}" class="text-[#ffdc7c] border-b-2 border-[#ffdc7c] pb-1">Beranda</a>
-                <a href="#koleksi" class="text-slate-300 hover:text-white transition">Katalog</a>
-                <a href="#koleksi" class="text-slate-300 hover:text-white transition">Layanan</a>
-                <a href="#kontak" class="text-slate-300 hover:text-white transition">Fasilitas</a>
-                <a href="#berita" class="text-slate-300 hover:text-white transition">Berita</a>
-                <a href="#agenda" class="text-slate-300 hover:text-white transition">Agenda</a>
-            </nav>
-
-            <!-- Action Buttons -->
-            <div class="flex items-center gap-4">
-                @auth
-                    @if (Auth::user()->isPetugas())
-                        <a href="{{ route('petugas.dashboard') }}" class="rounded-xl bg-[#ffdc7c] px-5 py-2.5 text-sm font-bold text-[#04241e] hover:bg-[#ffe399] transition shadow-md shadow-[#ffdc7c]/10">
-                            Dashboard
-                        </a>
-                    @else
-                        <a href="{{ route('anggota.e-kartu') }}" class="rounded-xl bg-[#ffdc7c] px-5 py-2.5 text-sm font-bold text-[#04241e] hover:bg-[#ffe399] transition shadow-md shadow-[#ffdc7c]/10">
-                            E-Kartu
-                        </a>
-                    @endif
-                    
-                    <form method="POST" action="{{ route('logout') }}" class="inline">
-                        @csrf
-                        <button type="submit" class="rounded-xl border border-slate-500 px-5 py-2.5 text-sm font-semibold hover:bg-white/10 transition">
-                            Keluar
-                        </button>
-                    </form>
-                @else
-                    <a href="{{ route('login') }}" class="rounded-xl border border-slate-500 px-5 py-2.5 text-sm font-semibold hover:bg-white/10 transition">
-                        Masuk
-                    </a>
-                    <a href="{{ route('register') }}" class="rounded-xl bg-[#ffdc7c] px-5 py-2.5 text-sm font-bold text-[#04241e] hover:bg-[#ffe399] transition shadow-md shadow-[#ffdc7c]/10">
-                        Daftar
-                    </a>
-                @endauth
-            </div>
-        </div>
-    </header>
 
     <!-- Hero / Banner Section -->
     <section class="bg-[#04241e] text-white py-12 lg:py-20 overflow-hidden relative">

@@ -20,6 +20,7 @@ use App\Http\Controllers\PublicAgendaController;
 use App\Http\Controllers\PublicBeritaController;
 use App\Http\Controllers\PublicKatalogController;
 use App\Http\Controllers\PublicLayananController;
+use App\Http\Controllers\PublicPengumumanController;
 use App\Models\Anggota;
 use App\Models\Berita;
 use App\Models\Buku;
@@ -78,6 +79,8 @@ Route::get('/agenda', [PublicAgendaController::class, 'index'])->name('agenda.in
 Route::get('/agenda/{slug}', [PublicAgendaController::class, 'show'])->name('agenda.show');
 Route::get('/layanan', [PublicLayananController::class, 'index'])->name('layanan.index');
 Route::get('/layanan/{layanan:slug}', [PublicLayananController::class, 'show'])->name('layanan.show');
+Route::get('/pengumuman', [PublicPengumumanController::class, 'index'])->name('pengumuman.public.index');
+Route::get('/pengumuman/{slug}', [PublicPengumumanController::class, 'show'])->name('pengumuman.public.show');
 Route::view('/tentang-kami', 'landing.tentang')->name('tentang');
 Route::get('/aduan/lacak', [AduanController::class, 'track'])->name('aduan.track');
 

@@ -2,10 +2,8 @@
     $isBeranda = request()->routeIs('landing') || request()->routeIs('anggota.dashboard');
     $isKatalog = request()->routeIs('katalog') || request()->routeIs('katalog.show');
     $isLayanan = request()->routeIs('layanan.*');
-    $isInformasiActive = request()->routeIs('berita.*') || request()->routeIs('agenda.*');
+    $isInformasiActive = request()->routeIs('berita.*') || request()->routeIs('agenda.*') || request()->routeIs('pengumuman.public.*');
     $isTentang = request()->routeIs('tentang');
-    
-    $pengumumanKategoriId = \App\Models\KategoriBerita::where('nama_kategori', 'Pengumuman')->first()?->id_kategori_berita;
 @endphp
 
 <header class="bg-[#04241e] text-white">
@@ -45,9 +43,7 @@
                      style="display: none;">
                      <a href="{{ route('berita.public.index') }}" class="block rounded-lg px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition">Berita</a>
                      <a href="{{ route('agenda.index') }}" class="block rounded-lg px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition">Agenda</a>
-                     @if($pengumumanKategoriId)
-                         <a href="{{ route('berita.public.index', ['kategori' => $pengumumanKategoriId]) }}" class="block rounded-lg px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition">Pengumuman</a>
-                     @endif
+                     <a href="{{ route('pengumuman.public.index') }}" class="block rounded-lg px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition">Pengumuman</a>
                 </div>
             </div>
 
