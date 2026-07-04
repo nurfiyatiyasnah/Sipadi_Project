@@ -15,12 +15,13 @@ use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\PetugasPeminjamanController;
 use App\Http\Controllers\PetugasPengembalianController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StrukturOrganisasiController;
+use App\Models\AgendaEvent;
 use App\Http\Controllers\PublicAgendaController;
 use App\Http\Controllers\PublicBeritaController;
 use App\Http\Controllers\PublicKatalogController;
 use App\Http\Controllers\PublicLayananController;
 use App\Http\Controllers\PublicPengumumanController;
-use App\Models\AgendaEvent;
 use App\Models\Anggota;
 use App\Models\Berita;
 use App\Models\Buku;
@@ -81,7 +82,12 @@ Route::get('/layanan', [PublicLayananController::class, 'index'])->name('layanan
 Route::get('/layanan/{layanan:slug}', [PublicLayananController::class, 'show'])->name('layanan.show');
 Route::get('/pengumuman', [PublicPengumumanController::class, 'index'])->name('pengumuman.public.index');
 Route::get('/pengumuman/{slug}', [PublicPengumumanController::class, 'show'])->name('pengumuman.public.show');
-Route::view('/tentang-kami', 'landing.tentang')->name('tentang');
+Route::get('/tentang-kami', function () {
+    $strukturOrganisasi = \App\Models\StrukturOrganisasi::orderBy('urutan')->get();
+    return view('landing.tentang', compact('strukturOrganisasi'));
+})->name('tentang');
+Route::get('/fasilitas', [\App\Http\Controllers\PublicFasilitasController::class, 'index'])->name('fasilitas.public.index');
+Route::get('/fasilitas/{id}', [\App\Http\Controllers\PublicFasilitasController::class, 'show'])->name('fasilitas.public.show');
 Route::get('/aduan/lacak', [AduanController::class, 'track'])->name('aduan.track');
 
 Route::middleware(['auth'])->get('/dashboard', function () {
@@ -157,6 +163,8 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
     Route::delete('/berita/{berita}', [BeritaController::class, 'destroy'])
         ->name('berita.destroy');
 
+    Route::resource('organisasi', StrukturOrganisasiController::class)->except(['show']);
+    Route::resource('fasilitas', App\Http\Controllers\FasilitasController::class);
     Route::get('/agenda', [AgendaEventController::class, 'index'])->name('agenda.index');
     Route::get('/agenda/tambah', [AgendaEventController::class, 'create'])->name('agenda.create');
     Route::post('/agenda', [AgendaEventController::class, 'store'])->name('agenda.store');
@@ -191,7 +199,6 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
     Route::get('/pengembalian/{peminjaman}/proses', [PetugasPengembalianController::class, 'prosesForm'])->name('pengembalian.proses-form');
     Route::post('/pengembalian/{peminjaman}/sanksi', [PetugasPengembalianController::class, 'prosesSanksi'])->name('pengembalian.proses-sanksi');
     Route::post('/pengembalian/{peminjaman}/simpan', [PetugasPengembalianController::class, 'store'])->name('pengembalian.store');
-
     Route::get('/layanan', [LayananController::class, 'index'])->name('layanan.index');
     Route::get('/layanan/tambah', [LayananController::class, 'create'])->name('layanan.create');
     Route::post('/layanan', [LayananController::class, 'store'])->name('layanan.store');

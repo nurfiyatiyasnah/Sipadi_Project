@@ -1,4 +1,7 @@
 # Daftar Fitur SIPADI
+
+Dokumen ini merangkum fitur SIPADI berdasarkan struktur route, controller, Livewire component, view, model, seeder, dan test yang ada di proyek per 30 Juni 2026.
+
 SIPADI adalah aplikasi Sistem Informasi Perpustakaan Digital untuk pengunjung, anggota, dan petugas perpustakaan. Fitur utama aplikasi mencakup publikasi informasi perpustakaan, katalog buku, registrasi anggota, e-kartu, peminjaman, pengembalian, aduan, notifikasi, dan pengelolaan konten.
 
 ## Ringkasan Aktor
