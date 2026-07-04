@@ -124,5 +124,5 @@ class KoleksiBukuIndex extends Component
         $stats['persen'] = round($stats['tersedia'] / max($stats['eksemplar'], 1) * 100, 1);
 
         return view('livewire.koleksi-buku-index', compact('books', 'categories', 'stats')); 
-    }    
+    } 
 }
