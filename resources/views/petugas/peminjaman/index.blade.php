@@ -72,6 +72,18 @@
         </div>
     @endif
 
+    @if($anggotaFilter)
+        <div class="mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-sm font-semibold flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <span>
+                Menampilkan riwayat peminjaman untuk: {{ $anggotaFilter->nama_lengkap }}
+            </span>
+            <a href="{{ route('petugas.peminjaman.index', request()->except(['id_anggota', 'page'])) }}" class="inline-flex items-center gap-2 text-[#7c6312] hover:underline">
+                <i class="fa-solid fa-filter-circle-xmark text-xs"></i>
+                Tampilkan Semua Data
+            </a>
+        </div>
+    @endif
+
     <!-- Table Section -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
         <!-- Controls Bar -->
@@ -90,6 +102,9 @@
             <form action="{{ request()->url() }}" method="GET" class="relative w-full sm:w-[320px]">
                 @if(request('status'))
                     <input type="hidden" name="status" value="{{ request('status') }}">
+                @endif
+                @if(request('id_anggota'))
+                    <input type="hidden" name="id_anggota" value="{{ request('id_anggota') }}">
                 @endif
                 <span class="absolute inset-y-0 left-3.5 flex items-center text-slate-400">
                     <i class="fa-solid fa-magnifying-glass text-xs"></i>

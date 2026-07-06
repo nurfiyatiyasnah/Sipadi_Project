@@ -96,18 +96,19 @@ class AnggotaController extends Controller
     {
         $anggota->load(['user', 'eKartuAnggota']);
 
-        // Check active sanksi to pre-select dropdown
-        $activeSanksi = $anggota->sanksi()->where('status_sanksi', 'aktif')->first();
-        $currentSanksi = 'Bersih';
-        if ($activeSanksi) {
-            if (stripos($activeSanksi->jenis_sanksi, 'Blokir') !== false) {
-                $currentSanksi = 'Diblokir';
-            } else {
-                $currentSanksi = 'Sanksi 15 Hari';
-            }
-        }
+        $activeSanksi = $anggota->sanksi()
+            ->where('status_sanksi', 'aktif')
+            ->where(function ($q) {
+                $q->whereNull('tanggal_selesai')
+                    ->orWhereDate('tanggal_selesai', '>=', today());
+            })
+            ->latest('id_sanksi_anggota')
+            ->first();
 
-        return view('anggota.edit', compact('anggota', 'currentSanksi'));
+        $statusAnggota = $this->resolveAnggotaStatus($anggota);
+        $statusSanksi = $this->resolveSanksiStatus($activeSanksi);
+
+        return view('anggota.edit', compact('anggota', 'statusAnggota', 'statusSanksi'));
     }
 
     /**
@@ -120,26 +121,13 @@ class AnggotaController extends Controller
             'email' => 'required|email|max:50|unique:users,email,'.$anggota->id_user.',id_user',
             'no_telepon' => 'required|string|max:20',
             'alamat' => 'nullable|string',
-            'status_anggota' => 'required|string|in:aktif,nonaktif,Aktif,Nonaktif',
-            'status_sanksi' => 'required|string|in:Bersih,Sanksi 15 Hari,Diblokir',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        // Force consistency between Status Anggota and Status Sanksi
-        $statusSanksi = $validated['status_sanksi'];
-        $statusAnggota = strtolower($validated['status_anggota']);
-
-        if ($statusSanksi === 'Diblokir') {
-            $statusAnggota = 'nonaktif';
-        } elseif ($statusAnggota === 'aktif' && $statusSanksi === 'Diblokir') {
-            $statusSanksi = 'Bersih';
-        }
-
-        // Update User email & status_akun
+        // Update User email
         $user = $anggota->user;
         $user->update([
             'email' => $validated['email'],
-            'status_akun' => $statusAnggota,
         ]);
 
         // Handle profile photo upload
@@ -157,55 +145,67 @@ class AnggotaController extends Controller
         if (array_key_exists('alamat', $validated)) {
             $anggota->alamat = $validated['alamat'];
         }
-        $anggota->status_anggota = $statusAnggota;
         $anggota->save();
-
-        // Handle sanksi updates
-        if ($statusSanksi === 'Bersih') {
-            // Set all active sanksi to selesai
-            $anggota->sanksi()->where('status_sanksi', 'aktif')->update([
-                'status_sanksi' => 'selesai',
-                'tanggal_selesai' => now(),
-            ]);
-        } else {
-            // Update or create active sanksi
-            $jenisSanksi = $statusSanksi;
-            $duration = null;
-            if ($statusSanksi === 'Sanksi 15 Hari') {
-                $jenisSanksi = 'Sanksi: 15 Hari';
-                $duration = 15;
-            }
-
-            $activeSanksi = $anggota->sanksi()->where('status_sanksi', 'aktif')->first();
-
-            if ($activeSanksi) {
-                $activeSanksi->update([
-                    'jenis_sanksi' => $jenisSanksi,
-                    'tanggal_mulai' => $activeSanksi->tanggal_mulai ?? now(),
-                    'tanggal_selesai' => $duration ? now()->addDays($duration) : null,
-                ]);
-            } else {
-                // If there's a peminjaman, we can associate with the latest one, otherwise leave it null (which we made nullable in migrations!)
-                $latestPeminjaman = $anggota->peminjaman()->latest('id_peminjaman')->first();
-
-                SanksiAnggota::create([
-                    'id_anggota' => $anggota->id_anggota,
-                    'id_peminjaman' => $latestPeminjaman?->id_peminjaman ?? null,
-                    'jenis_sanksi' => $jenisSanksi,
-                    'alasan' => 'Diberikan oleh administrator',
-                    'tanggal_mulai' => now(),
-                    'tanggal_selesai' => $duration ? now()->addDays($duration) : null,
-                    'status_sanksi' => 'aktif',
-                ]);
-            }
-        }
 
         if ($request->input('redirect_to') === 'index') {
             return redirect()->route('petugas.anggota.index')
-                ->with('success', 'Status anggota berhasil diperbarui');
+                ->with('success', 'Data anggota berhasil diperbarui');
         }
 
         return redirect()->route('petugas.anggota.show', $anggota->id_anggota)
             ->with('success', 'Data berhasil diperbarui');
+    }
+
+    /**
+     * @return array{label: string, class: string, description: string}
+     */
+    private function resolveAnggotaStatus(Anggota $anggota): array
+    {
+        if (strtolower((string) $anggota->status_anggota) === 'aktif') {
+            return [
+                'label' => 'Aktif',
+                'class' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
+                'description' => 'Akun anggota aktif.',
+            ];
+        }
+
+        return [
+            'label' => 'Nonaktif',
+            'class' => 'bg-rose-50 text-rose-700 border-rose-100',
+            'description' => 'Akun anggota sedang nonaktif.',
+        ];
+    }
+
+    /**
+     * @return array{label: string, class: string, description: string}
+     */
+    private function resolveSanksiStatus(?SanksiAnggota $activeSanksi): array
+    {
+        if (! $activeSanksi) {
+            return [
+                'label' => 'Bebas Sanksi',
+                'class' => 'bg-slate-100 text-slate-600 border-slate-200',
+                'description' => 'Tidak ada sanksi peminjaman aktif.',
+            ];
+        }
+
+        if (stripos((string) $activeSanksi->jenis_sanksi, 'Blokir') !== false) {
+            return [
+                'label' => 'Diblokir',
+                'class' => 'bg-rose-50 text-rose-700 border-rose-100',
+                'description' => 'Anggota sedang diblokir dari layanan peminjaman.',
+            ];
+        }
+
+        $jenisSanksi = $activeSanksi->jenis_sanksi ?: 'Sanksi peminjaman';
+        $description = $activeSanksi->tanggal_selesai
+            ? $jenisSanksi.' sampai '.$activeSanksi->tanggal_selesai->locale('id')->translatedFormat('d F Y')
+            : $jenisSanksi;
+
+        return [
+            'label' => 'Sedang Sanksi',
+            'class' => 'bg-amber-50 text-amber-700 border-amber-100',
+            'description' => $description,
+        ];
     }
 }

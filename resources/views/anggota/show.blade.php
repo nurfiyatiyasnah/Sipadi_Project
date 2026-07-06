@@ -207,7 +207,7 @@
                 </div>
                 <h3 class="text-lg font-bold text-slate-800">Riwayat Peminjaman Terakhir</h3>
             </div>
-            <a href="#" class="text-sm font-bold text-[#7c6312] hover:underline">Lihat Semua Riwayat</a>
+            <a href="{{ route('petugas.peminjaman.index', ['id_anggota' => $anggota->id_anggota]) }}" class="text-sm font-bold text-[#7c6312] hover:underline">Lihat Semua Riwayat</a>
         </div>
 
         @if ($riwayatPeminjaman->isNotEmpty())
@@ -219,7 +219,6 @@
                             <th class="pb-3 text-xs font-bold uppercase tracking-wider">Tanggal Pinjam</th>
                             <th class="pb-3 text-xs font-bold uppercase tracking-wider">Tanggal Kembali</th>
                             <th class="pb-3 text-xs font-bold uppercase tracking-wider">Status</th>
-                            <th class="pb-3 text-xs font-bold uppercase tracking-wider text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-50">
@@ -266,11 +265,6 @@
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border {{ $badgeClass }}">
                                         {{ $statusText }}
                                     </span>
-                                </td>
-                                <td class="py-4 text-right">
-                                    <button type="button" class="text-slate-400 hover:text-slate-700 p-2 rounded-lg hover:bg-slate-50 transition">
-                                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                                    </button>
                                 </td>
                             </tr>
                         @endforeach

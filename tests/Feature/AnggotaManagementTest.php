@@ -55,6 +55,16 @@ class AnggotaManagementTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Alex Jones');
         $response->assertSee($anggota->nik);
+        $response->assertDontSee('Tambah Anggota');
+        $response->assertSee(route('petugas.anggota.show', $anggota->id_anggota), false);
+        $response->assertSee('role="link"', false);
+        $response->assertDontSee('>Aksi<', false);
+        $response->assertDontSee('Lihat Detail');
+        $response->assertDontSee('Edit Anggota');
+        $response->assertDontSee('Blokir Anggota');
+        $response->assertDontSee('Buka Blokir');
+        $response->assertDontSee('name="status_anggota"', false);
+        $response->assertDontSee('name="status_sanksi"', false);
     }
 
     public function test_petugas_can_search_anggota_by_name_or_nik(): void
@@ -104,6 +114,7 @@ class AnggotaManagementTest extends TestCase
         $response->assertSee('Ahmad Ridwan');
         $response->assertSee($anggota->user->email);
         $response->assertSee('Bebas Sanksi');
+        $response->assertSee(route('petugas.peminjaman.index', ['id_anggota' => $anggota->id_anggota]), false);
     }
 
     public function test_detail_anggota_menampilkan_peminjaman_selesai_sebagai_dikembalikan(): void
@@ -142,7 +153,9 @@ class AnggotaManagementTest extends TestCase
         $response->assertOk()
             ->assertSee('Kuliner Khas Minangkabau')
             ->assertSee('Dikembalikan')
-            ->assertDontSee('Sedang Dipinjam');
+            ->assertDontSee('Sedang Dipinjam')
+            ->assertDontSee('>Aksi<', false)
+            ->assertDontSee('fa-ellipsis-vertical', false);
     }
 
     public function test_petugas_can_view_edit_form(): void
@@ -154,9 +167,34 @@ class AnggotaManagementTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Update Data Anggota');
         $response->assertSee($anggota->nama_lengkap);
+        $response->assertSee('Bebas Sanksi');
+        $response->assertDontSee('name="status_anggota"', false);
+        $response->assertDontSee('name="status_sanksi"', false);
     }
 
-    public function test_petugas_can_update_anggota_data_and_sanction_status(): void
+    public function test_edit_anggota_menampilkan_status_sanksi_otomatis(): void
+    {
+        $anggota = Anggota::factory()->create();
+
+        SanksiAnggota::create([
+            'id_anggota' => $anggota->id_anggota,
+            'id_peminjaman' => null,
+            'jenis_sanksi' => 'Nonaktif Peminjaman 3 Hari',
+            'alasan' => 'Terlambat mengembalikan buku.',
+            'tanggal_mulai' => now(),
+            'tanggal_selesai' => now()->addDays(3),
+            'status_sanksi' => 'aktif',
+        ]);
+
+        $response = $this->actingAs($this->petugasUser)->get(route('petugas.anggota.edit', $anggota->id_anggota));
+
+        $response->assertOk()
+            ->assertSee('Sedang Sanksi')
+            ->assertSee('Nonaktif Peminjaman 3 Hari')
+            ->assertDontSee('name="status_sanksi"', false);
+    }
+
+    public function test_petugas_can_update_anggota_profile_without_status_fields(): void
     {
         Storage::fake('public');
 
@@ -177,8 +215,6 @@ class AnggotaManagementTest extends TestCase
             'email' => 'newemail@example.com',
             'no_telepon' => '0899999999',
             'alamat' => 'New Address',
-            'status_anggota' => 'nonaktif',
-            'status_sanksi' => 'Sanksi 15 Hari',
             'foto' => $dummyPhoto,
         ]);
 
@@ -190,19 +226,17 @@ class AnggotaManagementTest extends TestCase
         $this->assertEquals('New Name', $anggota->nama_lengkap);
         $this->assertEquals('0899999999', $anggota->no_telepon);
         $this->assertEquals('New Address', $anggota->alamat);
-        $this->assertEquals('nonaktif', $anggota->status_anggota);
+        $this->assertEquals('aktif', $anggota->status_anggota);
+        $this->assertEquals('aktif', $anggota->user->status_akun);
         $this->assertEquals('newemail@example.com', $anggota->user->email);
 
         $this->assertNotNull($anggota->foto);
         Storage::disk('public')->assertExists($anggota->foto);
 
-        // Check active sanction
-        $activeSanksi = $anggota->sanksi()->where('status_sanksi', 'aktif')->first();
-        $this->assertNotNull($activeSanksi);
-        $this->assertEquals('Sanksi: 15 Hari', $activeSanksi->jenis_sanksi);
+        $this->assertFalse($anggota->sanksi()->where('status_sanksi', 'aktif')->exists());
     }
 
-    public function test_petugas_can_block_anggota_without_alamat_field(): void
+    public function test_update_anggota_mengabaikan_status_fields_dan_mempertahankan_alamat(): void
     {
         $anggota = Anggota::factory()->create([
             'nama_lengkap' => 'Budi Santoso',
@@ -222,14 +256,12 @@ class AnggotaManagementTest extends TestCase
         $response->assertRedirect(route('petugas.anggota.show', $anggota->id_anggota));
         $anggota->refresh();
 
-        $this->assertEquals('nonaktif', $anggota->status_anggota);
+        $this->assertEquals('aktif', $anggota->status_anggota);
         $this->assertEquals('Soreang, Bandung', $anggota->alamat); // Alamat is preserved!
-        $activeSanksi = $anggota->sanksi()->where('status_sanksi', 'aktif')->first();
-        $this->assertNotNull($activeSanksi);
-        $this->assertEquals('Diblokir', $activeSanksi->jenis_sanksi);
+        $this->assertFalse($anggota->sanksi()->where('status_sanksi', 'aktif')->exists());
     }
 
-    public function test_petugas_can_block_anggota_and_redirect_to_index(): void
+    public function test_petugas_can_update_anggota_and_redirect_to_index_without_status_fields(): void
     {
         $anggota = Anggota::factory()->create([
             'nama_lengkap' => 'Budi Santoso',
@@ -242,19 +274,18 @@ class AnggotaManagementTest extends TestCase
             'nama_lengkap' => 'Budi Santoso',
             'email' => $anggota->user->email,
             'no_telepon' => '0812345678',
-            'status_anggota' => 'nonaktif',
-            'status_sanksi' => 'Diblokir',
             'redirect_to' => 'index',
         ]);
 
         $response->assertRedirect(route('petugas.anggota.index'));
+        $response->assertSessionHas('success', 'Data anggota berhasil diperbarui');
         $anggota->refresh();
 
-        $this->assertEquals('nonaktif', $anggota->status_anggota);
-        $this->assertEquals('nonaktif', $anggota->user->status_akun);
+        $this->assertEquals('aktif', $anggota->status_anggota);
+        $this->assertEquals('aktif', $anggota->user->status_akun);
     }
 
-    public function test_petugas_can_unblock_anggota(): void
+    public function test_update_anggota_tidak_menyelesaikan_sanksi_aktif_secara_manual(): void
     {
         $anggota = Anggota::factory()->create([
             'nama_lengkap' => 'Budi Santoso',
@@ -262,6 +293,7 @@ class AnggotaManagementTest extends TestCase
             'alamat' => 'Soreang, Bandung',
             'status_anggota' => 'nonaktif',
         ]);
+        $anggota->user->update(['status_akun' => 'nonaktif']);
 
         // Create an active block sanksi
         SanksiAnggota::create([
@@ -285,15 +317,11 @@ class AnggotaManagementTest extends TestCase
         $response->assertRedirect(route('petugas.anggota.index'));
         $anggota->refresh();
 
-        $this->assertEquals('aktif', $anggota->status_anggota);
-        $this->assertEquals('aktif', $anggota->user->status_akun);
+        $this->assertEquals('nonaktif', $anggota->status_anggota);
+        $this->assertEquals('nonaktif', $anggota->user->status_akun);
 
-        // Active sanction should be resolved (no active sanction left)
         $activeSanksi = $anggota->sanksi()->where('status_sanksi', 'aktif')->first();
-        $this->assertNull($activeSanksi);
-
-        // Resolved sanction should exist
-        $resolvedSanksi = $anggota->sanksi()->where('status_sanksi', 'selesai')->first();
-        $this->assertNotNull($resolvedSanksi);
+        $this->assertNotNull($activeSanksi);
+        $this->assertEquals('Diblokir', $activeSanksi->jenis_sanksi);
     }
 }

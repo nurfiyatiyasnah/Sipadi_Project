@@ -47,7 +47,64 @@ class PetugasPeminjamanTest extends TestCase
         $response->assertOk()
             ->assertSee('PMJ-202310-045')
             ->assertSee('Ahmad Hidayat')
-            ->assertSee('Sistem Informasi Manajemen');
+            ->assertSee('Sistem Informasi Manajemen')
+            ->assertSee(route('petugas.peminjaman.show', $peminjaman->id_peminjaman), false)
+            ->assertSee('>Aksi<', false)
+            ->assertSee('Lihat Detail')
+            ->assertSee('Setujui & Atur Jadwal', false)
+            ->assertSee('Tolak Pengajuan');
+    }
+
+    public function test_petugas_dapat_memfilter_riwayat_peminjaman_berdasarkan_anggota(): void
+    {
+        $petugas = $this->createPetugasUser();
+        $anggotaPertama = $this->createAnggotaUser('Dina Pratiwi');
+        $anggotaKedua = $this->createAnggotaUser('Raka Wijaya');
+
+        $kategori = KategoriBuku::factory()->create();
+        $bukuPertama = Buku::factory()->for($kategori, 'kategori')->create(['judul' => 'Basis Data Terapan']);
+        $bukuKedua = Buku::factory()->for($kategori, 'kategori')->create(['judul' => 'Jaringan Komputer']);
+
+        $peminjamanPertama = Peminjaman::create([
+            'kode_peminjaman' => 'PMJ-202607-101',
+            'id_anggota' => $anggotaPertama->anggota->id_anggota,
+            'status_peminjaman' => 'aktif',
+            'tanggal_pengajuan' => now(),
+        ]);
+
+        DetailPeminjaman::create([
+            'id_peminjaman' => $peminjamanPertama->id_peminjaman,
+            'id_buku' => $bukuPertama->id_buku,
+            'jumlah' => 1,
+            'status_detail' => 'dipinjam',
+        ]);
+
+        $peminjamanKedua = Peminjaman::create([
+            'kode_peminjaman' => 'PMJ-202607-202',
+            'id_anggota' => $anggotaKedua->anggota->id_anggota,
+            'status_peminjaman' => 'selesai',
+            'tanggal_pengajuan' => now(),
+        ]);
+
+        DetailPeminjaman::create([
+            'id_peminjaman' => $peminjamanKedua->id_peminjaman,
+            'id_buku' => $bukuKedua->id_buku,
+            'jumlah' => 1,
+            'status_detail' => 'dikembalikan',
+        ]);
+
+        $response = $this->actingAs($petugas)
+            ->get(route('petugas.peminjaman.index', ['id_anggota' => $anggotaPertama->anggota->id_anggota]));
+
+        $response->assertOk()
+            ->assertSee('Menampilkan riwayat peminjaman untuk: Dina Pratiwi')
+            ->assertSee('PMJ-202607-101')
+            ->assertSee('Basis Data Terapan')
+            ->assertSee('Tampilkan Semua Data')
+            ->assertDontSee('PMJ-202607-202')
+            ->assertDontSee('Raka Wijaya')
+            ->assertDontSee('Jaringan Komputer')
+            ->assertSee('>Aksi<', false);
     }
 
     public function test_petugas_dapat_melihat_detail_pengajuan_peminjaman(): void
