@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'fonnte' => [
+        'base_url' => env('FONNTE_BASE_URL', 'https://api.fonnte.com'),
+        'token' => env('FONNTE_TOKEN'),
+        'country_code' => env('FONNTE_COUNTRY_CODE', '62'),
+    ],
+
 ];
