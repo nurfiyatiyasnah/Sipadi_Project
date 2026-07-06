@@ -69,13 +69,18 @@ class AnggotaController extends Controller
         $anggota->load([
             'user',
             'eKartuAnggota',
+            'sanksi' => function ($q) {
+                $q->where('status_sanksi', 'aktif');
+            },
             'peminjaman' => function ($q) {
-                $q->with('detailPeminjaman.buku')->latest('id_peminjaman');
+                $q->with(['detailPeminjaman.buku', 'pengembalian'])->latest('id_peminjaman');
             },
         ]);
 
         // Statistics
-        $totalPinjam = $anggota->peminjaman()->count();
+        $totalPinjam = $anggota->peminjaman()
+            ->whereIn('status_peminjaman', ['aktif', 'terlambat'])
+            ->count();
         $totalTerlambat = $anggota->peminjaman()->where('status_peminjaman', 'terlambat')->count();
 
         // Recent loans

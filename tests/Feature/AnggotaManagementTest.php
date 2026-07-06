@@ -3,7 +3,11 @@
 namespace Tests\Feature;
 
 use App\Models\Anggota;
+use App\Models\Buku;
+use App\Models\DetailPeminjaman;
 use App\Models\EKartuAnggota;
+use App\Models\Peminjaman;
+use App\Models\Pengembalian;
 use App\Models\Role;
 use App\Models\SanksiAnggota;
 use App\Models\User;
@@ -100,6 +104,45 @@ class AnggotaManagementTest extends TestCase
         $response->assertSee('Ahmad Ridwan');
         $response->assertSee($anggota->user->email);
         $response->assertSee('Bebas Sanksi');
+    }
+
+    public function test_detail_anggota_menampilkan_peminjaman_selesai_sebagai_dikembalikan(): void
+    {
+        $anggota = Anggota::factory()->create(['nama_lengkap' => 'Stenly Rizalevan']);
+        $buku = Buku::factory()->create([
+            'judul' => 'Kuliner Khas Minangkabau',
+            'isbn' => '978-979-22-8504-8',
+        ]);
+
+        $peminjaman = Peminjaman::create([
+            'kode_peminjaman' => 'PMJ-202607-001',
+            'id_anggota' => $anggota->id_anggota,
+            'status_peminjaman' => 'selesai',
+            'tanggal_pengajuan' => now()->subDays(5),
+            'tanggal_diambil' => now()->subDays(4),
+            'tanggal_jatuh_tempo' => now()->addDays(10),
+        ]);
+
+        DetailPeminjaman::create([
+            'id_peminjaman' => $peminjaman->id_peminjaman,
+            'id_buku' => $buku->id_buku,
+            'jumlah' => 1,
+            'status_detail' => 'dikembalikan',
+        ]);
+
+        Pengembalian::create([
+            'id_peminjaman' => $peminjaman->id_peminjaman,
+            'tanggal_pengembalian' => now(),
+            'total_hari_terlambat' => 0,
+            'status_pengembalian' => 'Tepat Waktu',
+        ]);
+
+        $response = $this->actingAs($this->petugasUser)->get(route('petugas.anggota.show', $anggota->id_anggota));
+
+        $response->assertOk()
+            ->assertSee('Kuliner Khas Minangkabau')
+            ->assertSee('Dikembalikan')
+            ->assertDontSee('Sedang Dipinjam');
     }
 
     public function test_petugas_can_view_edit_form(): void

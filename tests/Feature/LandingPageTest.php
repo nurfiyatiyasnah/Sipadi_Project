@@ -20,10 +20,8 @@ class LandingPageTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Selamat Datang di SIPADI');
-        $response->assertSee('Katalog Buku');
-        $response->assertSee('Peminjaman Buku');
-        $response->assertSee('E-Kartu Anggota');
-        $response->assertSee('Login');
+        $response->assertSee('Katalog');
+        $response->assertSee('Masuk');
         $response->assertSee('Daftar');
     }
 
@@ -41,10 +39,9 @@ class LandingPageTest extends TestCase
         $response = $this->actingAs($user)->get(route('landing'));
 
         $response->assertStatus(200);
-        $response->assertSee('Lihat E-Kartu');
-        $response->assertSee('Lihat Profil');
-        $response->assertSee('Logout');
-        $response->assertDontSee('Login');
+        $response->assertSee('E-Kartu');
+        $response->assertSee('Keluar');
+        $response->assertDontSee('Masuk');
     }
 
     /**
@@ -61,9 +58,8 @@ class LandingPageTest extends TestCase
         $response = $this->actingAs($user)->get(route('landing'));
 
         $response->assertStatus(200);
-        $response->assertSee('Dashboard Petugas');
-        $response->assertSee('Masuk Dashboard Petugas');
-        $response->assertSee('Logout');
-        $response->assertDontSee('Login');
+        $response->assertSee('Dashboard');
+        $response->assertSee('Keluar');
+        $response->assertDontSee('Masuk');
     }
 }

@@ -225,11 +225,12 @@
                     <tbody class="divide-y divide-slate-50">
                         @foreach ($riwayatPeminjaman as $peminjaman)
                             @php
-                                $status = strtolower($peminjaman->status_peminjaman);
+                                $status = strtolower((string) $peminjaman->status_peminjaman);
+                                $isReturned = $peminjaman->pengembalian || in_array($status, ['selesai', 'dikembalikan', 'kembali']);
                                 $badgeClass = 'bg-blue-50 text-blue-700 border-blue-100';
                                 $statusText = 'Sedang Dipinjam';
 
-                                if (in_array($status, ['dikembalikan', 'kembali'])) {
+                                if ($isReturned) {
                                     $badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-100';
                                     $statusText = 'Dikembalikan';
                                 } elseif (in_array($status, ['terlambat', 'denda'])) {
@@ -253,7 +254,9 @@
                                     {{ $peminjaman->tanggal_diambil ? $peminjaman->tanggal_diambil->locale('id')->translatedFormat('d M Y') : ($peminjaman->tanggal_pengajuan ? $peminjaman->tanggal_pengajuan->locale('id')->translatedFormat('d M Y') : '-') }}
                                 </td>
                                 <td class="py-4 text-sm font-semibold text-slate-650">
-                                    @if (in_array($status, ['dikembalikan', 'kembali']) && $peminjaman->pengembalian?->created_at)
+                                    @if ($isReturned && $peminjaman->pengembalian?->tanggal_pengembalian)
+                                        {{ $peminjaman->pengembalian->tanggal_pengembalian->locale('id')->translatedFormat('d M Y') }}
+                                    @elseif ($isReturned && $peminjaman->pengembalian?->created_at)
                                         {{ $peminjaman->pengembalian->created_at->locale('id')->translatedFormat('d M Y') }}
                                     @else
                                         {{ $peminjaman->tanggal_jatuh_tempo ? $peminjaman->tanggal_jatuh_tempo->locale('id')->translatedFormat('d M Y') : '-' }}
