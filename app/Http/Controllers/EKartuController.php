@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\EKartuPngRenderer;
+use App\EKartuPdfRenderer;
 use App\Models\Anggota;
 use App\Models\EKartuAnggota;
 use Illuminate\Http\Request;
@@ -20,16 +20,12 @@ class EKartuController extends Controller
         return view('e-kartu.show', compact('anggota', 'eKartu'));
     }
 
-    public function download(Request $request, EKartuPngRenderer $renderer): Response
+    public function download(Request $request, EKartuPdfRenderer $renderer): Response
     {
         $anggota = $this->anggota($request);
         $eKartu = $this->eKartu($anggota);
 
-        return response($renderer->render($anggota, $eKartu), 200, [
-            'Content-Type' => 'image/png',
-            'Content-Disposition' => "attachment; filename=\"e-kartu-{$anggota->no_anggota}.png\"",
-            'Cache-Control' => 'private, no-store',
-        ]);
+        return $renderer->download($anggota, $eKartu);
     }
 
     private function anggota(Request $request): Anggota

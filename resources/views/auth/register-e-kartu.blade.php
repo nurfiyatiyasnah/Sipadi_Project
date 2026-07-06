@@ -145,10 +145,10 @@
                     </div>
                 </div>
 
-                <!-- Buttons: Download PNG & Login -->
+                <!-- Buttons: Download PDF & Login -->
                 <div class="mt-6 flex justify-end gap-3">
                     <a href="{{ route('anggota.e-kartu.download') }}" class="rounded-2xl bg-[#061b3a] px-5 py-3 text-sm font-semibold text-white shadow hover:bg-[#0b2a59] focus:outline-none focus:ring-2 focus:ring-[#061b3a] focus:ring-offset-2 transition duration-200">
-                        Download PNG
+                        Download PDF
                     </a>
                     <a href="{{ route('register.e-kartu.login') }}" class="rounded-2xl border border-[#061b3a] bg-white px-5 py-3 text-sm font-semibold text-[#061b3a] shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#061b3a] focus:ring-offset-2 transition duration-200">
                         Login
