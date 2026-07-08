@@ -1,5 +1,5 @@
 @extends('layouts.petugas')
-@section('title', 'Struktur Organisasi')
+@section('title', 'Struktur Kepegawaian')
 
 @section('content')
 <div class="mx-auto max-w-[1180px] space-y-8">
@@ -10,17 +10,17 @@
             <div>
                 <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-[#ffdc7c]">
                     <i class="fa-solid fa-sitemap"></i>
-                    Manajemen Struktur Organisasi
+                    Manajemen Struktur Kepegawaian
                 </span>
-                <h2 class="mt-5 font-serif text-4xl font-bold leading-tight">Struktur Organisasi</h2>
+                <h2 class="mt-5 font-serif text-4xl font-bold leading-tight">Struktur Kepegawaian</h2>
                 <p class="mt-3 max-w-2xl text-lg text-slate-200">
-                    Kelola daftar anggota dan jabatan dalam struktur organisasi perpustakaan.
+                    Kelola daftar anggota dan jabatan dalam struktur kepegawaian perpustakaan.
                 </p>
 
                 <div class="mt-8 grid max-w-2xl gap-4 sm:grid-cols-2">
                     <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
                         <p class="text-xs font-bold uppercase tracking-widest text-slate-300">Total Anggota</p>
-                        <p class="mt-2 text-2xl font-bold">{{ $organisasi->total() }}</p>
+                        <p class="mt-2 text-2xl font-bold">{{ $kepegawaian->total() }}</p>
                     </div>
                 </div>
             </div>
@@ -30,8 +30,8 @@
                     <i class="fa-solid fa-user-plus"></i>
                 </span>
                 <h3 class="mt-4 text-lg font-bold">Tambah Anggota</h3>
-                <p class="mt-2 text-sm text-slate-500">Tambahkan anggota baru ke struktur organisasi.</p>
-                <a href="{{ route('petugas.organisasi.create') }}"
+                <p class="mt-2 text-sm text-slate-500">Tambahkan anggota baru ke struktur kepegawaian.</p>
+                <a href="{{ route('petugas.kepegawaian.create') }}"
                    class="mt-5 flex h-12 w-full items-center justify-center gap-3 rounded-xl bg-[#142b3d] font-bold text-white transition hover:bg-[#1a3a52]">
                     <i class="fa-solid fa-plus"></i>
                     Tambah Anggota
@@ -67,7 +67,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
-                    @forelse ($organisasi as $item)
+                    @forelse ($kepegawaian as $item)
                         <tr class="transition hover:bg-slate-50">
                             <td class="px-6 py-4">
                                 @if ($item->foto)
@@ -83,10 +83,10 @@
                             <td class="px-6 py-4">{{ $item->urutan }}</td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    <a href="{{ route('petugas.organisasi.edit', $item) }}" class="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition hover:bg-blue-100 hover:text-blue-600">
+                                    <a href="{{ route('petugas.kepegawaian.edit', $item) }}" class="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition hover:bg-blue-100 hover:text-blue-600">
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
-                                    <form action="{{ route('petugas.organisasi.destroy', $item) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus anggota ini?');">
+                                    <form action="{{ route('petugas.kepegawaian.destroy', $item) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus anggota ini?');">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition hover:bg-red-100 hover:text-red-600">
@@ -99,16 +99,16 @@
                     @empty
                         <tr>
                             <td colspan="5" class="px-6 py-10 text-center text-slate-500">
-                                Belum ada data anggota struktur organisasi.
+                                Belum ada data anggota struktur kepegawaian.
                             </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        @if ($organisasi->hasPages())
+        @if ($kepegawaian->hasPages())
             <div class="border-t border-slate-200 p-6">
-                {{ $organisasi->links() }}
+                {{ $kepegawaian->links() }}
             </div>
         @endif
     </section>

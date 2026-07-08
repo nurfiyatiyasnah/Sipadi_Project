@@ -1,5 +1,5 @@
 @extends('layouts.petugas')
-@section('title', 'Tambah Anggota Organisasi')
+@section('title', 'Tambah Anggota Kepegawaian')
 
 @section('content')
 <div class="mx-auto max-w-[1180px] space-y-8">
@@ -7,13 +7,13 @@
     {{-- Header --}}
     <section class="flex flex-wrap items-center justify-between gap-4">
         <div>
-            <a href="{{ route('petugas.organisasi.index') }}"
+            <a href="{{ route('petugas.kepegawaian.index') }}"
                 class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-[#071426]">
                 <i class="fa-solid fa-arrow-left"></i>
-                Kembali ke Struktur Organisasi
+                Kembali ke Struktur Kepegawaian
             </a>
             <h2 class="mt-2 font-serif text-3xl font-bold text-[#071426]">Tambah Anggota Baru</h2>
-            <p class="mt-1 text-slate-500">Masukkan data anggota struktur organisasi.</p>
+            <p class="mt-1 text-slate-500">Masukkan data anggota struktur kepegawaian.</p>
         </div>
     </section>
 
@@ -32,7 +32,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('petugas.organisasi.store') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('petugas.kepegawaian.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="grid gap-8 xl:grid-cols-[1fr_380px]">
 

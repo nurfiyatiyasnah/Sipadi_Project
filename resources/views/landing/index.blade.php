@@ -40,7 +40,6 @@
                         </h3>
                         <p class="mt-3 text-slate-500 text-sm leading-relaxed">
                             SIPADI menghadirkan layanan perpustakaan dan arsip digital yang lebih modern, memudahkan masyarakat mengakses buku, dokumen, dan informasi literasi secara terpadu.
-                            SIPADI menghadirkan layanan perpustakaan dan arsip digital yang lebih modern, memudahkan masyarakat mengakses buku, dokumen, dan information literasi secara terpadu.
                         </p>
                     </div>
                 </div>

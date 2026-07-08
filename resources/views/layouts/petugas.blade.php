@@ -33,7 +33,7 @@
                 ['Aduan', 'fa-solid fa-triangle-exclamation', 'petugas.aduan.index', 'petugas.aduan.*'],
                 ['divider', '', null, null],
                 ['Profil Perpustakaan', 'fa-solid fa-building-columns', null, null],
-                ['Struktur Organisasi', 'fa-solid fa-sitemap', 'petugas.organisasi.index', 'petugas.organisasi.*'],
+                ['Struktur Kepegawaian', 'fa-solid fa-sitemap', 'petugas.kepegawaian.index', 'petugas.kepegawaian.*'],
                 ['Prestasi', 'fa-solid fa-trophy', null, null],
                 ['Layanan', 'fa-solid fa-handshake-angle', 'petugas.layanan.index', 'petugas.layanan.*'],
                 ['Fasilitas', 'fa-solid fa-couch', 'petugas.fasilitas.index', 'petugas.fasilitas.*'],

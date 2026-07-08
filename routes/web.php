@@ -15,7 +15,7 @@ use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\PetugasPeminjamanController;
 use App\Http\Controllers\PetugasPengembalianController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\StrukturOrganisasiController;
+use App\Http\Controllers\StrukturKepegawaianController;
 use App\Models\AgendaEvent;
 use App\Http\Controllers\PublicAgendaController;
 use App\Http\Controllers\PublicBeritaController;
@@ -83,8 +83,8 @@ Route::get('/layanan/{layanan:slug}', [PublicLayananController::class, 'show'])-
 Route::get('/pengumuman', [PublicPengumumanController::class, 'index'])->name('pengumuman.public.index');
 Route::get('/pengumuman/{slug}', [PublicPengumumanController::class, 'show'])->name('pengumuman.public.show');
 Route::get('/tentang-kami', function () {
-    $strukturOrganisasi = \App\Models\StrukturOrganisasi::orderBy('urutan')->get();
-    return view('landing.tentang', compact('strukturOrganisasi'));
+    $StrukturKepegawaian = \App\Models\StrukturKepegawaian::orderBy('urutan')->get();
+    return view('landing.tentang', compact('StrukturKepegawaian'));
 })->name('tentang');
 Route::get('/fasilitas', [\App\Http\Controllers\PublicFasilitasController::class, 'index'])->name('fasilitas.public.index');
 Route::get('/fasilitas/{id}', [\App\Http\Controllers\PublicFasilitasController::class, 'show'])->name('fasilitas.public.show');
@@ -163,7 +163,7 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
     Route::delete('/berita/{berita}', [BeritaController::class, 'destroy'])
         ->name('berita.destroy');
 
-    Route::resource('organisasi', StrukturOrganisasiController::class)->except(['show']);
+    Route::resource('kepegawaian', StrukturKepegawaianController::class)->except(['show']);
     Route::resource('fasilitas', App\Http\Controllers\FasilitasController::class);
     Route::get('/agenda', [AgendaEventController::class, 'index'])->name('agenda.index');
     Route::get('/agenda/tambah', [AgendaEventController::class, 'create'])->name('agenda.create');
@@ -181,7 +181,7 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
     Route::get('/pengumuman/{pengumuman}/edit', [PengumumanController::class, 'edit'])->name('pengumuman.edit');
     Route::put('/pengumuman/{pengumuman}', [PengumumanController::class, 'update'])->name('pengumuman.update');
     Route::delete('/pengumuman/{pengumuman}', [PengumumanController::class, 'destroy'])->name('pengumuman.destroy');
-    
+
     // Peminjaman routes for Petugas
     Route::get('/peminjaman', [PetugasPeminjamanController::class, 'index'])->name('peminjaman.index');
     Route::get('/peminjaman/export', [PetugasPeminjamanController::class, 'export'])->name('peminjaman.export');
@@ -216,7 +216,7 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/books/create', [BookController::class, 'create'])->name('books.create');
     Route::post('/books', [BookController::class, 'store'])->name('books.store');
     Route::get('/books/{buku}', [BookController::class, 'show'])->name('books.show');
-    
+
 });
 
 Route::middleware('auth')->group(function () {

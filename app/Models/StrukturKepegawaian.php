@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class StrukturOrganisasi extends Model
+class StrukturKepegawaian extends Model
 {
-    protected $table = 'struktur_organisasi';
-    protected $primaryKey = 'id_struktur_organisasi';
+    protected $table = 'struktur_kepegawaian';
+    protected $primaryKey = 'id_struktur_kepegawaian';
 
     protected $fillable = [
         'nama',
