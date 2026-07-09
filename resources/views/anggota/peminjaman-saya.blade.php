@@ -5,11 +5,11 @@
     window.autoOpenTicket = @json($autoOpenTicket ?? null);
 </script>
 
-<div class="max-w-7xl mx-auto px-6 lg:px-12 py-12" x-data="{ activeTicket: window.autoOpenTicket }">
+<div class="max-w-7xl mx-auto min-w-0 px-4 sm:px-6 lg:px-12 py-12" x-data="{ activeTicket: window.autoOpenTicket }">
     <!-- Header Block -->
     <div class="border-b border-slate-200/60 pb-5 mb-8">
-        <h1 class="font-serif text-4xl font-bold text-[#04241e] tracking-tight flex items-center gap-3">
-            <i class="fa-solid fa-book-bookmark text-[#04241e]"></i>
+        <h1 class="font-serif text-3xl sm:text-4xl font-bold text-[#04241e] tracking-tight flex flex-wrap items-center gap-3">
+            <i class="fa-solid fa-book-bookmark text-[#04241e] shrink-0"></i>
             Peminjaman Saya
         </h1>
         <p class="text-sm text-slate-500 mt-2">Pantau status pengajuan, jadwal pengambilan, dan riwayat peminjaman buku Anda.</p>
@@ -17,21 +17,21 @@
 
     <!-- Alert Success / Error -->
     @if(session('success'))
-        <div class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-250 text-emerald-800 text-sm font-semibold flex items-center gap-3">
-            <i class="fa-solid fa-circle-check text-lg"></i>
-            <span>{{ session('success') }}</span>
+        <div class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-250 text-emerald-800 text-sm font-semibold flex items-start gap-3">
+            <i class="fa-solid fa-circle-check text-lg shrink-0 mt-0.5"></i>
+            <span class="min-w-0 break-words">{{ session('success') }}</span>
         </div>
     @endif
 
     @if(session('error'))
-        <div class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-250 text-rose-800 text-sm font-semibold flex items-center gap-3">
-            <i class="fa-solid fa-circle-exclamation text-lg"></i>
-            <span>{{ session('error') }}</span>
+        <div class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-250 text-rose-800 text-sm font-semibold flex items-start gap-3">
+            <i class="fa-solid fa-circle-exclamation text-lg shrink-0 mt-0.5"></i>
+            <span class="min-w-0 break-words">{{ session('error') }}</span>
         </div>
     @endif
 
     <!-- Borrowing List -->
-    <div class="bg-white rounded-3xl border border-slate-200/80 shadow-md shadow-[#04241e]/5 overflow-hidden">
+    <div class="min-w-0 bg-white rounded-3xl border border-slate-200/80 shadow-md shadow-[#04241e]/5 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
@@ -94,8 +94,8 @@
                                         @endif
                                     </div>
                                     <div class="leading-tight">
-                                        <span class="block text-sm font-bold text-slate-800 line-clamp-2 max-w-[240px]">{{ $buku->judul ?? 'Buku' }}</span>
-                                        <span class="block text-[11px] text-slate-400 mt-1">{{ $buku->penulis ?? '-' }}</span>
+                                        <span class="block text-sm font-bold text-slate-800 line-clamp-2 max-w-[240px] break-words">{{ $buku->judul ?? 'Buku' }}</span>
+                                        <span class="block text-[11px] text-slate-400 mt-1 break-words">{{ $buku->penulis ?? '-' }}</span>
                                     </div>
                                 </div>
                             </td>
@@ -219,13 +219,13 @@
             <div class="p-6 space-y-5 text-slate-700 bg-[#fafafa]">
                 <div>
                     <span class="block text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">KODE TRANSAKSI</span>
-                    <span class="block font-mono font-extrabold text-slate-800 text-sm mt-0.5" x-text="'#' + activeTicket?.kode"></span>
+                    <span class="block break-all font-mono font-extrabold text-slate-800 text-sm mt-0.5" x-text="'#' + activeTicket?.kode"></span>
                 </div>
 
                 <div>
                     <span class="block text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">BUKU YANG DIPINJAM</span>
-                    <span class="block font-bold text-slate-800 text-xs mt-0.5 line-clamp-1" x-text="activeTicket?.judul"></span>
-                    <span class="block text-[10px] text-slate-400 mt-0.5" x-text="activeTicket?.penulis"></span>
+                    <span class="block break-words font-bold text-slate-800 text-xs mt-0.5 line-clamp-1" x-text="activeTicket?.judul"></span>
+                    <span class="block break-words text-[10px] text-slate-400 mt-0.5" x-text="activeTicket?.penulis"></span>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 border-t border-b border-dashed border-slate-200 py-4 my-2">
@@ -241,12 +241,12 @@
 
                 <div>
                     <span class="block text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">LOKASI PENGAMBILAN</span>
-                    <span class="block font-bold text-slate-800 text-xs mt-0.5" x-text="activeTicket?.lokasi"></span>
+                    <span class="block break-words font-bold text-slate-800 text-xs mt-0.5" x-text="activeTicket?.lokasi"></span>
                 </div>
 
                 <div class="p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
                     <span class="block text-[9px] font-extrabold text-emerald-800 uppercase tracking-widest">CATATAN PETUGAS</span>
-                    <p class="text-[10px] text-emerald-700 mt-1 leading-normal font-semibold" x-text="activeTicket?.pesan"></p>
+                    <p class="break-words text-[10px] text-emerald-700 mt-1 leading-normal font-semibold" x-text="activeTicket?.pesan"></p>
                 </div>
             </div>
 

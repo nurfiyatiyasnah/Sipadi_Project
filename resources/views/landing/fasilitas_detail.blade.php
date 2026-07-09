@@ -15,8 +15,8 @@
 
     <!-- Breadcrumb -->
     <div class="mx-auto max-w-7xl px-6 lg:px-12 py-6">
-        <nav class="flex text-sm font-semibold text-slate-500" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+        <nav class="flex min-w-0 text-sm font-semibold text-slate-500" aria-label="Breadcrumb">
+            <ol class="inline-flex min-w-0 items-center space-x-1 md:space-x-3">
                 <li class="inline-flex items-center">
                     <a href="{{ route('landing') }}" class="inline-flex items-center hover:text-[#04241e] transition">
                         Beranda
@@ -29,9 +29,9 @@
                     </div>
                 </li>
                 <li aria-current="page">
-                    <div class="flex items-center">
+                    <div class="flex min-w-0 items-center">
                         <i class="fa-solid fa-chevron-right text-xs mx-2 text-slate-400"></i>
-                        <span class="text-[#04241e] font-bold">{{ $fasilita->nama_fasilitas }}</span>
+                        <span class="truncate text-[#04241e] font-bold">{{ $fasilita->nama_fasilitas }}</span>
                     </div>
                 </li>
             </ol>
@@ -40,12 +40,12 @@
 
     <!-- Main Content Area -->
     <div class="mx-auto max-w-7xl px-6 lg:px-12 pb-16">
-        <div class="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
+        <div class="grid min-w-0 grid-cols-1 gap-8 lg:grid-cols-[1fr_380px]">
             
             <!-- Left Content: Image and Details -->
-            <div class="space-y-8">
+            <div class="min-w-0 space-y-8">
                 <!-- Main Image -->
-                <div class="rounded-3xl bg-white shadow-sm border border-slate-100 overflow-hidden relative">
+                <div class="relative min-w-0 overflow-hidden rounded-3xl bg-white shadow-sm border border-slate-100">
                     @if($fasilita->gambar)
                         <img src="{{ asset('storage/' . $fasilita->gambar) }}" alt="{{ $fasilita->nama_fasilitas }}" class="w-full h-auto object-cover max-h-[500px]">
                     @else
@@ -61,33 +61,33 @@
                 </div>
 
                 <!-- Info Cards (Mobile visible, Desktop hidden) -->
-                <div class="grid grid-cols-2 gap-4 lg:hidden">
-                    <div class="rounded-2xl bg-white p-4 shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:hidden">
+                    <div class="min-w-0 rounded-2xl bg-white p-4 shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center">
                         <i class="fa-solid fa-location-dot text-emerald-600 text-xl mb-2"></i>
                         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Lokasi</span>
-                        <span class="text-sm font-bold text-[#04241e] mt-1">{{ $fasilita->lokasi }}</span>
+                        <span class="mt-1 break-words text-sm font-bold text-[#04241e]">{{ $fasilita->lokasi }}</span>
                     </div>
-                    <div class="rounded-2xl bg-white p-4 shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center">
+                    <div class="min-w-0 rounded-2xl bg-white p-4 shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center">
                         <i class="fa-solid fa-users text-emerald-600 text-xl mb-2"></i>
                         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Kapasitas</span>
-                        <span class="text-sm font-bold text-[#04241e] mt-1">{{ $fasilita->jumlah_unit }} {{ $fasilita->satuan_kapasitas ?? 'Orang' }}</span>
+                        <span class="mt-1 break-words text-sm font-bold text-[#04241e]">{{ $fasilita->jumlah_unit }} {{ $fasilita->satuan_kapasitas ?? 'Orang' }}</span>
                     </div>
                 </div>
 
                 <!-- Description -->
-                <div class="rounded-3xl bg-white p-8 shadow-sm border border-slate-100">
-                    <h1 class="font-serif text-3xl font-bold text-[#04241e] mb-6">{{ $fasilita->nama_fasilitas }}</h1>
+                <div class="min-w-0 rounded-3xl bg-white p-8 shadow-sm border border-slate-100">
+                    <h1 class="mb-6 break-words font-serif text-3xl font-bold text-[#04241e]">{{ $fasilita->nama_fasilitas }}</h1>
                     
-                    <div class="prose prose-slate max-w-none text-sm lg:text-base leading-loose text-slate-600">
+                    <div class="prose prose-slate max-w-none break-words text-sm lg:text-base leading-loose text-slate-600">
                         {!! nl2br(e($fasilita->deskripsi)) !!}
                     </div>
                 </div>
             </div>
 
             <!-- Right Sidebar -->
-            <div class="space-y-6">
+            <div class="min-w-0 space-y-6">
                 <!-- Status & Quick Info -->
-                <div class="rounded-3xl bg-[#04241e] p-8 text-white shadow-xl">
+                <div class="min-w-0 rounded-3xl bg-[#04241e] p-8 text-white shadow-xl">
                     <h3 class="font-bold text-xl mb-6">Informasi Fasilitas</h3>
                     
                     <div class="space-y-5">
@@ -106,14 +106,14 @@
                             @endif
                         </div>
 
-                        <div class="flex justify-between items-center pb-5 border-b border-white/10">
+                        <div class="flex min-w-0 justify-between items-center gap-4 pb-5 border-b border-white/10">
                             <span class="text-slate-300 text-sm">Lokasi</span>
-                            <span class="text-sm font-bold text-white text-right">{{ $fasilita->lokasi }}</span>
+                            <span class="min-w-0 break-words text-sm font-bold text-white text-right">{{ $fasilita->lokasi }}</span>
                         </div>
 
-                        <div class="flex justify-between items-center pb-5 border-b border-white/10">
+                        <div class="flex min-w-0 justify-between items-center gap-4 pb-5 border-b border-white/10">
                             <span class="text-slate-300 text-sm">Kapasitas</span>
-                            <span class="text-sm font-bold text-white text-right">{{ $fasilita->jumlah_unit }} {{ $fasilita->satuan_kapasitas ?? 'Orang' }}</span>
+                            <span class="min-w-0 break-words text-sm font-bold text-white text-right">{{ $fasilita->jumlah_unit }} {{ $fasilita->satuan_kapasitas ?? 'Orang' }}</span>
                         </div>
                     </div>
                     
@@ -125,7 +125,7 @@
                 </div>
 
                 <!-- Assistance Card -->
-                <div class="rounded-3xl bg-white p-8 shadow-sm border border-slate-100 text-center">
+                <div class="min-w-0 rounded-3xl bg-white p-8 shadow-sm border border-slate-100 text-center">
                     <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-700 mb-4">
                         <i class="fa-solid fa-headset text-2xl"></i>
                     </div>

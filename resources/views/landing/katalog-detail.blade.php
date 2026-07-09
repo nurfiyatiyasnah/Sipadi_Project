@@ -67,12 +67,12 @@
 
     <!-- Main Detail Section -->
     <div class="mx-auto max-w-7xl px-6 lg:px-12 pb-16">
-        <div class="grid gap-8 lg:grid-cols-[300px_1fr] items-start">
+        <div class="grid min-w-0 grid-cols-1 gap-8 lg:grid-cols-[300px_1fr] items-start">
             
             <!-- Left Side Cover & Action -->
-            <div class="space-y-6">
+            <div class="min-w-0 space-y-6">
                 <!-- Cover Image Card -->
-                <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100/80 flex items-center justify-center">
+                <div class="flex min-w-0 items-center justify-center rounded-[2rem] border border-slate-100/80 bg-white p-6 shadow-sm">
                     <div class="relative w-full aspect-[3/4] rounded-2xl bg-slate-50 overflow-hidden flex items-center justify-center shadow-md">
                         @if($buku->gambar_cover)
                             @php
@@ -84,9 +84,9 @@
                             <div class="absolute inset-0 bg-gradient-to-br from-[#1e463c] to-[#0f3028] p-6 text-white flex flex-col justify-between rounded-xl">
                                 <div class="absolute left-0 top-0 bottom-0 w-3.5 bg-gradient-to-r from-black/20 to-transparent"></div>
                                 <div class="mt-8">
-                                    <h3 class="font-sans font-bold text-lg leading-snug">{{ $buku->judul }}</h3>
+                                    <h3 class="break-words font-sans font-bold text-lg leading-snug">{{ $buku->judul }}</h3>
                                 </div>
-                                <p class="text-xs text-slate-300 font-semibold">{{ $buku->penulis }}</p>
+                                <p class="break-words text-xs text-slate-300 font-semibold">{{ $buku->penulis }}</p>
                             </div>
                         @endif
                     </div>
@@ -143,7 +143,7 @@
             </div>
 
             <!-- Right Side Book Information -->
-            <div class="space-y-8 lg:pl-4">
+            <div class="min-w-0 space-y-8 lg:pl-4">
                 <!-- Badges -->
                 <div class="flex flex-wrap gap-2 items-center">
                     <span class="bg-[#e2f0d9] text-[#385723] px-3 py-1.5 text-xs font-semibold rounded-md">
@@ -156,10 +156,10 @@
 
                 <!-- Title & Author -->
                 <div class="space-y-2">
-                    <h1 class="text-3xl lg:text-4xl font-bold text-[#04241e] leading-tight font-sans">
+                    <h1 class="break-words text-3xl lg:text-4xl font-bold text-[#04241e] leading-tight font-sans">
                         {{ $buku->judul }}
                     </h1>
-                    <p class="text-slate-600 text-sm font-semibold">
+                    <p class="break-words text-slate-600 text-sm font-semibold">
                         Oleh: <span class="text-slate-800">{{ $buku->penulis ?? 'Anonim' }}</span>
                     </p>
                 </div>
@@ -183,7 +183,7 @@
                 <!-- Synopsis -->
                 <div class="space-y-3">
                     <h2 class="text-xl font-bold text-[#04241e]">Sinopsis</h2>
-                    <p class="text-slate-600 text-sm leading-relaxed whitespace-pre-line">{{ $buku->deskripsi }}</p>
+                    <p class="break-words text-slate-600 text-sm leading-relaxed whitespace-pre-line">{{ $buku->deskripsi }}</p>
                 </div>
 
                 <!-- Informasi Detail Grid -->
@@ -192,37 +192,37 @@
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <!-- Penerbit -->
-                        <div class="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex flex-col justify-center min-h-[72px]">
+                        <div class="flex min-w-0 flex-col justify-center min-h-[72px] rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Penerbit</span>
-                            <span class="text-sm font-bold text-slate-700 mt-1">{{ $buku->penerbit ?? '-' }}</span>
+                            <span class="mt-1 break-words text-sm font-bold text-slate-700">{{ $buku->penerbit ?? '-' }}</span>
                         </div>
                         
                         <!-- Tahun Terbit -->
-                        <div class="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex flex-col justify-center min-h-[72px]">
+                        <div class="flex min-w-0 flex-col justify-center min-h-[72px] rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tahun Terbit</span>
                             <span class="text-sm font-bold text-slate-700 mt-1">{{ $buku->tahun_terbit ?? '-' }}</span>
                         </div>
                         
                         <!-- ISBN -->
-                        <div class="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex flex-col justify-center min-h-[72px]">
+                        <div class="flex min-w-0 flex-col justify-center min-h-[72px] rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">ISBN</span>
-                            <span class="text-sm font-bold text-slate-700 mt-1">{{ $buku->isbn ?? '-' }}</span>
+                            <span class="mt-1 break-all text-sm font-bold text-slate-700">{{ $buku->isbn ?? '-' }}</span>
                         </div>
                         
                         <!-- Bahasa -->
-                        <div class="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex flex-col justify-center min-h-[72px]">
+                        <div class="flex min-w-0 flex-col justify-center min-h-[72px] rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Bahasa</span>
                             <span class="text-sm font-bold text-slate-700 mt-1">Indonesia</span>
                         </div>
                         
                         <!-- Lokasi Rak -->
-                        <div class="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex flex-col justify-center min-h-[72px]">
+                        <div class="flex min-w-0 flex-col justify-center min-h-[72px] rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Lokasi Rak</span>
-                            <span class="text-sm font-bold text-slate-700 mt-1">{{ $lokasi_rak }}</span>
+                            <span class="mt-1 break-words text-sm font-bold text-slate-700">{{ $lokasi_rak }}</span>
                         </div>
                         
                         <!-- Nomor Panggil -->
-                        <div class="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex flex-col justify-center min-h-[72px]">
+                        <div class="flex min-w-0 flex-col justify-center min-h-[72px] rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nomor Panggil</span>
                             <span class="text-sm font-bold text-slate-700 mt-1">{{ $nomorPanggil }}</span>
                         </div>
@@ -244,7 +244,7 @@
                 </div>
 
                 <!-- Recommended Grid -->
-                <div class="grid gap-6 grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
                     @foreach($recommendations as $recom)
                         <a href="{{ route('katalog.show', $recom->id_buku) }}" 
                            class="group bg-white rounded-2xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition duration-200 flex flex-col">
@@ -265,10 +265,10 @@
                                 @endif
                             </div>
 
-                            <h4 class="font-bold text-xs text-[#061b3a] group-hover:text-[#04241e] transition line-clamp-1">
+                            <h4 class="break-words font-bold text-xs text-[#061b3a] group-hover:text-[#04241e] transition line-clamp-1">
                                 {{ $recom->judul }}
                             </h4>
-                            <p class="text-[10px] text-slate-400 mt-0.5 line-clamp-1 font-semibold">{{ $recom->penulis }}</p>
+                            <p class="mt-0.5 break-words text-[10px] text-slate-400 line-clamp-1 font-semibold">{{ $recom->penulis }}</p>
                         </a>
                     @endforeach
                 </div>

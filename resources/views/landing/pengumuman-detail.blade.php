@@ -27,11 +27,11 @@
     </div>
 
     <!-- Main Content Area -->
-    <div class="mx-auto max-w-7xl px-6 lg:px-12 py-8 grid gap-8 lg:grid-cols-[1fr_320px]">
+    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 py-8 lg:grid-cols-[1fr_320px] lg:px-12">
         
         <!-- Left Column: Announcement Detail -->
-        <main>
-            <article class="bg-white rounded-3xl p-6 lg:p-10 border border-slate-100 shadow-sm space-y-6">
+        <main class="min-w-0">
+            <article class="min-w-0 space-y-6 overflow-hidden rounded-3xl border border-slate-100 bg-white p-6 shadow-sm lg:p-10">
                 
                 <!-- Meta Info & Title -->
                 <div class="space-y-4">
@@ -49,7 +49,7 @@
                         </span>
                     </div>
                     
-                    <h1 class="font-serif text-3xl lg:text-4xl font-bold leading-tight text-[#04241e]">
+                    <h1 class="break-words font-serif text-3xl lg:text-4xl font-bold leading-tight text-[#04241e]">
                         {{ $pengumuman->judul }}
                     </h1>
 
@@ -66,7 +66,7 @@
                 </div>
 
                 <!-- Featured Image -->
-                <div class="overflow-hidden rounded-3xl w-full h-[320px] md:h-[400px]">
+                <div class="min-w-0 overflow-hidden rounded-3xl w-full h-[320px] md:h-[400px]">
                     @if($pengumuman->gambar)
                         <img src="{{ Storage::url($pengumuman->gambar) }}" alt="{{ $pengumuman->judul }}" class="w-full h-full object-cover">
                     @else
@@ -75,7 +75,7 @@
                 </div>
 
                 <!-- Body Content -->
-                <div class="text-[#061b3a] text-sm lg:text-base leading-relaxed space-y-4 pt-6 border-t border-slate-100/60 font-sans">
+                <div class="break-all text-[#061b3a] text-sm lg:text-base leading-relaxed space-y-4 pt-6 border-t border-slate-100/60 font-sans">
                     @if(strip_tags($pengumuman->isi) !== $pengumuman->isi)
                         {!! $pengumuman->isi !!}
                     @else
@@ -84,7 +84,7 @@
                 </div>
 
                 <!-- Key Schedule Info Box -->
-                <div class="rounded-2xl border border-sky-100 bg-sky-50/50 p-6 space-y-4">
+                <div class="min-w-0 rounded-2xl border border-sky-100 bg-sky-50/50 p-6 space-y-4">
                     <div class="flex items-center gap-3 text-sky-800 font-bold text-sm">
                         <i class="fa-solid fa-circle-info text-base"></i>
                         <span>Informasi Penting Terkait Pengumuman</span>
@@ -111,7 +111,7 @@
                         <h4 class="font-bold text-sm text-[#04241e] uppercase tracking-wider">Lampiran</h4>
                         <div class="space-y-2.5">
                             @foreach($pengumuman->file_lampiran as $item)
-                                <div class="flex items-center justify-between gap-4 p-4 rounded-2xl border border-slate-100 bg-slate-50">
+                                <div class="flex min-w-0 items-center justify-between gap-4 p-4 rounded-2xl border border-slate-100 bg-slate-50">
                                     <div class="flex items-center gap-3 min-w-0">
                                         <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-slate-200/60 text-red-500 text-lg flex-shrink-0">
                                             <i class="fa-regular fa-file-pdf"></i>
@@ -153,7 +153,7 @@
         </main>
 
         <!-- Right Column: Sidebar -->
-        <aside class="space-y-6">
+        <aside class="min-w-0 space-y-6">
             
             <!-- Butuh Bantuan Widget -->
             <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
@@ -171,11 +171,11 @@
                 <h3 class="font-serif font-bold text-lg text-[#04241e] border-b border-slate-100 pb-2">Pengumuman Lainnya</h3>
                 <div class="space-y-4">
                     @forelse($recentPengumuman as $recent)
-                        <a href="{{ route('pengumuman.public.show', $recent->slug) }}" class="block group transition">
+                        <a href="{{ route('pengumuman.public.show', $recent->slug) }}" class="block min-w-0 group transition">
                             <span class="text-[10px] font-bold text-slate-400">
                                 {{ $recent->tanggal_mulai->locale('id')->translatedFormat('d F Y') }}
                             </span>
-                            <h4 class="font-bold text-xs text-[#061b3a] group-hover:text-emerald-800 transition line-clamp-2 mt-1">
+                            <h4 class="break-words font-bold text-xs text-[#061b3a] group-hover:text-emerald-800 transition line-clamp-2 mt-1">
                                 {{ $recent->judul }}
                             </h4>
                         </a>

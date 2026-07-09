@@ -27,10 +27,10 @@
     </div>
 
     <!-- Main Content Area -->
-    <div class="mx-auto max-w-7xl px-6 lg:px-12 py-8 grid gap-8 lg:grid-cols-[1fr_320px]">
+    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 py-8 lg:grid-cols-[1fr_320px] lg:px-12">
         <!-- Left Column: News Detail -->
-        <main>
-            <article class="bg-white rounded-[2.5rem] p-6 lg:p-10 border border-slate-100 shadow-sm space-y-6">
+        <main class="min-w-0">
+            <article class="min-w-0 space-y-6 overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white p-6 shadow-sm lg:p-10">
                 <!-- Meta Info & Title -->
                 <div class="space-y-4">
                     <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500">
@@ -49,13 +49,13 @@
                         @endif
                     </div>
                     
-                    <h1 class="font-serif text-3xl lg:text-4xl font-bold leading-tight text-[#04241e]">
+                    <h1 class="break-words font-serif text-3xl lg:text-4xl font-bold leading-tight text-[#04241e]">
                         {{ $berita->judul }}
                     </h1>
                 </div>
 
                 <!-- Featured Image -->
-                <div class="overflow-hidden rounded-3xl w-full max-h-[480px]">
+                <div class="min-w-0 overflow-hidden rounded-3xl w-full max-h-[480px]">
                     @if($berita->gambar)
                         <img src="{{ Storage::url($berita->gambar) }}" alt="{{ $berita->judul }}" class="w-full h-full object-cover">
                     @else
@@ -66,7 +66,7 @@
                 </div>
 
                 <!-- Body Content -->
-                <div class="text-[#061b3a] text-sm lg:text-base leading-relaxed space-y-4 pt-6 border-t border-slate-100/60 font-sans">
+                <div class="break-all text-[#061b3a] text-sm lg:text-base leading-relaxed space-y-4 pt-6 border-t border-slate-100/60 font-sans">
                     @if(strip_tags($berita->isi) !== $berita->isi)
                         {!! $berita->isi !!}
                     @else
@@ -77,7 +77,7 @@
         </main>
 
         <!-- Right Column: Sidebar -->
-        <aside class="space-y-6">
+        <aside class="min-w-0 space-y-6">
             <!-- Cari Berita Card -->
             <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
                 <h3 class="font-serif font-bold text-lg text-[#04241e] mb-4">Cari Berita</h3>
@@ -95,7 +95,7 @@
                 <h3 class="font-serif font-bold text-lg text-[#04241e] border-b border-slate-100 pb-2">Berita Terbaru</h3>
                 <div class="space-y-4">
                     @forelse($recentBerita as $recent)
-                        <a href="{{ route('berita.public.show', $recent->slug) }}" class="flex gap-3 group transition">
+                        <a href="{{ route('berita.public.show', $recent->slug) }}" class="flex min-w-0 gap-3 group transition">
                             <div class="w-16 h-16 rounded-xl bg-slate-100 flex-shrink-0 overflow-hidden relative">
                                 @if($recent->gambar)
                                     <img src="{{ Storage::url($recent->gambar) }}" alt="{{ $recent->judul }}" class="h-full w-full object-cover group-hover:scale-105 transition duration-200">
@@ -105,8 +105,8 @@
                                     </div>
                                 @endif
                             </div>
-                            <div class="flex flex-col justify-center">
-                                <h4 class="font-bold text-xs text-[#061b3a] group-hover:text-[#ffdc7c] transition line-clamp-2">
+                            <div class="flex min-w-0 flex-col justify-center">
+                                <h4 class="break-words font-bold text-xs text-[#061b3a] group-hover:text-[#ffdc7c] transition line-clamp-2">
                                     {{ $recent->judul }}
                                 </h4>
                                 <span class="text-[10px] text-slate-400 mt-1">

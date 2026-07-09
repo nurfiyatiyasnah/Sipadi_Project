@@ -4,63 +4,63 @@
 
 @section('content')
 <div class="py-12 lg:py-20">
-    <div class="mx-auto max-w-7xl px-6 lg:px-12">
+    <div class="mx-auto max-w-7xl min-w-0 px-4 sm:px-6 lg:px-12">
         
-        <div class="grid gap-12 lg:grid-cols-[1fr_1.6fr] items-start">
+        <div class="grid min-w-0 grid-cols-1 gap-12 lg:grid-cols-[1fr_1.6fr] items-start">
             
             <!-- Left Column: Info & Contact -->
-            <div class="space-y-8">
+            <div class="min-w-0 space-y-8">
                 <div>
-                    <h1 class="font-serif text-4xl lg:text-5xl font-bold leading-tight text-[#04241e]">Layanan Pengaduan</h1>
-                    <p class="mt-4 text-slate-600 text-base leading-relaxed">
+                    <h1 class="break-words font-serif text-4xl lg:text-5xl font-bold leading-tight text-[#04241e]">Layanan Pengaduan</h1>
+                    <p class="mt-4 break-words text-slate-600 text-base leading-relaxed">
                         Kami menghargai setiap masukan dari Anda untuk meningkatkan kualitas layanan SIPADI Bukittinggi. Silakan lengkapi formulir di samping untuk menyampaikan saran, kritik, atau keluhan Anda.
                     </p>
                 </div>
 
                 <!-- Contact Card -->
-                <div class="bg-white border border-slate-200/50 rounded-3xl p-8 shadow-sm space-y-6 relative overflow-hidden">
+                <div class="min-w-0 bg-white border border-slate-200/50 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6 relative overflow-hidden">
                     <!-- Abstract Background Decoration -->
                     <div class="absolute right-0 top-0 w-24 h-24 bg-slate-50 rounded-bl-full flex items-center justify-center opacity-30 pointer-events-none">
                         <i class="fa-solid fa-headset text-4xl text-slate-300"></i>
                     </div>
 
-                    <h3 class="text-xl font-bold text-[#04241e] border-b border-slate-100 pb-3">Informasi Kontak</h3>
+                    <h3 class="break-words text-xl font-bold text-[#04241e] border-b border-slate-100 pb-3">Informasi Kontak</h3>
                     
                     <div class="space-y-5">
                         <!-- Alamat -->
-                        <div class="flex gap-4 items-start">
+                        <div class="flex min-w-0 gap-4 items-start">
                             <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-500 mt-0.5 flex-shrink-0">
                                 <i class="fa-solid fa-location-dot"></i>
                             </span>
-                            <div>
+                            <div class="min-w-0">
                                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Alamat</p>
-                                <p class="text-sm text-slate-700 mt-1 leading-relaxed">
+                                <p class="break-words text-sm text-slate-700 mt-1 leading-relaxed">
                                     Jl. Perintis Kemerdekaan No. 1, Bukittinggi
                                 </p>
                             </div>
                         </div>
 
                         <!-- Email -->
-                        <div class="flex gap-4 items-start">
+                        <div class="flex min-w-0 gap-4 items-start">
                             <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-500 mt-0.5 flex-shrink-0">
                                 <i class="fa-solid fa-envelope"></i>
                             </span>
-                            <div>
+                            <div class="min-w-0">
                                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Email</p>
-                                <p class="text-sm text-slate-700 mt-1 leading-relaxed">
+                                <p class="break-all text-sm text-slate-700 mt-1 leading-relaxed">
                                     pengaduan@sipadi.bukittinggi.go.id
                                 </p>
                             </div>
                         </div>
 
                         <!-- Telepon -->
-                        <div class="flex gap-4 items-start">
+                        <div class="flex min-w-0 gap-4 items-start">
                             <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-500 mt-0.5 flex-shrink-0">
                                 <i class="fa-solid fa-phone"></i>
                             </span>
-                            <div>
+                            <div class="min-w-0">
                                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Telepon</p>
-                                <p class="text-sm text-slate-700 mt-1 leading-relaxed">
+                                <p class="break-words text-sm text-slate-700 mt-1 leading-relaxed">
                                     (0752) 123456
                                 </p>
                             </div>
@@ -70,7 +70,7 @@
             </div>
 
             <!-- Right Column: Complaint Form -->
-            <div class="bg-white border border-slate-200/50 rounded-[2.5rem] p-8 lg:p-12 shadow-md">
+            <div class="min-w-0 bg-white border border-slate-200/50 rounded-[2.5rem] p-6 sm:p-8 lg:p-12 shadow-md">
                 
                 @if ($errors->any())
                     <div class="mb-6 rounded-2xl bg-red-50 border border-red-200 p-4 text-sm text-red-700">
@@ -137,7 +137,7 @@
                     <!-- Lampiran Pendukung -->
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Lampiran Pendukung (Opsional)</label>
-                        <div class="relative flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-2xl p-6 bg-slate-50 hover:bg-slate-100/50 transition duration-200 group cursor-pointer" x-data="{ fileName: '' }">
+                        <div class="relative flex min-w-0 flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-2xl p-6 bg-slate-50 hover:bg-slate-100/50 transition duration-200 group cursor-pointer" x-data="{ fileName: '' }">
                             <input type="file" name="lampiran" id="lampiran" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" 
                                 @change="fileName = $event.target.files[0] ? $event.target.files[0].name : ''">
                             
@@ -145,7 +145,7 @@
                                 <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
                             </span>
                             
-                            <p class="text-sm font-bold text-slate-700 mt-4 text-center">
+                            <p class="max-w-full break-all text-sm font-bold text-slate-700 mt-4 text-center">
                                 <span x-text="fileName ? fileName : 'Unggah File atau tarik dan lepas'"></span>
                             </p>
                             <p class="text-xs text-slate-400 mt-1 text-center" x-show="!fileName">
@@ -155,11 +155,11 @@
                     </div>
 
                     <!-- Submit Buttons -->
-                    <div class="border-t border-slate-100 pt-6 flex items-center justify-end gap-4">
-                        <a href="{{ route('landing') }}" class="rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-6 py-3 text-sm font-bold text-slate-600 transition duration-200">
+                    <div class="border-t border-slate-100 pt-6 flex flex-col-reverse items-stretch justify-end gap-3 sm:flex-row sm:items-center sm:gap-4">
+                        <a href="{{ route('landing') }}" class="rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-6 py-3 text-sm font-bold text-slate-600 transition duration-200 text-center">
                             Batal
                         </a>
-                        <button type="submit" class="rounded-xl bg-[#04241e] hover:bg-[#06342c] px-6 py-3 text-sm font-bold text-white shadow-md hover:shadow-lg transition duration-200 flex items-center gap-2">
+                        <button type="submit" class="rounded-xl bg-[#04241e] hover:bg-[#06342c] px-6 py-3 text-sm font-bold text-white shadow-md hover:shadow-lg transition duration-200 flex items-center justify-center gap-2">
                             Kirim Pengaduan
                             <i class="fa-regular fa-paper-plane"></i>
                         </button>
