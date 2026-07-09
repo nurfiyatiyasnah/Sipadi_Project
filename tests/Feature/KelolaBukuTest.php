@@ -7,9 +7,12 @@ use App\Livewire\BukuDetail;
 use App\Livewire\BukuEdit;
 use App\Livewire\KoleksiBukuIndex;
 use App\Livewire\TambahStokBuku;
+use App\Models\Anggota;
 use App\Models\Buku;
+use App\Models\DetailPeminjaman;
 use App\Models\EksemplarBuku;
 use App\Models\KategoriBuku;
+use App\Models\Peminjaman;
 use App\Models\Petugas;
 use App\Models\Role;
 use App\Models\User;
@@ -280,6 +283,65 @@ class KelolaBukuTest extends TestCase
 
         $this->assertDatabaseHas('eksemplar_buku', [
             'id_eksemplar_buku' => $copyDipinjam->id_eksemplar_buku,
+        ]);
+    }
+
+    public function test_admin_dapat_mengubah_eksemplar_dipinjam_tanpa_peminjaman_aktif_menjadi_tersedia(): void
+    {
+        $petugas = $this->createPetugasUser();
+        $kategori = KategoriBuku::factory()->create();
+        $book = Buku::factory()->create(['id_kategori' => $kategori->id_kategori]);
+        $copy = EksemplarBuku::create([
+            'id_buku' => $book->id_buku,
+            'kode_eksemplar' => 'BK-8888-001',
+            'status_eksemplar' => 'dipinjam',
+        ]);
+
+        $this->actingAs($petugas);
+
+        Livewire::test(BukuDetail::class, ['id' => $book->id_buku])
+            ->call('updateCopyStatus', $copy->id_eksemplar_buku, 'tersedia')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('eksemplar_buku', [
+            'id_eksemplar_buku' => $copy->id_eksemplar_buku,
+            'status_eksemplar' => 'tersedia',
+        ]);
+    }
+
+    public function test_admin_tidak_dapat_mengubah_eksemplar_yang_masih_memiliki_peminjaman_aktif(): void
+    {
+        $petugas = $this->createPetugasUser();
+        $anggota = Anggota::factory()->create();
+        $kategori = KategoriBuku::factory()->create();
+        $book = Buku::factory()->create(['id_kategori' => $kategori->id_kategori]);
+        $copy = EksemplarBuku::create([
+            'id_buku' => $book->id_buku,
+            'kode_eksemplar' => 'BK-7777-001',
+            'status_eksemplar' => 'dipinjam',
+        ]);
+        $peminjaman = Peminjaman::create([
+            'kode_peminjaman' => 'PMJ-202607-777',
+            'id_anggota' => $anggota->id_anggota,
+            'status_peminjaman' => 'aktif',
+        ]);
+        DetailPeminjaman::create([
+            'id_peminjaman' => $peminjaman->id_peminjaman,
+            'id_buku' => $book->id_buku,
+            'id_eksemplar_buku' => $copy->id_eksemplar_buku,
+            'jumlah' => 1,
+            'status_detail' => 'dipinjam',
+        ]);
+
+        $this->actingAs($petugas);
+
+        Livewire::test(BukuDetail::class, ['id' => $book->id_buku])
+            ->call('updateCopyStatus', $copy->id_eksemplar_buku, 'tersedia')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('eksemplar_buku', [
+            'id_eksemplar_buku' => $copy->id_eksemplar_buku,
+            'status_eksemplar' => 'dipinjam',
         ]);
     }
 
