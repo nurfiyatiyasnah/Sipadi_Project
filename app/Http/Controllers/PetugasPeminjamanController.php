@@ -65,7 +65,10 @@ class PetugasPeminjamanController extends Controller
         // Check active sanctions
         $sanksiAktif = SanksiAnggota::where('id_anggota', $anggota->id_anggota)
             ->where('status_sanksi', 'aktif')
-            ->where('tanggal_selesai', '>=', today()->toDateString())
+            ->where(function ($query) {
+                $query->whereNull('tanggal_selesai')
+                    ->orWhere('tanggal_selesai', '>=', today()->toDateString());
+            })
             ->first();
 
         return view('petugas.peminjaman.show', compact('peminjaman', 'anggota', 'bukuDipinjamCount', 'sanksiAktif'));

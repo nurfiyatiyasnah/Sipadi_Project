@@ -11,6 +11,7 @@ use App\Models\KategoriBuku;
 use App\Models\Peminjaman;
 use App\Models\Petugas;
 use App\Models\Role;
+use App\Models\SanksiAnggota;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -204,6 +205,29 @@ class PetugasPeminjamanTest extends TestCase
             ->assertSee('Setujui & Atur Jadwal', false)
             ->assertSee('Ahmad Rifai')
             ->assertSee('The Art of Computer Programming');
+    }
+
+    public function test_anggota_dengan_blokir_tanpa_batas_tidak_dapat_membuka_form_pengajuan_peminjaman(): void
+    {
+        $anggota = $this->createAnggotaUser('Ahmad Rifai');
+        $kategori = KategoriBuku::factory()->create();
+        $buku = Buku::factory()->for($kategori, 'kategori')->create(['judul' => 'The Art of Computer Programming']);
+
+        SanksiAnggota::create([
+            'id_anggota' => $anggota->anggota->id_anggota,
+            'id_peminjaman' => null,
+            'jenis_sanksi' => 'Diblokir',
+            'alasan' => 'Blokir tanpa batas dari petugas.',
+            'tanggal_mulai' => now(),
+            'tanggal_selesai' => null,
+            'status_sanksi' => 'aktif',
+        ]);
+
+        $response = $this->actingAs($anggota)
+            ->get(route('peminjaman.create', $buku->id_buku));
+
+        $response->assertRedirect(route('katalog.show', $buku->id_buku));
+        $response->assertSessionHas('error', 'Anda tidak dapat mengajukan peminjaman karena sedang dalam masa sanksi.');
     }
 
     public function test_petugas_dapat_menyetujui_dan_mengatur_jadwal_pengambilan(): void

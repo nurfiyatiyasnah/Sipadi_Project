@@ -39,9 +39,9 @@
     </div>
 
     <!-- Main Grid Profile Info -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        <!-- Left Panel: Profile & Quick Stats -->
-        <div class="lg:col-span-1 bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col items-center justify-between min-h-[440px]">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8 items-start">
+        <!-- Left Panel: Profile -->
+        <div class="lg:col-span-1 bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col items-center">
             <div class="flex flex-col items-center text-center w-full">
                 <!-- Avatar Photo -->
                 <div class="relative w-32 h-32 mx-auto mb-5 shrink-0 block">
@@ -83,45 +83,17 @@
                     @endif
 
                     <!-- Sanksi Badge -->
-                    @php
-                        $activeSanksi = $anggota->sanksi->where('status_sanksi', 'aktif')->first();
-                        $sanksiText = 'Bebas Sanksi';
-                        $sanksiClass = 'bg-slate-100 text-slate-600';
-                        if ($activeSanksi) {
-                            if (stripos($activeSanksi->jenis_sanksi, 'Blokir') !== false) {
-                                $sanksiText = 'Diblokir';
-                                $sanksiClass = 'bg-rose-50 text-rose-600 border border-rose-100';
-                            } else {
-                                $sanksiText = $activeSanksi->jenis_sanksi;
-                                $sanksiClass = 'bg-amber-50 text-amber-700 border border-amber-100';
-                            }
-                        }
-                    @endphp
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {{ $sanksiClass }}">
-                        {{ $sanksiText }}
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border {{ $sanksiBadge['class'] }}">
+                        {{ $sanksiBadge['label'] }}
                     </span>
                 </div>
             </div>
 
-            <!-- Stats Boxes -->
-            <div class="w-full mt-8 border-t border-slate-100 pt-5">
-                <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-3">STATISTIK PEMINJAMAN</p>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-slate-50 border border-slate-100 rounded-xl p-4 text-center">
-                        <h4 class="text-2xl font-black text-slate-800">{{ $totalPinjam }}</h4>
-                        <p class="text-[10px] text-slate-400 font-bold mt-1">Buku Dipinjam</p>
-                    </div>
-                    <div class="bg-slate-50 border border-slate-100 rounded-xl p-4 text-center">
-                        <h4 class="text-2xl font-black text-slate-800">{{ $totalTerlambat }}</h4>
-                        <p class="text-[10px] text-slate-400 font-bold mt-1">Keterlambatan</p>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Right Panel: Personal Details -->
-        <div class="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col justify-between">
-            <div class="h-full flex flex-col justify-between">
+        <div class="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+            <div class="flex flex-col">
                 <!-- Panel Header -->
                 <div class="flex items-center gap-3 pb-4 border-b border-slate-100 mb-6">
                     <div class="h-10 w-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-600">
@@ -134,7 +106,7 @@
                 </div>
 
                 <!-- Info Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 flex-1 py-2">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 py-2">
                     <!-- Email -->
                     <div class="flex items-start gap-4">
                         <div class="h-10 w-10 rounded-xl bg-blue-50/60 flex items-center justify-center text-blue-600 shrink-0 border border-blue-100/30">
@@ -195,6 +167,84 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Loan Statistics Section -->
+    @php
+        $statusRisikoPerluReview = $statistikPeminjaman['status_risiko'] === 'Perlu Review';
+        $statistikTiles = [
+            [
+                'label' => 'Buku Dipinjam',
+                'value' => $statistikPeminjaman['buku_dipinjam'],
+                'icon' => 'fa-book-open-reader',
+                'iconClass' => 'bg-blue-50 text-blue-600 border-blue-100',
+                'valueClass' => 'text-slate-800',
+            ],
+            [
+                'label' => 'Keterlambatan',
+                'value' => $statistikPeminjaman['keterlambatan'],
+                'icon' => 'fa-clock',
+                'iconClass' => 'bg-rose-50 text-rose-600 border-rose-100',
+                'valueClass' => 'text-slate-800',
+            ],
+            [
+                'label' => 'Total Hari Telat',
+                'value' => $statistikPeminjaman['total_hari_telat'],
+                'icon' => 'fa-calendar-days',
+                'iconClass' => 'bg-violet-50 text-violet-600 border-violet-100',
+                'valueClass' => 'text-slate-800',
+            ],
+            [
+                'label' => 'Status Risiko',
+                'value' => $statistikPeminjaman['status_risiko'],
+                'icon' => $statusRisikoPerluReview ? 'fa-triangle-exclamation' : 'fa-shield-heart',
+                'iconClass' => $statusRisikoPerluReview ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                'valueClass' => $statusRisikoPerluReview ? 'text-amber-700' : 'text-emerald-700',
+                'compactValue' => true,
+            ],
+            [
+                'label' => 'Sanksi Aktif',
+                'value' => $statistikPeminjaman['sanksi_aktif'],
+                'icon' => 'fa-ban',
+                'iconClass' => 'bg-orange-50 text-orange-600 border-orange-100',
+                'valueClass' => 'text-slate-800',
+            ],
+            [
+                'label' => 'Terakhir Telat',
+                'value' => $statistikPeminjaman['terakhir_telat'],
+                'icon' => 'fa-calendar-check',
+                'iconClass' => 'bg-slate-100 text-slate-600 border-slate-200',
+                'valueClass' => 'text-slate-800',
+                'compactValue' => true,
+            ],
+        ];
+    @endphp
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mb-8">
+        <div class="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
+            <div class="h-9 w-9 rounded-lg bg-slate-50 flex items-center justify-center text-slate-500">
+                <i class="fa-solid fa-chart-simple"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold text-slate-800">Statistik Peminjaman</h3>
+                <p class="text-xs text-slate-400">Ringkasan aktivitas dan risiko keterlambatan anggota</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
+            @foreach ($statistikTiles as $tile)
+                <div class="min-h-[104px] rounded-xl border border-slate-100 bg-slate-50/80 p-4">
+                    <div class="flex items-start gap-3">
+                        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border text-sm {{ $tile['iconClass'] }}">
+                            <i class="fa-solid {{ $tile['icon'] }}"></i>
+                        </span>
+                        <p class="min-w-0 text-[10px] font-extrabold uppercase leading-tight tracking-wider text-slate-400 break-words">{{ $tile['label'] }}</p>
+                    </div>
+                    <p class="mt-3 break-words font-black leading-tight {{ ($tile['compactValue'] ?? false) ? 'text-base' : 'text-2xl' }} {{ $tile['valueClass'] }}">
+                        {{ $tile['value'] }}
+                    </p>
+                </div>
+            @endforeach
         </div>
     </div>
 

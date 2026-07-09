@@ -95,10 +95,12 @@
                 <tbody class="divide-y divide-slate-100">
                     @forelse ($anggota as $item)
                         @php
-                            // Active sanksi check
-                            $activeSanksi = $item->sanksi->where('status_sanksi', 'aktif')->first();
+                            $activeSanksi = $item->sanksi->first(
+                                fn ($sanksi) => stripos((string) $sanksi->jenis_sanksi, 'Blokir') !== false
+                            ) ?? $item->sanksi->first();
                             $sanksiText = 'Bebas';
                             $sanksiClass = 'bg-slate-100 text-slate-600';
+
                             if ($activeSanksi) {
                                 if (stripos($activeSanksi->jenis_sanksi, 'Blokir') !== false) {
                                     $sanksiText = 'Diblokir';

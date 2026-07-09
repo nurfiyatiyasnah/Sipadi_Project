@@ -34,7 +34,10 @@ class PengajuanPeminjamanController extends Controller
         // Check active sanctions
         $hasActiveSanction = SanksiAnggota::where('id_anggota', $anggota->id_anggota)
             ->where('status_sanksi', 'aktif')
-            ->where('tanggal_selesai', '>=', today()->toDateString())
+            ->where(function ($q) {
+                $q->whereNull('tanggal_selesai')
+                    ->orWhere('tanggal_selesai', '>=', today()->toDateString());
+            })
             ->exists();
         if ($hasActiveSanction) {
             return redirect()->route('katalog.show', $buku->id_buku)->with('error', 'Anda tidak dapat mengajukan peminjaman karena sedang dalam masa sanksi.');
@@ -110,7 +113,10 @@ class PengajuanPeminjamanController extends Controller
         // Check active sanctions
         $hasActiveSanction = SanksiAnggota::where('id_anggota', $anggota->id_anggota)
             ->where('status_sanksi', 'aktif')
-            ->where('tanggal_selesai', '>=', today()->toDateString())
+            ->where(function ($q) {
+                $q->whereNull('tanggal_selesai')
+                    ->orWhere('tanggal_selesai', '>=', today()->toDateString());
+            })
             ->exists();
         if ($hasActiveSanction) {
             return redirect()->route('katalog.show', $buku->id_buku)->with('error', 'Anda tidak dapat mengajukan peminjaman karena sedang dalam masa sanksi.');
