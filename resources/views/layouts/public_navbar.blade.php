@@ -187,7 +187,15 @@
                             <!-- User Name and Role -->
                             <div class="hidden max-w-48 min-w-0 leading-tight xl:block">
                                 <span class="block truncate text-sm font-bold text-white group-hover:text-slate-200 transition-colors">{{ Auth::user()->nama }}</span>
-                                <span class="block truncate text-[11px] text-slate-400 mt-0.5">{{ Auth::user()->role?->nama_role ?? 'Anggota' }}</span>
+                                <span class="mt-0.5 flex min-w-0 items-center gap-2">
+                                    <span class="truncate text-[11px] text-slate-400">{{ Auth::user()->role?->nama_role ?? 'Anggota' }}</span>
+                                    @if ($publicMemberStatusBadge)
+                                        <span data-member-status-badge="{{ $publicMemberStatusBadge['label'] }}" class="inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-extrabold leading-none {{ $publicMemberStatusBadge['class'] }}">
+                                            <span class="h-1.5 w-1.5 rounded-full {{ $publicMemberStatusBadge['dot_class'] }}"></span>
+                                            {{ $publicMemberStatusBadge['label'] }}
+                                        </span>
+                                    @endif
+                                </span>
                             </div>
                         </button>
 
@@ -274,6 +282,19 @@
                     @if (Auth::user()->isPetugas())
                         <a href="{{ route('petugas.dashboard') }}" @click="mobileOpen = false" class="block rounded-xl bg-[#ffdc7c] px-4 py-3 text-center text-sm font-bold text-[#04241e] transition hover:bg-[#ffe399]">Dashboard</a>
                     @else
+                        @if ($publicMemberStatusBadge)
+                            <div class="mb-3 flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
+                                <div class="min-w-0">
+                                    <span class="block truncate text-sm font-bold text-white">{{ Auth::user()->nama }}</span>
+                                    <span class="block truncate text-[11px] text-slate-400">{{ Auth::user()->role?->nama_role ?? 'Anggota' }}</span>
+                                </div>
+                                <span data-member-status-badge="{{ $publicMemberStatusBadge['label'] }}" class="inline-flex shrink-0 items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-extrabold leading-none {{ $publicMemberStatusBadge['class'] }}">
+                                    <span class="h-1.5 w-1.5 rounded-full {{ $publicMemberStatusBadge['dot_class'] }}"></span>
+                                    {{ $publicMemberStatusBadge['label'] }}
+                                </span>
+                            </div>
+                        @endif
+
                         <div class="grid gap-2 sm:grid-cols-2">
                             <a href="{{ route('anggota.e-kartu') }}" @click="mobileOpen = false" class="block rounded-xl bg-[#ffdc7c] px-4 py-3 text-center text-sm font-bold text-[#04241e] transition hover:bg-[#ffe399]">E-Kartu</a>
                             <a href="{{ route('anggota.peminjaman-saya') }}" @click="mobileOpen = false" class="block rounded-xl border border-white/15 px-4 py-3 text-center text-sm font-bold text-white transition hover:bg-white/10">Peminjaman Saya</a>

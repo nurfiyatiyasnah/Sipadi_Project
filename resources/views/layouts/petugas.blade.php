@@ -42,7 +42,7 @@
         @endphp
 
         <!-- Navigation Menu -->
-        <nav class="flex-1 space-y-1 overflow-y-auto px-4 py-6">
+        <nav class="sipadi-sidebar-scrollbar flex-1 space-y-1 overflow-y-auto px-4 py-6">
             @foreach ($navigationItems as [$label, $icon, $routeName, $activePattern])
                 @if ($label === 'divider')
                     <hr class="my-4 border-slate-800/60">
