@@ -24,10 +24,10 @@
         </nav>
     </div>
 
-    <div class="mx-auto max-w-7xl px-6 lg:px-12 py-8 grid gap-8 lg:grid-cols-[1fr_390px]">
+    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 py-8 lg:grid-cols-[1fr_390px] lg:px-12">
         <!-- Left Column: Layanan Detail -->
-        <main>
-            <article class="bg-white rounded-3xl p-6 lg:p-10 border border-slate-100 shadow-sm space-y-8">
+        <main class="min-w-0">
+            <article class="min-w-0 space-y-8 overflow-hidden rounded-3xl border border-slate-100 bg-white p-6 shadow-sm lg:p-10">
                 <!-- Header / Title -->
                 <div class="space-y-4">
                     <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500">
@@ -36,38 +36,38 @@
                         </span>
                     </div>
                     
-                    <h1 class="font-serif text-3xl lg:text-4xl font-bold leading-tight text-[#04241e]">
+                    <h1 class="break-words font-serif text-3xl lg:text-4xl font-bold leading-tight text-[#04241e]">
                         {{ $layanan->nama_layanan }}
                     </h1>
                 </div>
 
                 <!-- Description -->
-                <div class="text-[#061b3a] text-sm lg:text-base leading-relaxed pt-6 border-t border-slate-100/60 font-sans">
+                <div class="break-words text-[#061b3a] text-sm lg:text-base leading-relaxed pt-6 border-t border-slate-100/60 font-sans">
                     <p>{{ $layanan->deskripsi ?: 'Informasi detail layanan Perpustakaan Umum Kota Bukittinggi.' }}</p>
                 </div>
 
                 <!-- Key Parameters Row -->
                 <div class="grid gap-4 md:grid-cols-3 pt-4">
-                    <div class="rounded-2xl border border-slate-100 bg-[#fbfbfa] p-5">
+                    <div class="min-w-0 rounded-2xl border border-slate-100 bg-[#fbfbfa] p-5">
                         <div class="flex items-center gap-2 text-slate-500">
                             <i class="fa-regular fa-clock text-sm text-[#04241e]"></i>
                             <span class="text-xs font-semibold">Jam Layanan</span>
                         </div>
-                        <p class="mt-2 text-lg font-bold text-[#04241e] leading-snug">{{ $layanan->jam_layanan ?: 'Menyesuaikan jadwal' }}</p>
+                        <p class="mt-2 break-words text-lg font-bold text-[#04241e] leading-snug">{{ $layanan->jam_layanan ?: 'Menyesuaikan jadwal' }}</p>
                     </div>
-                    <div class="rounded-2xl border border-slate-100 bg-[#fbfbfa] p-5">
+                    <div class="min-w-0 rounded-2xl border border-slate-100 bg-[#fbfbfa] p-5">
                         <div class="flex items-center gap-2 text-slate-500">
                             <i class="fa-solid fa-headset text-sm text-[#04241e]"></i>
                             <span class="text-xs font-semibold">Kontak</span>
                         </div>
-                        <p class="mt-2 text-lg font-bold text-[#04241e] leading-snug">{{ $layanan->kontak_layanan ?: 'Petugas layanan' }}</p>
+                        <p class="mt-2 break-words text-lg font-bold text-[#04241e] leading-snug">{{ $layanan->kontak_layanan ?: 'Petugas layanan' }}</p>
                     </div>
-                    <div class="rounded-2xl border border-slate-100 bg-[#fbfbfa] p-5">
+                    <div class="min-w-0 rounded-2xl border border-slate-100 bg-[#fbfbfa] p-5">
                         <div class="flex items-center gap-2 text-slate-500">
                             <i class="fa-solid fa-money-bill-wave text-sm text-[#04241e]"></i>
                             <span class="text-xs font-semibold">Biaya</span>
                         </div>
-                        <p class="mt-2 text-lg font-bold text-[#04241e] leading-snug">{{ $layanan->biaya ?: 'Gratis' }}</p>
+                        <p class="mt-2 break-words text-lg font-bold text-[#04241e] leading-snug">{{ $layanan->biaya ?: 'Gratis' }}</p>
                     </div>
                 </div>
 
@@ -76,17 +76,17 @@
                     <h2 class="font-serif text-xl font-bold text-[#04241e] mb-6">Alur Layanan</h2>
                     <div class="space-y-4">
                         @forelse ($procedures as $procedure)
-                            <div class="relative flex gap-4">
+                            <div class="relative flex min-w-0 gap-4">
                                 <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#04241e] text-sm font-bold text-[#ffdc7c]">{{ $loop->iteration }}</span>
-                                <div class="flex-1 rounded-2xl border border-slate-100 bg-slate-50/50 px-5 py-4">
-                                    <h3 class="font-bold text-[#04241e]">Langkah {{ $loop->iteration }}</h3>
-                                    <p class="mt-1 text-sm leading-relaxed text-slate-600">{{ $procedure }}</p>
+                                <div class="min-w-0 flex-1 rounded-2xl border border-slate-100 bg-slate-50/50 px-5 py-4">
+                                    <h3 class="break-words font-bold text-[#04241e]">Langkah {{ $loop->iteration }}</h3>
+                                    <p class="mt-1 break-words text-sm leading-relaxed text-slate-600">{{ $procedure }}</p>
                                 </div>
                             </div>
                         @empty
-                            <div class="relative flex gap-4">
+                            <div class="relative flex min-w-0 gap-4">
                                 <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#04241e] text-sm font-bold text-[#ffdc7c]">1</span>
-                                <div class="flex-1 rounded-2xl border border-slate-100 bg-slate-50/50 px-5 py-4">
+                                <div class="min-w-0 flex-1 rounded-2xl border border-slate-100 bg-slate-50/50 px-5 py-4">
                                     <h3 class="font-bold text-[#04241e]">Hubungi Petugas</h3>
                                     <p class="mt-1 text-sm leading-relaxed text-slate-600">Silakan hubungi petugas untuk mendapatkan arahan penggunaan layanan ini.</p>
                                 </div>
@@ -98,7 +98,7 @@
         </main>
 
         <!-- Right Column: Sidebar -->
-        <aside class="space-y-6">
+        <aside class="min-w-0 space-y-6">
             <!-- Action / Cover Box -->
             <div class="rounded-3xl border border-slate-100 bg-white p-6 text-center shadow-sm">
                 <div class="mx-auto flex h-32 w-32 items-center justify-center overflow-hidden bg-slate-50 rounded-2xl border border-slate-100">
@@ -110,7 +110,7 @@
                         </div>
                     @endif
                 </div>
-                <h2 class="mt-5 font-serif text-lg font-bold text-[#04241e]">Ingin Menggunakan Layanan?</h2>
+                <h2 class="mt-5 break-words font-serif text-lg font-bold text-[#04241e]">Ingin Menggunakan Layanan?</h2>
                 <p class="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-slate-500">Anda dapat masuk sebagai anggota aktif untuk menggunakan layanan ini secara online.</p>
                 <div class="mt-6 space-y-3">
                     <a href="{{ route('login') }}" class="block rounded-2xl bg-[#04241e] py-3 text-sm font-bold text-white hover:bg-opacity-90 transition duration-200">Masuk ke Akun</a>
@@ -124,7 +124,7 @@
                     <i class="fa-solid fa-list-check text-sm text-emerald-800"></i>
                     Syarat & Ketentuan
                 </h2>
-                <ul class="space-y-3 text-sm leading-relaxed text-slate-500 list-disc list-inside">
+                <ul class="space-y-3 break-words text-sm leading-relaxed text-slate-500 list-disc list-inside">
                     @forelse ($requirements as $requirement)
                         <li>{{ $requirement }}</li>
                     @empty
@@ -141,14 +141,14 @@
                     Jam Layanan
                 </h2>
                 <dl class="space-y-3 text-sm text-slate-500">
-                    <div class="flex items-center justify-between gap-4">
+                    <div class="flex min-w-0 items-center justify-between gap-4">
                         <dt class="font-semibold">Waktu Layanan</dt>
-                        <dd class="text-right font-bold text-[#04241e]">{{ $layanan->jam_layanan ?: 'Mengikuti jam operasional' }}</dd>
+                        <dd class="min-w-0 break-words text-right font-bold text-[#04241e]">{{ $layanan->jam_layanan ?: 'Mengikuti jam operasional' }}</dd>
                     </div>
                     @if ($layanan->kontak_layanan)
-                        <div class="flex items-center justify-between gap-4">
+                        <div class="flex min-w-0 items-center justify-between gap-4">
                             <dt class="font-semibold">Kontak</dt>
-                            <dd class="text-right font-bold text-[#04241e]">{{ $layanan->kontak_layanan }}</dd>
+                            <dd class="min-w-0 break-words text-right font-bold text-[#04241e]">{{ $layanan->kontak_layanan }}</dd>
                         </div>
                     @endif
                 </dl>
@@ -160,7 +160,7 @@
                     <h2 class="font-serif text-base font-bold text-[#04241e] border-b pb-4 mb-4">Layanan Lainnya</h2>
                     <div class="space-y-3">
                         @foreach ($relatedLayanan as $item)
-                            <a href="{{ route('layanan.show', $item->slug) }}" class="block rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold text-[#04241e] hover:bg-emerald-50 hover:border-emerald-200 transition duration-200">
+                            <a href="{{ route('layanan.show', $item->slug) }}" class="block rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold text-[#04241e] hover:bg-emerald-50 hover:border-emerald-200 transition duration-200 break-words">
                                 {{ $item->nama_layanan }}
                             </a>
                         @endforeach

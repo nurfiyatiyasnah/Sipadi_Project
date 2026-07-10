@@ -110,7 +110,6 @@ Temuan utama:
 ### Perubahan Yang Dilakukan
 File diubah:
 - `app/Http/Controllers/PetugasPeminjamanController.php`
-- `docs/refactoring.md`
 
 Detail refactoring:
 - Menambahkan `INDEX_STATUS_FILTERS` untuk mapping status tab halaman index.

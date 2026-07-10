@@ -17,49 +17,197 @@
 
 
     <!-- Hero / Banner Section -->
-    <section class="bg-[#04241e] text-white py-12 lg:py-20 overflow-hidden relative">
+    @php
+        $totalSlides = $beritaList->count() > 0 ? $beritaList->count() : 1;
+    @endphp
+
+    <section x-data="{
+        activeSlide: 0,
+        totalSlides: {{ $totalSlides }},
+        autoplayTimer: null,
+        init() {
+            if (this.totalSlides > 1) {
+                this.startAutoplay();
+            }
+        },
+        startAutoplay() {
+            this.stopAutoplay();
+            this.autoplayTimer = setInterval(() => {
+                this.nextSlide();
+            }, 6000);
+        },
+        stopAutoplay() {
+            if (this.autoplayTimer) {
+                clearInterval(this.autoplayTimer);
+                this.autoplayTimer = null;
+            }
+        },
+        nextSlide() {
+            if (this.totalSlides <= 1) return;
+            this.activeSlide = (this.activeSlide + 1) % this.totalSlides;
+        },
+        prevSlide() {
+            if (this.totalSlides <= 1) return;
+            this.activeSlide = (this.activeSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+        goToSlide(index) {
+            this.activeSlide = index;
+            if (this.totalSlides > 1) this.startAutoplay();
+        }
+    }"
+    @mouseenter="stopAutoplay()"
+    @mouseleave="if (totalSlides > 1) startAutoplay()"
+    class="bg-[#04241e] text-white py-12 lg:py-20 overflow-hidden relative">
+
         <!-- Subtle Pattern Overlay -->
         <div class="absolute inset-0 opacity-10 pointer-events-none mix-blend-overlay bg-[radial-gradient(circle_at_center,_#ffffff_0,_transparent_70%)]"></div>
 
-        <div class="mx-auto max-w-7xl px-6 lg:px-12 grid gap-12 lg:grid-cols-2 items-center relative z-10">
-            <!-- Left Side: Slider Preview Card -->
-            <div class="relative flex items-center">
-                <!-- Floating Left Arrow Button -->
-                <button class="absolute -left-6 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-[#ffdc7c] text-[#04241e] hover:bg-[#ffe399] shadow-lg transition">
-                    <i class="fa-solid fa-chevron-left text-lg"></i>
-                </button>
+        <div class="relative z-10 mx-auto max-w-7xl overflow-hidden px-6 lg:px-12">
+            <div class="relative flex min-h-[420px] min-w-0 items-center">
 
-                <!-- Slider Card Content -->
-                <div class="w-full bg-white text-[#061b3a] rounded-[2.5rem] p-6 shadow-2xl transition duration-300 hover:scale-[1.01]">
-                    <div class="overflow-hidden rounded-3xl relative">
-                        <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1200&q=80" alt="Literasi Digital" class="h-60 w-full object-cover">
-                    </div>
-                    <div class="mt-6">
-                        <h3 class="font-serif text-2xl font-bold leading-tight text-[#04241e]">
-                            Literasi Digital dan Arsip Daerah: Inovasi Baru SIPADI untuk Bukittinggi
-                        </h3>
-                        <p class="mt-3 text-slate-500 text-sm leading-relaxed">
-                            SIPADI menghadirkan layanan perpustakaan dan arsip digital yang lebih modern, memudahkan masyarakat mengakses buku, dokumen, dan informasi literasi secara terpadu.
-                        </p>
-                    </div>
+                <!-- Floating Prev Button (Left Arrow) -->
+                @if($totalSlides > 1)
+                    <button @click="prevSlide()"
+                            aria-label="Slide sebelumnya"
+                            class="absolute left-0 sm:-left-6 top-1/2 -translate-y-1/2 z-30 flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/10 text-white border border-white/20 hover:bg-[#ffdc7c] hover:text-[#04241e] hover:border-[#ffdc7c] shadow-xl transition-all duration-200 focus:outline-none backdrop-blur-sm">
+                        <i class="fa-solid fa-chevron-left text-base sm:text-lg"></i>
+                    </button>
+                @endif
+
+                <!-- Floating Next Button (Right Arrow) -->
+                @if($totalSlides > 1)
+                    <button @click="nextSlide()"
+                            aria-label="Slide berikutnya"
+                            class="absolute right-0 sm:-right-6 top-1/2 -translate-y-1/2 z-30 flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/10 text-white border border-white/20 hover:bg-[#ffdc7c] hover:text-[#04241e] hover:border-[#ffdc7c] shadow-xl transition-all duration-200 focus:outline-none backdrop-blur-sm">
+                        <i class="fa-solid fa-chevron-right text-base sm:text-lg"></i>
+                    </button>
+                @endif
+
+                <!-- Slides Wrapper -->
+                <div class="min-w-0 w-full">
+                    @if($beritaList->isNotEmpty())
+                        @foreach($beritaList as $index => $item)
+                            @php
+                                $imageUrl = $item->gambar
+                                    ? (str_starts_with($item->gambar, 'http') ? $item->gambar : Storage::url($item->gambar))
+                                    : 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1200&q=80';
+                                $plainIsi = strip_tags($item->isi ?? '');
+                                $shortExcerpt = \Illuminate\Support\Str::limit($plainIsi, 140, '...');
+                                $longExcerpt = \Illuminate\Support\Str::limit($plainIsi, 180, '...');
+                            @endphp
+
+                            <div x-show="activeSlide === {{ $index }}"
+                                 x-transition:enter="transition ease-out duration-500 transform"
+                                 x-transition:enter-start="opacity-0 scale-95"
+                                 x-transition:enter-end="opacity-100 scale-100"
+                                 x-transition:leave="transition ease-in duration-300 transform absolute inset-0 pointer-events-none"
+                                 x-transition:leave-start="opacity-100 scale-100"
+                                 x-transition:leave-end="opacity-0 scale-95"
+                                 class="grid min-w-0 grid-cols-1 gap-8 lg:gap-12 lg:grid-cols-2 items-center w-full">
+
+                                <!-- Left Side: Slider Preview Card -->
+                                <div class="relative flex min-w-0 items-center w-full">
+                                    <div class="min-w-0 w-full overflow-hidden rounded-[2.5rem] bg-white p-6 text-[#061b3a] shadow-2xl transition duration-300 hover:scale-[1.01]">
+                                        <a href="{{ route('berita.public.show', $item->slug) }}" class="block min-w-0 group">
+                                            <div class="relative h-60 min-w-0 overflow-hidden rounded-3xl w-full bg-slate-100">
+                                                <img src="{{ $imageUrl }}" alt="{{ $item->judul }}" class="h-full w-full object-cover group-hover:scale-105 transition duration-500">
+                                                @if($item->kategoriBerita?->nama_kategori)
+                                                    <span class="absolute top-3 left-3 bg-[#04241e]/90 text-[#ffdc7c] backdrop-blur-sm text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                                                        {{ $item->kategoriBerita->nama_kategori }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <div class="mt-6">
+                                                <h3 class="break-words font-serif text-xl sm:text-2xl font-bold leading-tight text-[#04241e] group-hover:text-emerald-700 transition line-clamp-2">
+                                                    {{ $item->judul }}
+                                                </h3>
+                                                <p class="mt-3 break-all text-slate-500 text-sm leading-relaxed line-clamp-3">
+                                                    {{ $shortExcerpt }}
+                                                </p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Right Side: Heading Content -->
+                                <div class="relative flex min-w-0 flex-col justify-center items-start overflow-hidden lg:pl-6">
+                                    @if($item->kategoriBerita?->nama_kategori)
+                                        <span class="text-[#ffdc7c] text-xs font-bold uppercase tracking-widest mb-3 bg-white/10 px-3 py-1 rounded-full border border-white/10">
+                                            {{ $item->kategoriBerita->nama_kategori }}
+                                        </span>
+                                    @endif
+
+                                    <h1 class="break-words font-serif text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.15] tracking-tight">
+                                        <a href="{{ route('berita.public.show', $item->slug) }}" class="hover:text-[#ffdc7c] transition duration-200 line-clamp-3">
+                                            {{ $item->judul }}
+                                        </a>
+                                    </h1>
+
+                                    <p class="mt-5 max-w-xl break-all text-slate-300 text-base sm:text-lg leading-relaxed line-clamp-3">
+                                        {{ $longExcerpt }}
+                                    </p>
+
+                                    <div class="mt-8 flex items-center gap-4">
+                                        <a href="{{ route('berita.public.show', $item->slug) }}" class="inline-flex items-center gap-2 bg-[#ffdc7c] text-[#04241e] font-bold px-6 py-3 rounded-2xl hover:bg-[#ffe399] transition duration-200 text-sm shadow-md">
+                                            Baca Selengkapnya
+                                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        @endforeach
+                    @else
+                        <!-- Fallback Hero Default -->
+                        <div class="grid min-w-0 grid-cols-1 gap-8 lg:gap-12 lg:grid-cols-2 items-center w-full">
+                            <!-- Left Side: Default Card -->
+                            <div class="relative flex min-w-0 items-center w-full">
+                                <div class="min-w-0 w-full overflow-hidden rounded-[2.5rem] bg-white p-6 text-[#061b3a] shadow-2xl">
+                                    <div class="relative h-60 min-w-0 overflow-hidden rounded-3xl w-full bg-slate-100">
+                                        <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1200&q=80" alt="SIPADI Bukittinggi" class="h-full w-full object-cover">
+                                    </div>
+                                    <div class="mt-6">
+                                        <h3 class="break-words font-serif text-2xl font-bold leading-tight text-[#04241e]">
+                                            Selamat Datang di SIPADI Bukittinggi
+                                        </h3>
+                                        <p class="mt-3 break-words text-slate-500 text-sm leading-relaxed">
+                                            SIPADI hadir untuk memudahkan masyarakat mengakses buku, dokumen, dan informasi literasi melalui layanan perpustakaan dan arsip digital yang terintegrasi dan terpercaya.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Side: Default Heading Content -->
+                            <div class="relative flex min-w-0 flex-col justify-center items-start overflow-hidden lg:pl-6">
+                                <h1 class="break-words font-serif text-4xl lg:text-6xl font-bold leading-[1.1] tracking-tight">
+                                    Selamat Datang di<br>
+                                    SIPADI Bukittinggi
+                                </h1>
+                                <p class="mt-4 text-[#ffdc7c] font-serif text-2xl lg:text-3xl font-semibold">
+                                    Layanan Digital Perpustakaan dan Arsip
+                                </p>
+                                <p class="mt-5 max-w-xl break-words text-slate-300 text-base lg:text-lg leading-relaxed">
+                                    Akses informasi, buku, dan arsip daerah dalam satu layanan terpadu.
+                                </p>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
 
-            <!-- Right Side: Heading Content -->
-            <div class="flex flex-col justify-center items-start lg:pl-6 relative">
-                <!-- Floating Right Arrow Button -->
-                <button class="absolute -right-4 -top-12 lg:-top-16 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-[#ffdc7c] text-[#04241e] hover:bg-[#ffe399] shadow-lg transition">
-                    <i class="fa-solid fa-chevron-right text-lg"></i>
-                </button>
+            <!-- Slider Dot Indicators -->
+            @if($totalSlides > 1)
+                <div class="mt-8 flex justify-center items-center gap-2 relative z-20">
+                    <template x-for="(slide, index) in totalSlides" :key="index">
+                        <button @click="goToSlide(index)"
+                                :class="activeSlide === index ? 'w-8 bg-[#ffdc7c]' : 'w-2.5 bg-white/30 hover:bg-white/60'"
+                                class="h-2.5 rounded-full transition-all duration-300 focus:outline-none"
+                                :aria-label="'Buka slide ' + (index + 1)">
+                        </button>
+                    </template>
+                </div>
+            @endif
 
-                <h1 class="font-serif text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight">
-                    Literasi Digital<br>dan Arsip Daerah:<br>
-                    <span class="text-[#ffdc7c]">Inovasi Baru SIPADI</span>
-                </h1>
-                <p class="mt-6 text-slate-300 text-lg leading-relaxed max-w-xl">
-                    Menghubungkan sejarah masa lalu dengan teknologi masa depan untuk kemajuan literasi masyarakat Bukittinggi.
-                </p>
-            </div>
         </div>
     </section>
 
@@ -271,9 +419,9 @@
 
     <!-- Kontak & Map Section -->
     <section id="kontak" class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
-        <div class="bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-lg grid gap-0 lg:grid-cols-2">
+        <div class="grid min-w-0 gap-0 overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white shadow-lg lg:grid-cols-2">
             <!-- Left: Kontak Info -->
-            <div class="p-8 lg:p-12 flex flex-col justify-between">
+            <div class="flex min-w-0 flex-col justify-between p-8 lg:p-12">
                 <div>
                     <h3 class="font-serif text-3xl font-bold text-[#061b3a] flex items-center gap-3">
                         <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">

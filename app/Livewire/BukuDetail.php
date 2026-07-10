@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Buku;
 use App\Models\DetailPeminjaman;
 use App\Models\EksemplarBuku;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 class BukuDetail extends Component
@@ -20,8 +21,8 @@ class BukuDetail extends Component
     {
         $copy = EksemplarBuku::findOrFail($copyId);
 
-        if ($copy->status_eksemplar === 'dipinjam') {
-            session()->flash('error', 'Status eksemplar yang sedang dipinjam tidak dapat diubah.');
+        if ($copy->hasActiveBorrowing()) {
+            session()->flash('error', 'Status eksemplar yang masih memiliki peminjaman aktif tidak dapat diubah.');
 
             return;
         }
@@ -68,6 +69,14 @@ class BukuDetail extends Component
             ->findOrFail($this->bookId);
 
         $copies = $book->eksemplar()
+            ->withExists([
+                'detailPeminjaman as has_active_borrowing' => function (Builder $query): void {
+                    $query->whereIn('status_detail', EksemplarBuku::ACTIVE_DETAIL_STATUSES)
+                        ->whereHas('peminjaman', function (Builder $query): void {
+                            $query->whereIn('status_peminjaman', EksemplarBuku::ACTIVE_BORROWING_STATUSES);
+                        });
+                },
+            ])
             ->latest('id_eksemplar_buku')
             ->get();
 

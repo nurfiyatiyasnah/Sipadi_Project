@@ -211,7 +211,7 @@
                             <td class="px-6 py-4 text-center">
                                 <div class="flex items-center justify-center gap-2">
                                     <select wire:change="updateCopyStatus({{ $copy->id_eksemplar_buku }}, $event.target.value)"
-                                            @disabled($copy->status_eksemplar === 'dipinjam')
+                                            @disabled($copy->has_active_borrowing)
                                             class="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold focus:border-[#ffdc7c] focus:ring-[#ffdc7c] outline-none disabled:opacity-50 transition">
                                         <option value="tersedia" @selected($copy->status_eksemplar === 'tersedia')>Set Tersedia</option>
                                         <option value="dipinjam" @selected($copy->status_eksemplar === 'dipinjam') disabled>Dipinjam</option>

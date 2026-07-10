@@ -2,11 +2,11 @@
 @section('title', 'Notifikasi Saya - SIPADI Bukittinggi')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
+<div class="max-w-7xl mx-auto min-w-0 px-4 sm:px-6 lg:px-12 py-12">
     <!-- Header Block -->
     <div class="border-b border-slate-200/60 pb-5 mb-8">
-        <h1 class="font-serif text-4xl font-bold text-[#04241e] tracking-tight flex items-center gap-3">
-            <i class="fa-solid fa-bell text-[#04241e]"></i>
+        <h1 class="font-serif text-3xl sm:text-4xl font-bold text-[#04241e] tracking-tight flex flex-wrap items-center gap-3">
+            <i class="fa-solid fa-bell text-[#04241e] shrink-0"></i>
             Notifikasi Saya
         </h1>
         <p class="text-sm text-slate-500 mt-2">Lihat seluruh riwayat pesan, info peminjaman, dan tanggapan dari petugas.</p>
@@ -55,24 +55,24 @@
                 }
             @endphp
 
-            <div class="border border-slate-200/80 rounded-3xl p-5 shadow-sm transition duration-200 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between {{ $colorTheme }}">
-                <div class="flex gap-4 items-start">
+            <div class="min-w-0 border border-slate-200/80 rounded-3xl p-5 shadow-sm transition duration-200 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between {{ $colorTheme }}">
+                <div class="flex w-full min-w-0 gap-4 items-start">
                     <span class="flex h-12 w-12 items-center justify-center rounded-2xl border text-xl flex-shrink-0 {{ $iconClass }}">
                         <!-- Icon mapped in PHP -->
                     </span>
-                    <div>
+                    <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-2 flex-wrap">
-                            <h3 class="font-bold text-slate-800 text-base leading-snug">{{ $n->judul }}</h3>
+                            <h3 class="break-words font-bold text-slate-800 text-base leading-snug">{{ $n->judul }}</h3>
                             @if ($isUnread)
                                 <span class="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                                     Baru
                                 </span>
                             @endif
                         </div>
-                        <p class="text-sm text-slate-600 mt-1 leading-relaxed">
+                        <p class="break-words text-sm text-slate-600 mt-1 leading-relaxed">
                             {{ $n->isi }}
                         </p>
-                        <div class="flex items-center gap-4 mt-2 text-xs text-slate-400 font-semibold">
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-xs text-slate-400 font-semibold">
                             <span class="flex items-center gap-1">
                                 <i class="fa-regular fa-clock"></i>
                                 {{ $n->dikirim_pada ? $n->dikirim_pada->diffForHumans() : $n->created_at->diffForHumans() }}

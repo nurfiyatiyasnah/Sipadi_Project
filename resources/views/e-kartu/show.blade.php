@@ -32,50 +32,50 @@
     }
 </style>
 
-<div class="mx-auto max-w-7xl px-6 lg:px-12 py-16">
+<div class="mx-auto max-w-7xl min-w-0 px-4 sm:px-6 lg:px-12 py-16">
     <!-- Page Title Section -->
     <div class="text-center mb-12 no-print">
-        <h1 class="font-serif text-4xl lg:text-5xl font-bold text-[#04241e]">E-Kartu Anggota</h1>
+        <h1 class="break-words font-serif text-4xl lg:text-5xl font-bold text-[#04241e]">E-Kartu Anggota</h1>
         <p class="mt-4 text-slate-500 text-sm max-w-xl mx-auto leading-relaxed">
             Kartu identitas digital Anda untuk mengakses seluruh layanan dan fasilitas Perpustakaan Kota Bukittinggi.
         </p>
     </div>
 
     <!-- Card Container Box -->
-    <div class="bg-white border border-slate-200/80 rounded-[2.5rem] p-8 lg:p-12 shadow-md shadow-[#04241e]/5">
-        <div class="grid grid-cols-1 min-[1200px]:grid-cols-[auto_1fr] gap-12 xl:gap-16 items-start">
+    <div class="min-w-0 overflow-hidden bg-white border border-slate-200/80 rounded-[2.5rem] p-5 sm:p-8 lg:p-12 shadow-md shadow-[#04241e]/5">
+        <div class="grid min-w-0 grid-cols-1 min-[1200px]:grid-cols-[auto_1fr] gap-8 xl:gap-16 items-start">
             
             <!-- Left: Card Display Wrapper -->
-            <div class="flex items-center justify-center min-[1200px]:justify-start print-card-wrapper w-full">
-                <div class="w-full max-w-[580px] e-card-element overflow-hidden rounded-[2rem] bg-[#061b3a] p-8 text-white shadow-2xl shadow-[#061b3a]/20">
-                    <div class="flex flex-col justify-between gap-8 sm:flex-row">
-                        <div class="flex-1">
+            <div class="flex min-w-0 items-center justify-center min-[1200px]:justify-start print-card-wrapper w-full">
+                <div class="w-full max-w-[580px] e-card-element overflow-hidden rounded-[2rem] bg-[#061b3a] p-5 sm:p-8 text-white shadow-2xl shadow-[#061b3a]/20">
+                    <div class="flex min-w-0 flex-col justify-between gap-8 sm:flex-row">
+                        <div class="min-w-0 flex-1">
                             <p class="text-sm font-bold uppercase tracking-[0.24em] text-[#ffdc7c]">SIPADI Bukittinggi</p>
-                            <h3 class="mt-3 text-3xl font-bold">Kartu Anggota Digital</h3>
+                            <h3 class="mt-3 break-words text-2xl sm:text-3xl font-bold">Kartu Anggota Digital</h3>
 
                             <dl class="mt-8 grid gap-5 rounded-3xl bg-white/10 p-6 text-sm">
                                 <div>
                                     <dt class="text-slate-300">Nama Anggota</dt>
-                                    <dd class="mt-1 text-2xl font-bold">{{ $anggota->nama_lengkap }}</dd>
+                                    <dd class="mt-1 break-words text-2xl font-bold">{{ $anggota->nama_lengkap }}</dd>
                                 </div>
                                 <div>
                                     <dt class="text-slate-300">Nomor Kartu / NIK</dt>
-                                    <dd class="mt-1 font-mono text-xl font-bold">{{ $eKartu->no_anggota }}</dd>
+                                    <dd class="mt-1 break-all font-mono text-xl font-bold">{{ $eKartu->no_anggota }}</dd>
                                 </div>
                                 <div class="grid gap-4 sm:grid-cols-2">
                                     <div>
                                         <dt class="text-slate-300">Kalangan</dt>
-                                        <dd class="mt-1 font-semibold">{{ $eKartu->kalangan }}</dd>
+                                        <dd class="mt-1 break-words font-semibold">{{ $eKartu->kalangan }}</dd>
                                     </div>
                                     <div>
                                         <dt class="text-slate-300">Berlaku Sampai</dt>
-                                        <dd class="mt-1 font-semibold">{{ $eKartu->masa_berlaku?->translatedFormat('d F Y') }}</dd>
+                                        <dd class="mt-1 break-words font-semibold">{{ $eKartu->masa_berlaku?->translatedFormat('d F Y') }}</dd>
                                     </div>
                                 </div>
                             </dl>
                         </div>
 
-                        <div class="flex min-w-56 flex-col justify-between rounded-3xl bg-white p-5 text-[#061b3a]">
+                        <div class="flex w-full min-w-0 flex-col justify-between rounded-3xl bg-white p-5 text-[#061b3a] sm:w-56 sm:shrink-0">
                             <div class="flex justify-center">
                                 @if ($anggota->foto)
                                     <img src="{{ asset('storage/'.$anggota->foto) }}" alt="Foto {{ $anggota->nama_lengkap }}" class="h-28 w-28 rounded-3xl object-cover ring-4 ring-[#ffdc7c]/70">
@@ -102,12 +102,12 @@
             <div class="flex flex-col gap-8 no-print h-full justify-between w-full max-w-xl mx-auto min-[1200px]:mx-0">
                 
                 <!-- Status Keanggotaan Card -->
-                <div class="bg-slate-50 border border-slate-200/60 rounded-3xl p-8 shadow-sm flex-1">
+                <div class="min-w-0 bg-slate-50 border border-slate-200/60 rounded-3xl p-6 sm:p-8 shadow-sm flex-1">
                     <div class="flex items-center gap-3">
                         <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
                             <i class="fa-solid fa-circle-check text-2xl"></i>
                         </span>
-                        <h3 class="text-xl font-bold text-[#04241e]">Status Keanggotaan</h3>
+                        <h3 class="break-words text-xl font-bold text-[#04241e]">Status Keanggotaan</h3>
                     </div>
 
                     <div class="flex items-center gap-2 mt-5">
@@ -127,7 +127,7 @@
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <!-- Download PDF -->
                     <a href="{{ route('anggota.e-kartu.download') }}" class="flex items-center justify-center gap-2 rounded-3xl bg-[#04241e] hover:bg-[#06342c] px-6 py-4 text-base font-bold text-white shadow-md hover:shadow-lg transition duration-300">
                         <i class="fa-solid fa-download"></i>

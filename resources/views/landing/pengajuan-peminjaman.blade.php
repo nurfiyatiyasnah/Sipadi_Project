@@ -17,7 +17,7 @@
     @include('layouts.public_navbar')
 
     <!-- Main Content -->
-    <div class="mx-auto max-w-7xl px-6 lg:px-12 py-8">
+    <div class="mx-auto max-w-7xl min-w-0 px-4 sm:px-6 lg:px-12 py-8">
 
         <!-- Back Link -->
         <a href="{{ route('katalog.show', $buku->id_buku) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-[#1e463c] hover:text-[#15332c] transition mb-6">
@@ -27,18 +27,18 @@
 
         <!-- Page Title -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-[#04241e]">Pengajuan Peminjaman</h1>
+            <h1 class="break-words text-3xl font-bold text-[#04241e]">Pengajuan Peminjaman</h1>
             <p class="text-sm text-slate-500 mt-1.5">Selesaikan pengajuan Anda untuk mengatur jadwal pengambilan.</p>
         </div>
 
         <!-- Alert Messages -->
         @if(session('error'))
-            <div class="mb-6 flex items-center justify-between p-4 rounded-xl bg-rose-50 border border-rose-100 text-rose-700 text-sm font-semibold" id="error-alert">
-                <div class="flex items-center gap-2.5">
-                    <i class="fa-solid fa-circle-exclamation text-base"></i>
-                    <span>{{ session('error') }}</span>
+            <div class="mb-6 flex items-start justify-between gap-3 p-4 rounded-xl bg-rose-50 border border-rose-100 text-rose-700 text-sm font-semibold" id="error-alert">
+                <div class="flex min-w-0 items-start gap-2.5">
+                    <i class="fa-solid fa-circle-exclamation text-base shrink-0 mt-0.5"></i>
+                    <span class="min-w-0 break-words">{{ session('error') }}</span>
                 </div>
-                <button onclick="document.getElementById('error-alert').remove()" class="text-rose-400 hover:text-rose-700 transition">
+                <button onclick="document.getElementById('error-alert').remove()" class="shrink-0 text-rose-400 hover:text-rose-700 transition">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -47,14 +47,14 @@
         <form method="POST" action="{{ route('peminjaman.store', $buku->id_buku) }}" id="form-pengajuan">
             @csrf
 
-            <div class="grid gap-8 lg:grid-cols-[1fr_360px] items-start">
+            <div class="grid min-w-0 grid-cols-1 gap-8 lg:grid-cols-[1fr_360px] items-start">
 
                 <!-- Left Column: Form Cards -->
-                <div class="space-y-6">
+                <div class="min-w-0 space-y-6">
 
                     <!-- Data Anggota Card -->
-                    <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-                        <h2 class="text-lg font-bold text-[#04241e] flex items-center gap-2 mb-5">
+                    <div class="min-w-0 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+                        <h2 class="break-words text-lg font-bold text-[#04241e] flex items-center gap-2 mb-5">
                             <i class="fa-solid fa-user text-sm text-[#1e463c]/60"></i>
                             Data Anggota
                         </h2>
@@ -106,8 +106,8 @@
                     </div>
 
                     <!-- Catatan Pengajuan Card -->
-                    <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-                        <h2 class="text-lg font-bold text-[#04241e] flex items-center gap-2 mb-5">
+                    <div class="min-w-0 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+                        <h2 class="break-words text-lg font-bold text-[#04241e] flex items-center gap-2 mb-5">
                             <i class="fa-regular fa-comment-dots text-sm text-[#1e463c]/60"></i>
                             Catatan Pengajuan (Opsional)
                         </h2>
@@ -128,22 +128,22 @@
                             </div>
                         </div>
 
-                        <div class="mt-4 p-4 bg-emerald-50/50 border border-emerald-100 rounded-xl flex items-start gap-3">
-                            <i class="fa-solid fa-circle-info text-emerald-600 mt-0.5"></i>
-                            <p class="text-xs text-emerald-800 leading-relaxed font-semibold">
+                        <div class="mt-4 p-4 bg-emerald-50/50 border border-emerald-100 rounded-xl flex min-w-0 items-start gap-3">
+                            <i class="fa-solid fa-circle-info text-emerald-600 mt-0.5 shrink-0"></i>
+                            <p class="min-w-0 break-words text-xs text-emerald-800 leading-relaxed font-semibold">
                                 Jadwal pengambilan akan dikirim setelah petugas menyetujui pengajuan peminjaman Anda.
                             </p>
                         </div>
                     </div>
 
                     <!-- Syarat & Ketentuan Card -->
-                    <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-                        <h2 class="text-lg font-bold text-[#04241e] flex items-center gap-2 mb-5">
+                    <div class="min-w-0 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+                        <h2 class="break-words text-lg font-bold text-[#04241e] flex items-center gap-2 mb-5">
                             <i class="fa-solid fa-scale-balanced text-sm text-[#1e463c]/60"></i>
                             Syarat & Ketentuan
                         </h2>
 
-                        <div class="bg-slate-50 rounded-xl p-5 border border-slate-100 text-sm text-slate-600 leading-relaxed space-y-3">
+                        <div class="break-words bg-slate-50 rounded-xl p-5 border border-slate-100 text-sm text-slate-600 leading-relaxed space-y-3">
                             <p>1. Anggota wajib membawa Kartu Tanda Anggota (KTA) saat mengambil buku.</p>
                             <p>2. Masa peminjaman adalah {{ $aturan?->lama_pinjam_hari ?? 14 }} hari kalender sejak tanggal pengambilan.</p>
                             <p>3. Keterlambatan pengembalian akan dikenakan sanksi tidak bisa meminjam buku sesuai berapa lama kamu terlambat mengembalikan buku, misal telat mengembalikan buku selama 3 hari = 3 hari kamu tidak dapat meminjam.</p>
@@ -171,8 +171,8 @@
                 </div>
 
                 <!-- Right Column: Summary Sidebar -->
-                <div class="lg:sticky lg:top-24">
-                    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div class="min-w-0 lg:sticky lg:top-24">
+                    <div class="min-w-0 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
                         <!-- Green Header -->
                         <div class="bg-[#1e463c] px-6 py-4 flex items-center gap-2.5">
                             <i class="fa-solid fa-clipboard-list text-white/80 text-base"></i>
@@ -182,7 +182,7 @@
                         <!-- Content -->
                         <div class="p-6 space-y-5">
                             <!-- Book Info Row -->
-                            <div class="flex items-start gap-4">
+                            <div class="flex min-w-0 items-start gap-4">
                                 <!-- Mini Book Cover -->
                                 <div class="w-16 h-20 rounded-lg bg-slate-100 overflow-hidden shrink-0 shadow-sm">
                                     @if($buku->gambar_cover)
@@ -208,9 +208,9 @@
                                             Tidak Tersedia
                                         </span>
                                     @endif
-                                    <h4 class="text-sm font-bold text-[#04241e] leading-snug line-clamp-2">{{ $buku->judul }}</h4>
-                                    <p class="text-xs text-slate-400 mt-0.5 font-semibold">{{ $buku->penulis }}</p>
-                                    <p class="text-[10px] text-slate-400 mt-0.5">ISBN: {{ $buku->isbn ?? '-' }}</p>
+                                    <h4 class="break-words text-sm font-bold text-[#04241e] leading-snug line-clamp-2">{{ $buku->judul }}</h4>
+                                    <p class="break-words text-xs text-slate-400 mt-0.5 font-semibold">{{ $buku->penulis }}</p>
+                                    <p class="break-all text-[10px] text-slate-400 mt-0.5">ISBN: {{ $buku->isbn ?? '-' }}</p>
                                 </div>
                             </div>
 
@@ -218,11 +218,11 @@
 
                             <!-- Summary Details -->
                             <div class="space-y-3">
-                                <div class="flex items-center justify-between text-sm">
+                                <div class="flex min-w-0 items-center justify-between gap-4 text-sm">
                                     <span class="text-slate-400 font-semibold">Jumlah Buku</span>
                                     <span class="font-bold text-[#04241e]">1 Eksemplar</span>
                                 </div>
-                                <div class="flex items-center justify-between text-sm">
+                                <div class="flex min-w-0 items-center justify-between gap-4 text-sm">
                                     <span class="text-slate-400 font-semibold">Durasi Pinjam</span>
                                     <span class="font-bold text-[#04241e]">{{ $aturan?->lama_pinjam_hari ?? 14 }} Hari</span>
                                 </div>

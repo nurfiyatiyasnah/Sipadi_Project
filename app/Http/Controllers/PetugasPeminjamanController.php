@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ApprovePeminjamanRequest;
+use App\Models\Anggota;
 use App\Models\EksemplarBuku;
 use App\Models\JadwalPengambilan;
 use App\Models\Notifikasi;
@@ -33,8 +34,10 @@ class PetugasPeminjamanController extends Controller
     {
         $statusFilter = strtolower($request->query('status', 'semua'));
         $search = $request->query('search');
+        $idAnggota = $request->filled('id_anggota') ? $request->integer('id_anggota') : null;
+        $anggotaFilter = $idAnggota ? Anggota::find($idAnggota) : null;
 
-        $query = $this->loanApplicationsQuery($search);
+        $query = $this->loanApplicationsQuery($search, $idAnggota);
 
         if (array_key_exists($statusFilter, self::INDEX_STATUS_FILTERS)) {
             $query->where('status_peminjaman', self::INDEX_STATUS_FILTERS[$statusFilter]);
@@ -43,7 +46,7 @@ class PetugasPeminjamanController extends Controller
         $peminjamans = $query->latest('id_peminjaman')->paginate(10)->withQueryString();
         $stats = $this->loanApplicationStats();
 
-        return view('petugas.peminjaman.index', compact('peminjamans', 'stats', 'statusFilter', 'search'));
+        return view('petugas.peminjaman.index', compact('peminjamans', 'stats', 'statusFilter', 'search', 'anggotaFilter'));
     }
 
     /**
@@ -62,7 +65,10 @@ class PetugasPeminjamanController extends Controller
         // Check active sanctions
         $sanksiAktif = SanksiAnggota::where('id_anggota', $anggota->id_anggota)
             ->where('status_sanksi', 'aktif')
-            ->where('tanggal_selesai', '>=', today()->toDateString())
+            ->where(function ($query) {
+                $query->whereNull('tanggal_selesai')
+                    ->orWhere('tanggal_selesai', '>=', today()->toDateString());
+            })
             ->first();
 
         return view('petugas.peminjaman.show', compact('peminjaman', 'anggota', 'bukuDipinjamCount', 'sanksiAktif'));
@@ -264,8 +270,9 @@ class PetugasPeminjamanController extends Controller
 
             $statusFilter = strtolower($request->query('status', 'diajukan'));
             $search = $request->query('search');
+            $idAnggota = $request->filled('id_anggota') ? $request->integer('id_anggota') : null;
 
-            $query = $this->loanApplicationsQuery($search);
+            $query = $this->loanApplicationsQuery($search, $idAnggota);
 
             if ($statusFilter !== 'semua') {
                 $query->where('status_peminjaman', $statusFilter);
@@ -282,9 +289,13 @@ class PetugasPeminjamanController extends Controller
     /**
      * @return Builder<Peminjaman>
      */
-    private function loanApplicationsQuery(mixed $search = null): Builder
+    private function loanApplicationsQuery(mixed $search = null, ?int $idAnggota = null): Builder
     {
         $query = Peminjaman::with(['anggota', 'detailPeminjaman.buku']);
+
+        if ($idAnggota) {
+            $query->where('id_anggota', $idAnggota);
+        }
 
         if ($search) {
             $this->applyLoanApplicationSearch($query, $search);

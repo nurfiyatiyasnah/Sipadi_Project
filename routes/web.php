@@ -9,23 +9,26 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\BukuController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EKartuController;
+use App\Http\Controllers\FasilitasController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\PengajuanPeminjamanController;
 use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\PetugasPeminjamanController;
 use App\Http\Controllers\PetugasPengembalianController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\StrukturKepegawaianController;
-use App\Models\AgendaEvent;
 use App\Http\Controllers\PublicAgendaController;
 use App\Http\Controllers\PublicBeritaController;
+use App\Http\Controllers\PublicFasilitasController;
 use App\Http\Controllers\PublicKatalogController;
 use App\Http\Controllers\PublicLayananController;
 use App\Http\Controllers\PublicPengumumanController;
+use App\Http\Controllers\StrukturKepegawaianController;
+use App\Models\AgendaEvent;
 use App\Models\Anggota;
 use App\Models\Berita;
 use App\Models\Buku;
 use App\Models\EksemplarBuku;
+use App\Models\StrukturKepegawaian;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -86,8 +89,8 @@ Route::get('/tentang-kami', function () {
     $StrukturKepegawaian = \App\Models\StrukturKepegawaian::orderBy('urutan')->get();
     return view('landing.tentang', compact('StrukturKepegawaian'));
 })->name('tentang');
-Route::get('/fasilitas', [\App\Http\Controllers\PublicFasilitasController::class, 'index'])->name('fasilitas.public.index');
-Route::get('/fasilitas/{id}', [\App\Http\Controllers\PublicFasilitasController::class, 'show'])->name('fasilitas.public.show');
+Route::get('/fasilitas', [PublicFasilitasController::class, 'index'])->name('fasilitas.public.index');
+Route::get('/fasilitas/{id}', [PublicFasilitasController::class, 'show'])->name('fasilitas.public.show');
 Route::get('/aduan/lacak', [AduanController::class, 'track'])->name('aduan.track');
 
 Route::middleware(['auth'])->get('/dashboard', function () {
@@ -136,6 +139,10 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
     Route::get('/anggota/{anggota}', [AnggotaController::class, 'show'])->name('anggota.show');
     Route::get('/anggota/{anggota}/edit', [AnggotaController::class, 'edit'])->name('anggota.edit');
     Route::put('/anggota/{anggota}', [AnggotaController::class, 'update'])->name('anggota.update');
+    Route::post('/anggota/{anggota}/nonaktifkan', [AnggotaController::class, 'deactivate'])->name('anggota.nonaktifkan');
+    Route::post('/anggota/{anggota}/aktifkan', [AnggotaController::class, 'activate'])->name('anggota.aktifkan');
+    Route::post('/anggota/{anggota}/blokir-peminjaman', [AnggotaController::class, 'blockBorrowing'])->name('anggota.blokir-peminjaman');
+    Route::post('/anggota/{anggota}/buka-blokir-peminjaman', [AnggotaController::class, 'unblockBorrowing'])->name('anggota.buka-blokir-peminjaman');
 
     Route::get('/koleksi', [DashboardController::class, 'koleksi'])
         ->name('koleksi');
@@ -164,7 +171,7 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
         ->name('berita.destroy');
 
     Route::resource('kepegawaian', StrukturKepegawaianController::class)->except(['show']);
-    Route::resource('fasilitas', App\Http\Controllers\FasilitasController::class);
+    Route::resource('fasilitas', FasilitasController::class);
     Route::get('/agenda', [AgendaEventController::class, 'index'])->name('agenda.index');
     Route::get('/agenda/tambah', [AgendaEventController::class, 'create'])->name('agenda.create');
     Route::post('/agenda', [AgendaEventController::class, 'store'])->name('agenda.store');
