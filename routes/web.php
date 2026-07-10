@@ -86,8 +86,9 @@ Route::get('/layanan/{layanan:slug}', [PublicLayananController::class, 'show'])-
 Route::get('/pengumuman', [PublicPengumumanController::class, 'index'])->name('pengumuman.public.index');
 Route::get('/pengumuman/{slug}', [PublicPengumumanController::class, 'show'])->name('pengumuman.public.show');
 Route::get('/tentang-kami', function () {
-    $StrukturKepegawaian = \App\Models\StrukturKepegawaian::orderBy('urutan')->get();
-    return view('landing.tentang', compact('StrukturKepegawaian'));
+    $strukturKepegawaian = StrukturKepegawaian::orderBy('urutan')->get();
+
+    return view('landing.tentang', compact('strukturKepegawaian'));
 })->name('tentang');
 Route::get('/fasilitas', [PublicFasilitasController::class, 'index'])->name('fasilitas.public.index');
 Route::get('/fasilitas/{id}', [PublicFasilitasController::class, 'show'])->name('fasilitas.public.show');
