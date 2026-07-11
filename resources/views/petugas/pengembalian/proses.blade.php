@@ -40,7 +40,7 @@
                             <h4 class="text-sm font-bold text-slate-850">{{ $anggota?->nama_lengkap }}</h4>
                             <p class="text-xs text-slate-400 mt-0.5">ID: {{ $anggota?->no_anggota }}</p>
                             <span class="inline-flex items-center px-2 py-0.5 mt-1 bg-blue-50 text-blue-600 rounded-md text-[10px] font-bold">
-                                Mahasiswa S1
+                                Anggota
                             </span>
                         </div>
                     </div>
@@ -75,9 +75,7 @@
             <div class="pb-6 border-b border-slate-100">
                 <span class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-3">Ringkasan Buku</span>
                 <div class="flex items-center gap-4 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
-                    <div class="h-16 w-12 rounded bg-slate-200 flex items-center justify-center text-slate-400 border border-slate-200">
-                        <i class="fa-solid fa-book"></i>
-                    </div>
+                    <x-book-cover :book="$buku" class="h-16 w-12 rounded" icon-class="text-base" />
                     <div>
                         <h4 class="text-sm font-bold text-slate-800">{{ $buku?->judul }}</h4>
                         <p class="text-xs text-slate-450 mt-0.5">{{ $buku?->penulis }} • Barcode: {{ $firstEksemplar?->kode_eksemplar ?? '-' }}</p>

@@ -134,14 +134,13 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-4">
-                                    <div class="h-16 w-12 shrink-0 overflow-hidden rounded-lg bg-slate-100 border border-slate-200">
-                                        @if ($book->gambar_cover)
-                                            <img src="{{ Str::startsWith($book->gambar_cover, 'http') ? $book->gambar_cover : Storage::url($book->gambar_cover) }}"
-                                                 alt="{{ $book->judul }}" class="h-full w-full object-cover">
-                                        @else
-                                            <div class="flex h-full w-full items-center justify-center bg-slate-200 text-slate-400">
-                                                <i class="fa-solid fa-book"></i>
-                                            </div>
+                                    <div class="relative h-16 w-12 shrink-0 overflow-hidden rounded-lg bg-slate-200 border border-slate-200">
+                                        <div class="absolute inset-0 flex items-center justify-center text-slate-400">
+                                            <i class="fa-solid fa-book"></i>
+                                        </div>
+                                        @if ($coverUrl = $book->coverUrl())
+                                            <img src="{{ $coverUrl }}" alt="{{ $book->judul }}"
+                                                 class="relative h-full w-full object-cover" onerror="this.remove()">
                                         @endif
                                     </div>
                                     <div>

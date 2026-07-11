@@ -119,23 +119,35 @@
 
     <!-- Data Table -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+        <div class="overflow-x-auto rounded-xl border border-slate-100">
+            <table class="min-w-[1320px] w-full table-fixed border-collapse text-left">
+                <colgroup>
+                    <col class="w-[150px]">
+                    <col class="w-[190px]">
+                    <col class="w-[230px]">
+                    <col class="w-[130px]">
+                    <col class="w-[165px]">
+                    <col class="w-[155px]">
+                    <col class="w-[130px]">
+                    <col class="w-[120px]">
+                    <col class="w-[115px]">
+                    <col class="w-[75px]">
+                </colgroup>
                 <thead>
-                    <tr class="border-b border-slate-150">
-                        <th class="pb-3.5 text-xs font-extrabold uppercase tracking-wider text-slate-400">Kode Transaksi</th>
-                        <th class="pb-3.5 text-xs font-extrabold uppercase tracking-wider text-slate-400">Nama Anggota</th>
-                        <th class="pb-3.5 text-xs font-extrabold uppercase tracking-wider text-slate-400">Judul Buku</th>
-                        <th class="pb-3.5 text-xs font-extrabold uppercase tracking-wider text-slate-400">Tanggal Pinjam</th>
-                        <th class="pb-3.5 text-xs font-extrabold uppercase tracking-wider text-slate-400">Tanggal Pengembalian</th>
-                        <th class="pb-3.5 text-xs font-extrabold uppercase tracking-wider text-slate-400">Status Pengembalian</th>
-                        <th class="pb-3.5 text-xs font-extrabold uppercase tracking-wider text-slate-400">Keterlambatan</th>
-                        <th class="pb-3.5 text-xs font-extrabold uppercase tracking-wider text-slate-400">Kondisi Buku</th>
-                        <th class="pb-3.5 text-xs font-extrabold uppercase tracking-wider text-slate-400">Sanksi (Hari)</th>
-                        <th class="pb-3.5 text-xs font-extrabold uppercase tracking-wider text-slate-400">Aksi</th>
+                    <tr class="border-b border-slate-150 bg-slate-50/70">
+                        <th class="px-3 py-3.5 pl-4 text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Kode Transaksi</th>
+                        <th class="px-3 py-3.5 text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Nama Anggota</th>
+                        <th class="px-3 py-3.5 text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Judul Buku</th>
+                        <th class="px-3 py-3.5 text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Tanggal Pinjam</th>
+                        <th class="px-3 py-3.5 text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Tanggal Pengembalian</th>
+                        <th class="px-3 py-3.5 text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Status Pengembalian</th>
+                        <th class="px-3 py-3.5 text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Keterlambatan</th>
+                        <th class="px-3 py-3.5 text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Kondisi Buku</th>
+                        <th class="px-3 py-3.5 text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Sanksi</th>
+                        <th class="px-3 py-3.5 pr-4 text-center text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-50">
+                <tbody class="divide-y divide-slate-100">
                     @forelse($pengembalians as $pengembalian)
                         @php
                             $peminjaman = $pengembalian->peminjaman;
@@ -148,66 +160,66 @@
                             
                             $initials = collect(explode(' ', $anggota?->nama_lengkap ?? 'A'))->map(fn($n) => substr($n, 0, 1))->take(2)->join('');
                         @endphp
-                        <tr class="hover:bg-slate-50/50 transition">
-                            <td class="py-4 font-bold text-slate-800 text-sm">
+                        <tr class="transition hover:bg-slate-50/60">
+                            <td class="px-3 py-4 pl-4 align-middle font-mono text-sm font-bold text-slate-800 whitespace-nowrap">
                                 {{ $peminjaman?->kode_peminjaman }}
                             </td>
-                            <td class="py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-650 border border-slate-200">
+                            <td class="px-3 py-4 align-middle">
+                                <div class="flex min-w-0 items-center gap-3">
+                                    <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-xs font-bold text-slate-650">
                                         {{ strtoupper($initials) }}
                                     </div>
-                                    <div>
-                                        <h4 class="text-xs font-bold text-slate-800 leading-tight">{{ $anggota?->nama_lengkap }}</h4>
-                                        <span class="text-[10px] text-slate-450">{{ $anggota?->no_anggota }}</span>
+                                    <div class="min-w-0">
+                                        <h4 class="truncate text-xs font-bold leading-tight text-slate-800" title="{{ $anggota?->nama_lengkap }}">{{ $anggota?->nama_lengkap }}</h4>
+                                        <span class="block truncate text-[10px] text-slate-450" title="{{ $anggota?->no_anggota }}">{{ $anggota?->no_anggota }}</span>
                                     </div>
                                 </div>
                             </td>
-                            <td class="py-4">
-                                <div>
-                                    <h4 class="text-xs font-bold text-slate-850 leading-tight">{{ Str::limit($buku?->judul ?? '-', 30) }}</h4>
-                                    <span class="text-[10px] text-slate-450">{{ $buku?->kategori?->nama_kategori ?? '-' }}</span>
+                            <td class="px-3 py-4 align-middle">
+                                <div class="min-w-0">
+                                    <h4 class="truncate text-xs font-bold leading-tight text-slate-850" title="{{ $buku?->judul ?? '-' }}">{{ $buku?->judul ?? '-' }}</h4>
+                                    <span class="block truncate text-[10px] text-slate-450" title="{{ $buku?->kategori?->nama_kategori ?? '-' }}">{{ $buku?->kategori?->nama_kategori ?? '-' }}</span>
                                 </div>
                             </td>
-                            <td class="py-4 text-xs font-semibold text-slate-600">
+                            <td class="px-3 py-4 align-middle text-xs font-semibold text-slate-600 whitespace-nowrap">
                                 {{ $peminjaman?->tanggal_diambil ? $peminjaman->tanggal_diambil->locale('id')->translatedFormat('d M Y') : '-' }}
                             </td>
-                            <td class="py-4 text-xs font-semibold text-slate-600">
+                            <td class="px-3 py-4 align-middle text-xs font-semibold text-slate-600 whitespace-nowrap">
                                 {{ $pengembalian->tanggal_pengembalian ? $pengembalian->tanggal_pengembalian->locale('id')->translatedFormat('d M Y') : '-' }}
                             </td>
-                            <td class="py-4">
+                            <td class="px-3 py-4 align-middle">
                                 @if($pengembalian->status_pengembalian === 'Tepat Waktu')
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600">
+                                    <span class="inline-flex items-center whitespace-nowrap rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold text-emerald-600">
                                         Tepat Waktu
                                     </span>
                                 @elseif($pengembalian->status_pengembalian === 'Terlambat')
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-600">
+                                    <span class="inline-flex items-center whitespace-nowrap rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-bold text-amber-600">
                                         Terlambat
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-600">
+                                    <span class="inline-flex items-center whitespace-nowrap rounded-full bg-rose-50 px-2.5 py-1 text-[10px] font-bold text-rose-600">
                                         {{ $pengembalian->status_pengembalian }}
                                     </span>
                                 @endif
                             </td>
-                            <td class="py-4 text-xs font-semibold text-slate-600 text-center md:text-left">
+                            <td class="px-3 py-4 align-middle text-xs font-semibold text-slate-600 whitespace-nowrap">
                                 {{ $pengembalian->total_hari_terlambat > 0 ? $pengembalian->total_hari_terlambat . ' Hari' : '-' }}
                             </td>
-                            <td class="py-4 text-xs font-semibold text-slate-700">
+                            <td class="px-3 py-4 align-middle text-xs font-semibold text-slate-700 whitespace-nowrap">
                                 {{ $pengembalian->detailPengembalian?->first()?->kondisi_buku ?? 'Baik' }}
                             </td>
-                            <td class="py-4 text-xs font-semibold text-slate-600">
+                            <td class="px-3 py-4 align-middle text-xs font-semibold text-slate-600 whitespace-nowrap">
                                 {{ $duration > 0 ? $duration . ' Hari' : '0 Hari' }}
                             </td>
-                            <td class="py-4">
-                                <a href="{{ route('petugas.pengembalian.show', $peminjaman->id_peminjaman) }}" class="h-7 w-7 rounded-lg bg-slate-50 hover:bg-slate-100 flex items-center justify-center border border-slate-200 text-slate-500 hover:text-slate-700 transition">
+                            <td class="px-3 py-4 pr-4 align-middle">
+                                <a href="{{ route('petugas.pengembalian.riwayat.show', $pengembalian->id_pengembalian) }}" class="mx-auto flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700" title="Lihat detail riwayat pengembalian">
                                     <i class="fa-regular fa-eye text-xs"></i>
                                 </a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="10" class="py-8 text-center text-slate-400 font-semibold text-sm">
+                            <td colspan="10" class="px-4 py-10 text-center text-sm font-semibold text-slate-400">
                                 <i class="fa-solid fa-clock text-2xl mb-2 block text-slate-300"></i>
                                 Belum ada riwayat pengembalian buku.
                             </td>

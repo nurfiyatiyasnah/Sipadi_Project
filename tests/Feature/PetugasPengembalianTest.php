@@ -6,6 +6,7 @@ use App\Models\Anggota;
 use App\Models\AturanPeminjaman;
 use App\Models\Buku;
 use App\Models\DetailPeminjaman;
+use App\Models\DetailPengembalian;
 use App\Models\EksemplarBuku;
 use App\Models\KategoriBuku;
 use App\Models\Peminjaman;
@@ -86,7 +87,11 @@ class PetugasPengembalianTest extends TestCase
             ->assertSee('PMJ-202310-089')
             ->assertSee('Budi Santoso')
             ->assertSee('Algoritma Pemrograman')
-            ->assertSee('Proses Pengembalian');
+            ->assertSee('Proses Pengembalian')
+            ->assertSee('TIPE ANGGOTA')
+            ->assertSee('Anggota')
+            ->assertDontSee('Ilmu Komputer')
+            ->assertDontSee('Teknik Informatika');
     }
 
     public function test_petugas_dapat_melihat_form_proses_pengembalian(): void
@@ -118,7 +123,66 @@ class PetugasPengembalianTest extends TestCase
 
         $response->assertOk()
             ->assertSee('Algoritma Pemrograman')
-            ->assertSee('Keadaan Buku');
+            ->assertSee('Keadaan Buku')
+            ->assertSee('Anggota')
+            ->assertDontSee('Mahasiswa S1');
+    }
+
+    public function test_petugas_dapat_melihat_cover_buku_pada_alur_pengembalian(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('covers/arsitektur.jpg', 'fake image');
+
+        $petugas = $this->createPetugasUser();
+        $anggota = $this->createAnggotaUser('Budi Santoso');
+
+        $kategori = KategoriBuku::factory()->create();
+        $buku = Buku::factory()->for($kategori, 'kategori')->create([
+            'judul' => 'Arsitektur Tradisional Minangkabau',
+            'gambar_cover' => 'covers/arsitektur.jpg',
+        ]);
+
+        $peminjaman = Peminjaman::create([
+            'kode_peminjaman' => 'PMJ-202607-302',
+            'id_anggota' => $anggota->anggota->id_anggota,
+            'status_peminjaman' => 'aktif',
+            'tanggal_pengajuan' => now(),
+            'tanggal_diambil' => now()->subDays(2),
+            'tanggal_jatuh_tempo' => now()->addDays(5),
+        ]);
+
+        DetailPeminjaman::create([
+            'id_peminjaman' => $peminjaman->id_peminjaman,
+            'id_buku' => $buku->id_buku,
+            'jumlah' => 1,
+            'status_detail' => 'dipinjam',
+        ]);
+
+        $showResponse = $this->actingAs($petugas)
+            ->get(route('petugas.pengembalian.show', $peminjaman->id_peminjaman));
+
+        $showResponse->assertOk()
+            ->assertSee('/storage/covers/arsitektur.jpg', false);
+
+        $prosesResponse = $this->actingAs($petugas)
+            ->get(route('petugas.pengembalian.proses-form', $peminjaman->id_peminjaman));
+
+        $prosesResponse->assertOk()
+            ->assertSee('/storage/covers/arsitektur.jpg', false);
+
+        $sanksiResponse = $this->actingAs($petugas)
+            ->post(route('petugas.pengembalian.proses-sanksi', $peminjaman->id_peminjaman), [
+                'tanggal_pengembalian' => now()->toDateString(),
+                'keadaan_buku' => 'Baik',
+                'catatan_kondisi' => null,
+            ]);
+
+        $sanksiResponse->assertOk()
+            ->assertSee('/storage/covers/arsitektur.jpg', false)
+            ->assertSee('Cover Arsitektur Tradisional Minangkabau')
+            ->assertSee('Anggota')
+            ->assertDontSee('Mahasiswa')
+            ->assertDontSee('email@domain.com');
     }
 
     public function test_petugas_dapat_memproses_sanksi_dan_melihat_preview(): void
@@ -353,7 +417,71 @@ class PetugasPengembalianTest extends TestCase
         $response->assertOk()
             ->assertSee('PMJ-202310-045')
             ->assertSee('Ahmad Hidayat')
-            ->assertSee('Tepat Waktu');
+            ->assertSee('Tepat Waktu')
+            ->assertSee(route('petugas.pengembalian.riwayat.show', $pengembalian->id_pengembalian), false)
+            ->assertDontSee(route('petugas.pengembalian.show', $peminjaman->id_peminjaman), false);
+    }
+
+    public function test_petugas_dapat_melihat_detail_riwayat_pengembalian_selesai(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('pengembalian/bukti.jpg', 'fake photo content');
+
+        $petugas = $this->createPetugasUser();
+        $anggota = $this->createAnggotaUser('Ahmad Hidayat');
+
+        $kategori = KategoriBuku::factory()->create(['nama_kategori' => 'Teknologi']);
+        $buku = Buku::factory()->for($kategori, 'kategori')->create(['judul' => 'Sistem Informasi Manajemen']);
+
+        $peminjaman = Peminjaman::create([
+            'kode_peminjaman' => 'PMJ-202310-046',
+            'id_anggota' => $anggota->anggota->id_anggota,
+            'id_petugas' => $petugas->petugas->id_petugas,
+            'status_peminjaman' => 'selesai',
+            'tanggal_pengajuan' => now()->subDays(4),
+            'tanggal_diambil' => now()->subDays(3),
+            'tanggal_jatuh_tempo' => now()->addDays(4),
+        ]);
+
+        $detailPeminjaman = DetailPeminjaman::create([
+            'id_peminjaman' => $peminjaman->id_peminjaman,
+            'id_buku' => $buku->id_buku,
+            'jumlah' => 1,
+            'status_detail' => 'dikembalikan',
+        ]);
+
+        $pengembalian = Pengembalian::create([
+            'id_peminjaman' => $peminjaman->id_peminjaman,
+            'id_petugas' => $petugas->petugas->id_petugas,
+            'tanggal_pengembalian' => now(),
+            'total_hari_terlambat' => 0,
+            'status_pengembalian' => 'Tepat Waktu',
+            'catatan' => json_encode([
+                'catatan' => 'Kondisi buku baik.',
+                'foto' => 'pengembalian/bukti.jpg',
+            ]),
+        ]);
+
+        DetailPengembalian::create([
+            'id_pengembalian' => $pengembalian->id_pengembalian,
+            'id_detail_peminjaman' => $detailPeminjaman->id_detail_peminjaman,
+            'jumlah_dikembalikan' => 1,
+            'kondisi_buku' => 'Baik',
+            'catatan' => 'Kondisi buku baik.',
+        ]);
+
+        $response = $this->actingAs($petugas)
+            ->get(route('petugas.pengembalian.riwayat.show', $pengembalian->id_pengembalian));
+
+        $response->assertOk()
+            ->assertSee('Detail Riwayat Pengembalian')
+            ->assertSee('PMJ-202310-046')
+            ->assertSee('Ahmad Hidayat')
+            ->assertSee('Sistem Informasi Manajemen')
+            ->assertSee('Tepat Waktu')
+            ->assertSee('Kondisi buku baik.')
+            ->assertSee('/storage/pengembalian/bukti.jpg', false)
+            ->assertDontSee('Proses Pengembalian');
     }
 
     public function test_petugas_dapat_mengekspor_riwayat_pengembalian_ke_csv(): void

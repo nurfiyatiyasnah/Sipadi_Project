@@ -260,6 +260,61 @@ class PetugasPeminjamanController extends Controller
     }
 
     /**
+     * Cancel a ready-for-pickup borrowing when the member does not pick up the book.
+     */
+    public function cancelPickup(Peminjaman $peminjaman): RedirectResponse
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $petugas = $user->petugas;
+
+        if ($peminjaman->status_peminjaman !== 'siap_diambil') {
+            return back()->with('error', 'Peminjaman harus berstatus siap diambil untuk dibatalkan.');
+        }
+
+        $peminjaman->load(['anggota.user', 'detailPeminjaman']);
+
+        DB::transaction(function () use ($peminjaman, $petugas): void {
+            $peminjaman->update([
+                'status_peminjaman' => 'dibatalkan',
+                'tanggal_diambil' => null,
+                'tanggal_jatuh_tempo' => null,
+                'id_petugas' => $petugas?->id_petugas,
+                'catatan_admin' => 'Pengambilan dibatalkan karena anggota tidak mengambil buku sesuai jadwal.',
+            ]);
+
+            foreach ($peminjaman->detailPeminjaman as $detail) {
+                $detail->update([
+                    'status_detail' => 'dibatalkan',
+                ]);
+
+                if ($detail->id_eksemplar_buku) {
+                    EksemplarBuku::where('id_eksemplar_buku', $detail->id_eksemplar_buku)->update([
+                        'status_eksemplar' => EksemplarBuku::STATUS_TERSEDIA,
+                    ]);
+                }
+            }
+
+            if ($peminjaman->anggota?->user) {
+                Notifikasi::create([
+                    'id_user' => $peminjaman->anggota->user->id_user,
+                    'id_peminjaman' => $peminjaman->id_peminjaman,
+                    'judul' => 'Peminjaman Dibatalkan',
+                    'isi' => 'Pengambilan buku untuk kode '.$peminjaman->kode_peminjaman.' telah dibatalkan karena tidak diambil sesuai jadwal.',
+                    'jenis_notifikasi' => 'peminjaman_dibatalkan',
+                    'status_notifikasi' => 'terkirim',
+                    'status_baca' => 'belum_dibaca',
+                    'dikirim_pada' => now(),
+                ]);
+            }
+        });
+
+        return redirect()
+            ->route('petugas.peminjaman.show', $peminjaman->id_peminjaman)
+            ->with('success', 'Pengambilan buku berhasil dibatalkan dan eksemplar kembali tersedia.');
+    }
+
+    /**
      * Export the loan applications list to CSV.
      */
     public function export(Request $request): StreamedResponse

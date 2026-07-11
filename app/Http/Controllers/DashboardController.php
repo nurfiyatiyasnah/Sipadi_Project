@@ -46,7 +46,7 @@ class DashboardController extends Controller
      */
     private function dashboardStats(): array
     {
-        $pengajuanStatuses = ['menunggu', 'Menunggu', 'pending', 'Pending', 'pengajuan', 'Pengajuan'];
+        $pengajuanStatuses = ['menunggu', 'Menunggu', 'pending', 'Pending', 'pengajuan', 'Pengajuan', 'diajukan', 'Diajukan'];
         $peminjamanAktifStatuses = ['aktif', 'Aktif', 'dipinjam', 'Dipinjam'];
 
         return [

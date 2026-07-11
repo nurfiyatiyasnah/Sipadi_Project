@@ -72,13 +72,13 @@
                             <h4 class="text-base font-bold text-slate-850">{{ $anggota?->nama_lengkap }}</h4>
                             <p class="text-xs text-slate-400 font-semibold mt-0.5">ID: {{ $anggota?->no_anggota }}</p>
                             <span class="inline-flex items-center px-2 py-0.5 mt-1.5 bg-blue-50 text-blue-650 rounded-md text-[10px] font-bold">
-                                Mahasiswa
+                                Anggota
                             </span>
                         </div>
                         <div class="pt-2 space-y-1.5 text-xs text-slate-600">
                             <div class="flex justify-between">
                                 <span class="text-slate-400 font-semibold">Email</span>
-                                <span class="font-bold text-slate-750">{{ $anggota?->user?->email ?? 'email@domain.com' }}</span>
+                                <span class="font-bold text-slate-750">{{ $anggota?->user?->email ?? '-' }}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-slate-400 font-semibold">Telepon</span>
@@ -104,9 +104,7 @@
                 </div>
 
                 <div class="flex gap-4">
-                    <div class="h-28 w-20 rounded bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 flex-shrink-0">
-                        <i class="fa-solid fa-book text-2xl"></i>
-                    </div>
+                    <x-book-cover :book="$buku" class="h-28 w-20 rounded" icon-class="text-2xl" />
                     <div class="space-y-2 flex-1">
                         <div>
                             <span class="block text-[9px] font-extrabold uppercase tracking-wider text-slate-400">Katalog: {{ $firstEksemplar?->kode_eksemplar ?? '-' }}</span>

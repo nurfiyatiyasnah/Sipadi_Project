@@ -37,20 +37,17 @@
                 <!-- Cover Image Card -->
                 <div class="flex min-w-0 items-center justify-center rounded-[2rem] border border-slate-100/80 bg-white p-6 shadow-sm">
                     <div class="relative w-full aspect-[3/4] rounded-2xl bg-slate-50 overflow-hidden flex items-center justify-center shadow-md">
-                        @if($buku->gambar_cover)
-                            @php
-                                $imageUrl = str_starts_with($buku->gambar_cover, 'http') ? $buku->gambar_cover : asset('storage/' . $buku->gambar_cover);
-                            @endphp
-                            <img src="{{ $imageUrl }}" alt="{{ $buku->judul }}" class="w-full h-full object-cover">
-                        @else
-                            <!-- Fallback Dynamic CSS Cover -->
-                            <div class="absolute inset-0 bg-gradient-to-br from-[#1e463c] to-[#0f3028] p-6 text-white flex flex-col justify-between rounded-xl">
-                                <div class="absolute left-0 top-0 bottom-0 w-3.5 bg-gradient-to-r from-black/20 to-transparent"></div>
-                                <div class="mt-8">
-                                    <h3 class="break-words font-sans font-bold text-lg leading-snug">{{ $buku->judul }}</h3>
-                                </div>
-                                <p class="break-words text-xs text-slate-300 font-semibold">{{ $buku->penulis }}</p>
+                        <!-- Fallback Dynamic CSS Cover -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-[#1e463c] to-[#0f3028] p-6 text-white flex flex-col justify-between rounded-xl">
+                            <div class="absolute left-0 top-0 bottom-0 w-3.5 bg-gradient-to-r from-black/20 to-transparent"></div>
+                            <div class="mt-8">
+                                <h3 class="break-words font-sans font-bold text-lg leading-snug">{{ $buku->judul }}</h3>
                             </div>
+                            <p class="break-words text-xs text-slate-300 font-semibold">{{ $buku->penulis }}</p>
+                        </div>
+                        @if($imageUrl = $buku->coverUrl())
+                            <img src="{{ $imageUrl }}" alt="{{ $buku->judul }}"
+                                 class="relative w-full h-full object-cover" onerror="this.remove()">
                         @endif
                     </div>
                 </div>
@@ -190,19 +187,16 @@
                         <a href="{{ route('katalog.show', $recom->id_buku) }}" 
                            class="group bg-white rounded-2xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition duration-200 flex flex-col">
                             <!-- Styled Book Cover Padded Area -->
-                            <div class="w-full aspect-[3/4] rounded-xl bg-[#f2ede2] p-4 flex items-center justify-center mb-3 overflow-hidden shadow-inner">
-                                @if($recom->gambar_cover)
-                                    @php
-                                        $recomImageUrl = str_starts_with($recom->gambar_cover, 'http') ? $recom->gambar_cover : asset('storage/' . $recom->gambar_cover);
-                                    @endphp
-                                    <img src="{{ $recomImageUrl }}" alt="{{ $recom->judul }}" class="h-full object-contain rounded shadow-md group-hover:scale-105 transition duration-300">
-                                @else
-                                    <!-- Fallback Cover style -->
-                                    <div class="w-full h-full bg-gradient-to-br from-[#1e463c] to-[#0f3028] text-white p-3 flex flex-col justify-between rounded shadow-md">
-                                        <div class="absolute left-0 top-0 bottom-0 w-2.5 bg-gradient-to-r from-black/20 to-transparent"></div>
-                                        <h4 class="font-sans font-bold text-[10px] leading-snug line-clamp-3">{{ $recom->judul }}</h4>
-                                        <p class="text-[8px] text-slate-300 font-semibold">{{ $recom->penulis }}</p>
-                                    </div>
+                            <div class="relative w-full aspect-[3/4] rounded-xl bg-[#f2ede2] p-4 flex items-center justify-center mb-3 overflow-hidden shadow-inner">
+                                <!-- Fallback Cover style -->
+                                <div class="w-full h-full bg-gradient-to-br from-[#1e463c] to-[#0f3028] text-white p-3 flex flex-col justify-between rounded shadow-md">
+                                    <div class="absolute left-0 top-0 bottom-0 w-2.5 bg-gradient-to-r from-black/20 to-transparent"></div>
+                                    <h4 class="font-sans font-bold text-[10px] leading-snug line-clamp-3">{{ $recom->judul }}</h4>
+                                    <p class="text-[8px] text-slate-300 font-semibold">{{ $recom->penulis }}</p>
+                                </div>
+                                @if($recomImageUrl = $recom->coverUrl())
+                                    <img src="{{ $recomImageUrl }}" alt="{{ $recom->judul }}"
+                                         class="absolute inset-4 h-[calc(100%-2rem)] object-contain rounded shadow-md group-hover:scale-105 transition duration-300" onerror="this.remove()">
                                 @endif
                             </div>
 

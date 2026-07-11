@@ -42,6 +42,9 @@
                     case 'peminjaman_ditolak':
                         $iconClass = 'fa-solid fa-circle-xmark text-rose-600 bg-rose-50 border-rose-100';
                         break;
+                    case 'peminjaman_dibatalkan':
+                        $iconClass = 'fa-solid fa-ban text-slate-600 bg-slate-50 border-slate-100';
+                        break;
                     case 'pengembalian_berhasil':
                         $iconClass = 'fa-solid fa-book text-blue-600 bg-blue-50 border-blue-100';
                         break;

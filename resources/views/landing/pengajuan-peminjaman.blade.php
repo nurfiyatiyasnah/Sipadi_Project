@@ -148,7 +148,7 @@
                             <p>2. Masa peminjaman adalah {{ $aturan?->lama_pinjam_hari ?? 14 }} hari kalender sejak tanggal pengambilan.</p>
                             <p>3. Keterlambatan pengembalian akan dikenakan sanksi tidak bisa meminjam buku sesuai berapa lama kamu terlambat mengembalikan buku, misal telat mengembalikan buku selama 3 hari = 3 hari kamu tidak dapat meminjam.</p>
                             <p>4. Kerusakan atau kehilangan buku menjadi tanggung jawab peminjam sepenuhnya, dan wajib mengganti dengan buku yang sama atau membayar denda seharga buku tersebut.</p>
-                            <p>5. Jika buku tidak diambil sesuai jadwal yang telah ditentukan tanpa konfirmasi, pengajuan akan dibatalkan otomatis.</p>
+                            <p>5. Jika buku tidak diambil sesuai jadwal yang telah ditentukan tanpa konfirmasi, pengajuan akan dibatalkan otomatis atau oleh petugas.</p>
                         </div>
 
                         <!-- Checkbox Agreement -->

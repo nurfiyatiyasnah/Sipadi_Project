@@ -145,6 +145,49 @@ class KelolaBukuTest extends TestCase
         $this->assertFalse($book->eksemplar()->where('lokasi_rak', 'Rak A-1')->exists());
     }
 
+    public function test_cover_url_buku_mendukung_url_eksternal_dan_file_lokal(): void
+    {
+        Storage::fake('public');
+
+        $externalBook = Buku::factory()->create([
+            'gambar_cover' => 'https://example.com/cover.jpg',
+        ]);
+        $missingLocalBook = Buku::factory()->create([
+            'gambar_cover' => 'covers/hilang.jpg',
+        ]);
+
+        Storage::disk('public')->put('covers/ada.jpg', 'cover');
+        $localBook = Buku::factory()->create([
+            'gambar_cover' => 'covers/ada.jpg',
+        ]);
+
+        $this->assertSame('https://example.com/cover.jpg', $externalBook->coverUrl());
+        $this->assertNull($missingLocalBook->coverUrl());
+        $this->assertStringEndsWith('/storage/covers/ada.jpg', $localBook->coverUrl());
+    }
+
+    public function test_daftar_buku_menyiapkan_fallback_cover_jika_gambar_gagal_dimuat(): void
+    {
+        $petugas = $this->createPetugasUser();
+        $kategori = KategoriBuku::factory()->create();
+        $book = Buku::factory()->create([
+            'id_kategori' => $kategori->id_kategori,
+            'judul' => 'Buku Cover Eksternal Rusak',
+            'gambar_cover' => 'https://example.com/cover-rusak.jpg',
+        ]);
+        EksemplarBuku::factory()->create([
+            'id_buku' => $book->id_buku,
+            'status_eksemplar' => EksemplarBuku::STATUS_TERSEDIA,
+        ]);
+
+        $this->actingAs($petugas);
+
+        Livewire::test(KoleksiBukuIndex::class)
+            ->assertSee('Buku Cover Eksternal Rusak')
+            ->assertSee('https://example.com/cover-rusak.jpg')
+            ->assertSee('onerror="this.remove()"', false);
+    }
+
     /**
      * Test admin can edit book.
      */
