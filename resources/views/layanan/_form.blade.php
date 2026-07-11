@@ -87,14 +87,46 @@
     </div>
 
     <aside class="space-y-5">
-        <section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm" x-data="{ 
+            selectedIcon: '{{ old('ikon', $layanan->ikon ?? 'fa-handshake-angle') }}', 
+            showMore: false,
+            icons: ['fa-handshake-angle', 'fa-book-open', 'fa-print', 'fa-laptop', 'fa-wifi', 'fa-envelope-open-text', 'fa-building'],
+            moreIcons: ['fa-users', 'fa-chalkboard-user', 'fa-graduation-cap', 'fa-book-quran', 'fa-computer', 'fa-mouse', 'fa-keyboard', 'fa-headphones', 'fa-wheelchair', 'fa-magnifying-glass', 'fa-folder-open', 'fa-id-card']
+        }">
             <h3 class="text-sm font-bold text-slate-900">Ikon Layanan</h3>
+            <input type="hidden" name="ikon" x-model="selectedIcon">
+            
             <div class="mt-4 grid grid-cols-4 gap-3">
-                @foreach (['fa-handshake-angle', 'fa-book-open', 'fa-print', 'fa-laptop', 'fa-wifi', 'fa-envelope-open-text', 'fa-building', 'fa-ellipsis'] as $icon)
-                    <button type="button" class="flex h-11 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition hover:border-[#d7ad37] hover:bg-[#fff8df]">
-                        <i class="fa-solid {{ $icon }}"></i>
+                <template x-for="icon in icons" :key="icon">
+                    <button type="button" 
+                            @click="selectedIcon = icon"
+                            :class="selectedIcon === icon ? 'border-[#d7ad37] bg-[#fff8df] text-[#d7ad37]' : 'border-slate-200 text-slate-600 hover:border-[#d7ad37] hover:bg-[#fff8df]'"
+                            class="flex h-11 items-center justify-center rounded-xl border transition">
+                        <i class="fa-solid" :class="icon"></i>
                     </button>
-                @endforeach
+                </template>
+                
+                <button type="button" 
+                        @click="showMore = !showMore"
+                        :class="showMore ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:border-[#d7ad37] hover:bg-[#fff8df]'"
+                        class="flex h-11 items-center justify-center rounded-xl border border-slate-200 transition"
+                        title="Lihat ikon lainnya">
+                    <i class="fa-solid fa-ellipsis"></i>
+                </button>
+            </div>
+
+            <!-- More Icons -->
+            <div x-show="showMore" x-transition class="mt-3 border-t border-slate-100 pt-3">
+                <div class="grid grid-cols-4 gap-3">
+                    <template x-for="icon in moreIcons" :key="icon">
+                        <button type="button" 
+                                @click="selectedIcon = icon"
+                                :class="selectedIcon === icon ? 'border-[#d7ad37] bg-[#fff8df] text-[#d7ad37]' : 'border-slate-200 text-slate-600 hover:border-[#d7ad37] hover:bg-[#fff8df]'"
+                                class="flex h-11 items-center justify-center rounded-xl border transition">
+                            <i class="fa-solid" :class="icon"></i>
+                        </button>
+                    </template>
+                </div>
             </div>
         </section>
 
