@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Buku extends Model
 {
@@ -135,6 +137,31 @@ class Buku extends Model
             'tidak_tersedia' => 'Tidak Tersedia',
             default => 'Tersedia',
         };
+    }
+
+    public function coverUrl(): ?string
+    {
+        $cover = trim((string) $this->gambar_cover);
+
+        if ($cover === '') {
+            return null;
+        }
+
+        if (Str::startsWith($cover, ['http://', 'https://'])) {
+            return $cover;
+        }
+
+        $cover = Str::of($cover)
+            ->ltrim('/')
+            ->after('storage/')
+            ->after('public/')
+            ->toString();
+
+        if (! Storage::disk('public')->exists($cover)) {
+            return null;
+        }
+
+        return Storage::url($cover);
     }
 
     /**

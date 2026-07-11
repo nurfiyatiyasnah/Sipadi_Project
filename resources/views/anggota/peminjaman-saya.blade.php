@@ -152,6 +152,8 @@
                                     <span class="text-xs text-amber-600 font-semibold"><i class="fa-regular fa-clock mr-1"></i>Menunggu Petugas</span>
                                 @elseif($status === 'ditolak')
                                     <span class="text-xs text-rose-500 font-semibold" title="{{ $p->catatan_admin }}"><i class="fa-regular fa-comment-dots mr-1"></i>Ditolak Petugas</span>
+                                @elseif($status === 'dibatalkan')
+                                    <span class="text-xs text-slate-500 font-semibold" title="{{ $p->catatan_admin }}"><i class="fa-regular fa-circle-xmark mr-1"></i>Dibatalkan Petugas</span>
                                 @else
                                     <span class="text-xs text-slate-400 font-semibold">-</span>
                                 @endif

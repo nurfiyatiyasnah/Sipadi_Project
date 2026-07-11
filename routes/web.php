@@ -200,10 +200,12 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
     Route::get('/peminjaman/{peminjaman}/setujui', [PetugasPeminjamanController::class, 'approveForm'])->name('peminjaman.approve-form');
     Route::post('/peminjaman/{peminjaman}/setujui', [PetugasPeminjamanController::class, 'approve'])->name('peminjaman.approve');
     Route::post('/peminjaman/{peminjaman}/ambil', [PetugasPeminjamanController::class, 'markAsPickedUp'])->name('peminjaman.ambil');
+    Route::post('/peminjaman/{peminjaman}/batalkan-pengambilan', [PetugasPeminjamanController::class, 'cancelPickup'])->name('peminjaman.batalkan-pengambilan');
 
     // Pengembalian routes for Petugas
     Route::get('/pengembalian', [PetugasPengembalianController::class, 'index'])->name('pengembalian.index');
     Route::get('/pengembalian/riwayat', [PetugasPengembalianController::class, 'riwayat'])->name('pengembalian.riwayat');
+    Route::get('/pengembalian/riwayat/{pengembalian}', [PetugasPengembalianController::class, 'riwayatShow'])->name('pengembalian.riwayat.show');
     Route::get('/pengembalian/export-csv', [PetugasPengembalianController::class, 'exportCsv'])->name('pengembalian.export-csv');
     Route::get('/pengembalian/{peminjaman}', [PetugasPengembalianController::class, 'show'])->name('pengembalian.show');
     Route::get('/pengembalian/{peminjaman}/proses', [PetugasPengembalianController::class, 'prosesForm'])->name('pengembalian.proses-form');

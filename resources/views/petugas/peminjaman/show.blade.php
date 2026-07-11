@@ -24,18 +24,29 @@
             </a>
             <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Detail Pengajuan Peminjaman</h2>
             @php
-                $status = strtolower($peminjaman->status_peminjaman);
+                $status = strtolower((string) $peminjaman->status_peminjaman);
                 $badge = 'bg-slate-50 text-slate-600';
+                $statusLabel = ucwords(str_replace('_', ' ', (string) $peminjaman->status_peminjaman));
+
                 if (in_array($status, ['menunggu', 'pending', 'pengajuan', 'diajukan'])) {
                     $badge = 'bg-amber-50 text-amber-600';
-                } elseif (in_array($status, ['disetujui', 'aktif', 'Dipinjam', 'dipinjam'])) {
+                    $statusLabel = 'Diajukan';
+                } elseif ($status === 'siap_diambil') {
+                    $badge = 'bg-blue-50 text-blue-600';
+                    $statusLabel = 'Siap Diambil';
+                } elseif (in_array($status, ['disetujui', 'aktif', 'dipinjam', 'terlambat'])) {
                     $badge = 'bg-emerald-50 text-emerald-600';
-                } elseif (in_array($status, ['ditolak', 'batal'])) {
+                    $statusLabel = $status === 'terlambat' ? 'Terlambat' : 'Aktif';
+                } elseif ($status === 'selesai') {
+                    $badge = 'bg-slate-100 text-slate-650';
+                    $statusLabel = 'Selesai';
+                } elseif (in_array($status, ['ditolak', 'batal', 'dibatalkan'])) {
                     $badge = 'bg-rose-50 text-rose-600';
+                    $statusLabel = $status === 'ditolak' ? 'Ditolak' : 'Dibatalkan';
                 }
             @endphp
-            <span class="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold capitalize {{ $badge }} ml-2">
-                {{ $peminjaman->status_peminjaman }}
+            <span class="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold {{ $badge }} ml-2">
+                {{ $statusLabel }}
             </span>
         </div>
     </div>
@@ -113,13 +124,7 @@
             </div>
 
             <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-                @if($buku && $buku->gambar_cover)
-                    <img src="{{ asset('storage/' . $buku->gambar_cover) }}" alt="Cover Buku" class="h-36 w-24 rounded-lg border border-slate-100 object-cover shadow-sm">
-                @else
-                    <div class="h-36 w-24 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 border border-slate-200">
-                        <i class="fa-solid fa-book text-3xl"></i>
-                    </div>
-                @endif
+                <x-book-cover :book="$buku" class="h-36 w-24 rounded-lg shadow-sm" icon-class="text-3xl" />
 
                 <div class="space-y-3.5 flex-1 text-center sm:text-left">
                     <div>
@@ -210,6 +215,16 @@
             </div>
         </div>
 
+        @php
+            $catatanAnggota = trim((string) $peminjaman->deskripsi_pengajuan);
+        @endphp
+        <div class="mb-8 rounded-2xl border border-slate-100 bg-slate-50/70 p-5">
+            <span class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400">CATATAN ANGGOTA</span>
+            <p class="mt-2 whitespace-pre-line text-sm font-medium leading-relaxed text-slate-700">
+                {{ $catatanAnggota !== '' ? $catatanAnggota : 'Tidak ada catatan dari anggota.' }}
+            </p>
+        </div>
+
         @if(in_array($status, ['menunggu', 'pending', 'pengajuan', 'diajukan']))
             <!-- Actions Section -->
             <div class="flex items-center justify-end gap-4 border-t border-slate-100 pt-6">
@@ -230,11 +245,19 @@
 
         @if($status === 'siap_diambil')
             <!-- Actions Section for Ready to Pick Up -->
-            <div class="flex items-center justify-end gap-4 border-t border-slate-100 pt-6">
+            <div class="flex flex-col items-stretch justify-end gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:items-center">
+                <!-- Cancel Pickup Action -->
+                <form action="{{ route('petugas.peminjaman.batalkan-pengambilan', $peminjaman->id_peminjaman) }}" method="POST" class="inline" onsubmit="return confirm('Batalkan pengambilan buku ini? Eksemplar akan dikembalikan menjadi tersedia.')">
+                    @csrf
+                    <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl border border-rose-200 px-5 py-3 text-sm font-bold text-rose-600 transition hover:bg-rose-50 sm:w-auto">
+                        <i class="fa-solid fa-ban"></i> Batalkan Pengambilan
+                    </button>
+                </form>
+
                 <!-- Mark as Picked Up Action -->
                 <form action="{{ route('petugas.peminjaman.ambil', $peminjaman->id_peminjaman) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menandai buku ini telah diambil oleh anggota?')">
                     @csrf
-                    <button type="submit" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl transition shadow-sm flex items-center justify-center gap-2">
+                    <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-700 sm:w-auto">
                         <i class="fa-solid fa-hand-holding-hand"></i> Tandai Diambil (Serahkan Buku)
                     </button>
                 </form>

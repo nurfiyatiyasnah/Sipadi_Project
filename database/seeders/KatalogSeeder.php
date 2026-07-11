@@ -62,7 +62,7 @@ class KatalogSeeder extends Seeder
                     'gambar_cover' => 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=600',
                     'kategori' => $sastra,
                     'copies' => [
-                        ['status' => 'Dipinjam', 'rak' => 'Lantai 2 - Rak A-05'],
+                        ['status' => 'Tersedia', 'rak' => 'Lantai 2 - Rak A-05'],
                     ],
                 ],
                 [
@@ -72,7 +72,7 @@ class KatalogSeeder extends Seeder
                     'tahun_terbit' => 2008,
                     'isbn' => '978-979-3786-25-4',
                     'deskripsi' => 'Buku sejarah yang komprehensif menguraikan perkembangan Kota Bukittinggi sejak masa kolonial Belanda, pendudukan Jepang, masa revolusi kemerdekaan, hingga perannya yang vital sebagai Ibu Kota Negara Darurat RI (PDRI).',
-                    'gambar_cover' => 'https://images.unsplash.com/photo-1505664194779-8bebcb3f9e2e?q=80&w=600',
+                    'gambar_cover' => 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=600&q=80',
                     'kategori' => $sejarah,
                     'copies' => [
                         ['status' => 'Tersedia', 'rak' => 'Lantai 1 - Rak B-12'],
@@ -128,7 +128,7 @@ class KatalogSeeder extends Seeder
                     'gambar_cover' => 'https://images.unsplash.com/photo-1476275466078-4007374efbbe?q=80&w=600',
                     'kategori' => $fiksi,
                     'copies' => [
-                        ['status' => 'Dipinjam', 'rak' => 'Lantai 2 - Rak F-08'],
+                        ['status' => 'Tersedia', 'rak' => 'Lantai 2 - Rak F-08'],
                     ],
                 ],
                 [

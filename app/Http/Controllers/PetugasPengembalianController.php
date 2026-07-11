@@ -379,6 +379,24 @@ class PetugasPengembalianController extends Controller
     }
 
     /**
+     * Display a completed return history detail.
+     */
+    public function riwayatShow(Pengembalian $pengembalian): View
+    {
+        $pengembalian->load([
+            'detailPengembalian.detailPeminjaman.buku.kategori',
+            'peminjaman.anggota.user',
+            'peminjaman.detailPeminjaman.buku.eksemplar',
+            'peminjaman.detailPeminjaman.buku.kategori',
+            'peminjaman.petugas',
+            'peminjaman.sanksiAnggota',
+            'petugas',
+        ]);
+
+        return view('petugas.pengembalian.riwayat-show', compact('pengembalian'));
+    }
+
+    /**
      * Export return history to CSV format.
      */
     public function exportCsv(Request $request): StreamedResponse

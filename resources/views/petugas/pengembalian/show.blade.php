@@ -63,6 +63,7 @@
                 <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">
                     @php
                         $initials = collect(explode(' ', $anggota?->nama_lengkap ?? 'A'))->map(fn($n) => substr($n, 0, 1))->take(2)->join('');
+                        $statusAnggota = filled($anggota?->status_anggota) ? $anggota->status_anggota : 'Aktif';
                     @endphp
                     <div class="h-16 w-16 rounded-full bg-slate-100 flex items-center justify-center text-lg font-black text-slate-650 border border-slate-200 shadow-sm flex-shrink-0">
                         {{ strtoupper($initials) }}
@@ -74,14 +75,12 @@
                             <p class="text-xs font-semibold text-slate-400 mt-0.5">ID: {{ $anggota?->no_anggota }}</p>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-x-6 gap-y-4 pt-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 pt-2">
                             <div>
-                                <span class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400">FAKULTAS</span>
-                                <span class="block text-sm font-semibold text-slate-700 mt-0.5">Ilmu Komputer</span>
-                            </div>
-                            <div>
-                                <span class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400">PROGRAM STUDI</span>
-                                <span class="block text-sm font-semibold text-slate-700 mt-0.5">Teknik Informatika</span>
+                                <span class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400">TIPE ANGGOTA</span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 mt-1 rounded-full text-xs font-bold bg-blue-50 text-blue-650">
+                                    Anggota
+                                </span>
                             </div>
                             <div>
                                 <span class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400">NO. TELEPON</span>
@@ -91,7 +90,7 @@
                                 <span class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400">STATUS</span>
                                 <div class="mt-1">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600">
-                                        Aktif
+                                        {{ $statusAnggota }}
                                     </span>
                                 </div>
                             </div>
@@ -115,9 +114,7 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-                    <div class="h-36 w-24 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-200 flex-shrink-0">
-                        <i class="fa-solid fa-book text-3xl"></i>
-                    </div>
+                    <x-book-cover :book="$buku" class="h-36 w-24 rounded-lg" icon-class="text-3xl" />
 
                     <div class="flex-1 w-full space-y-4">
                         <div>
@@ -177,7 +174,7 @@
                     <div class="flex justify-between items-center py-2 border-b border-slate-50">
                         <span class="text-xs font-extrabold text-slate-400 uppercase">PETUGAS PEMINJAMAN</span>
                         <span class="text-sm font-bold text-slate-750">
-                            {{ $peminjaman->petugas?->nama_petugas ?? 'Sarah W.' }}
+                            {{ $peminjaman->petugas?->nama_petugas ?? '-' }}
                         </span>
                     </div>
                     <div class="flex justify-between items-center py-2">
