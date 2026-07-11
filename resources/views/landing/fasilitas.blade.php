@@ -29,12 +29,31 @@
     <!-- Main Content Area -->
     <div class="mx-auto max-w-7xl px-6 lg:px-12 pb-16">
         
-        <!-- Filter Tabs -->
-        <div class="mb-8 flex gap-3 overflow-x-auto pb-2">
-            <a href="{{ route('fasilitas.public.index') }}" class="whitespace-nowrap rounded-full px-5 py-2 text-sm font-semibold transition {{ $kategori === 'Semua' ? 'bg-[#04241e] text-white' : 'bg-white text-slate-600 hover:bg-slate-100' }}">Semua Kategori</a>
-            <a href="{{ route('fasilitas.public.index', ['kategori' => 'Ruangan']) }}" class="whitespace-nowrap rounded-full px-5 py-2 text-sm font-semibold transition {{ $kategori === 'Ruangan' ? 'bg-[#04241e] text-white' : 'bg-white text-slate-600 hover:bg-slate-100' }}">Ruang Belajar & Diskusi</a>
-            <a href="{{ route('fasilitas.public.index', ['kategori' => 'Elektronik']) }}" class="whitespace-nowrap rounded-full px-5 py-2 text-sm font-semibold transition {{ $kategori === 'Elektronik' ? 'bg-[#04241e] text-white' : 'bg-white text-slate-600 hover:bg-slate-100' }}">Perangkat IT</a>
-            <a href="{{ route('fasilitas.public.index', ['kategori' => 'Peralatan']) }}" class="whitespace-nowrap rounded-full px-5 py-2 text-sm font-semibold transition {{ $kategori === 'Peralatan' ? 'bg-[#04241e] text-white' : 'bg-white text-slate-600 hover:bg-slate-100' }}">Peralatan Pendukung</a>
+        <!-- Filter Tabs & Search -->
+        <div class="mb-8 flex flex-col lg:flex-row gap-4 justify-between lg:items-center">
+            <div class="flex gap-3 overflow-x-auto pb-2 lg:pb-0">
+                <a href="{{ route('fasilitas.public.index') }}" class="whitespace-nowrap rounded-full px-5 py-2 text-sm font-semibold transition {{ $kategori === 'Semua' ? 'bg-[#04241e] text-white' : 'bg-white text-slate-600 hover:bg-slate-100 shadow-sm border border-slate-100' }}">Semua Kategori</a>
+                <a href="{{ route('fasilitas.public.index', ['kategori' => 'Ruangan']) }}" class="whitespace-nowrap rounded-full px-5 py-2 text-sm font-semibold transition {{ $kategori === 'Ruangan' ? 'bg-[#04241e] text-white' : 'bg-white text-slate-600 hover:bg-slate-100 shadow-sm border border-slate-100' }}">Ruang Belajar & Diskusi</a>
+                <a href="{{ route('fasilitas.public.index', ['kategori' => 'Elektronik']) }}" class="whitespace-nowrap rounded-full px-5 py-2 text-sm font-semibold transition {{ $kategori === 'Elektronik' ? 'bg-[#04241e] text-white' : 'bg-white text-slate-600 hover:bg-slate-100 shadow-sm border border-slate-100' }}">Perangkat IT</a>
+                <a href="{{ route('fasilitas.public.index', ['kategori' => 'Peralatan']) }}" class="whitespace-nowrap rounded-full px-5 py-2 text-sm font-semibold transition {{ $kategori === 'Peralatan' ? 'bg-[#04241e] text-white' : 'bg-white text-slate-600 hover:bg-slate-100 shadow-sm border border-slate-100' }}">Peralatan Pendukung</a>
+            </div>
+            
+            <form action="{{ route('fasilitas.public.index') }}" method="GET" class="relative min-w-[280px]">
+                @if($kategori !== 'Semua')
+                    <input type="hidden" name="kategori" value="{{ $kategori }}">
+                @endif
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari fasilitas, lokasi..." class="w-full rounded-full border border-slate-200 bg-white py-2.5 pl-5 {{ request('search') ? 'pr-20' : 'pr-11' }} text-sm shadow-sm focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600 transition">
+                
+                @if(request('search'))
+                    <a href="{{ route('fasilitas.public.index', $kategori !== 'Semua' ? ['kategori' => $kategori] : []) }}" class="absolute right-10 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center text-slate-400 hover:text-red-500 transition" title="Hapus pencarian">
+                        <i class="fa-solid fa-xmark text-sm"></i>
+                    </a>
+                @endif
+
+                <button type="submit" class="absolute right-1.5 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 transition hover:bg-emerald-600 hover:text-white">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                </button>
+            </form>
         </div>
 
         <!-- Fasilitas Grid -->

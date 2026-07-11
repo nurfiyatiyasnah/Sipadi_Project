@@ -1,5 +1,5 @@
 @extends('layouts.petugas')
-@section('title', 'Edit Anggota Organisasi')
+@section('title', 'Edit Anggota Kepegawaian')
 
 @section('content')
 <div class="mx-auto max-w-[1180px] space-y-8">
@@ -7,13 +7,13 @@
     {{-- Header --}}
     <section class="flex flex-wrap items-center justify-between gap-4">
         <div>
-            <a href="{{ route('petugas.organisasi.index') }}"
+            <a href="{{ route('petugas.kepegawaian.index') }}"
                 class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-[#071426]">
                 <i class="fa-solid fa-arrow-left"></i>
-                Kembali ke Struktur Organisasi
+                Kembali ke Struktur Kepegawaian
             </a>
             <h2 class="mt-2 font-serif text-3xl font-bold text-[#071426]">Edit Anggota</h2>
-            <p class="mt-1 text-slate-500">Ubah data anggota struktur organisasi.</p>
+            <p class="mt-1 text-slate-500">Ubah data anggota struktur kepegawaian.</p>
         </div>
     </section>
 
@@ -32,7 +32,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('petugas.organisasi.update', $organisasi) }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('petugas.kepegawaian.update', $kepegawaian) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="grid gap-8 xl:grid-cols-[1fr_380px]">
@@ -44,7 +44,7 @@
                     <label for="nama" class="mb-3 block text-sm font-bold uppercase tracking-widest text-slate-600">
                         Nama Lengkap <span class="text-red-500">*</span>
                     </label>
-                    <input id="nama" type="text" name="nama" value="{{ old('nama', $organisasi->nama) }}"
+                    <input id="nama" type="text" name="nama" value="{{ old('nama', $kepegawaian->nama) }}"
                            placeholder="Masukkan nama lengkap..."
                            class="h-14 w-full rounded-xl border border-slate-200 bg-slate-50 px-5 text-lg font-semibold focus:border-[#ffdc7c] focus:ring-[#ffdc7c] @error('nama') border-red-400 @enderror"
                            required>
@@ -58,7 +58,7 @@
                     <label for="jabatan" class="mb-3 block text-sm font-bold uppercase tracking-widest text-slate-600">
                         Jabatan <span class="text-red-500">*</span>
                     </label>
-                    <input id="jabatan" type="text" name="jabatan" value="{{ old('jabatan', $organisasi->jabatan) }}"
+                    <input id="jabatan" type="text" name="jabatan" value="{{ old('jabatan', $kepegawaian->jabatan) }}"
                            placeholder="Masukkan jabatan..."
                            class="h-14 w-full rounded-xl border border-slate-200 bg-slate-50 px-5 text-lg focus:border-[#ffdc7c] focus:ring-[#ffdc7c] @error('jabatan') border-red-400 @enderror"
                            required>
@@ -72,7 +72,7 @@
                     <label for="urutan" class="mb-3 block text-sm font-bold uppercase tracking-widest text-slate-600">
                         Urutan Tampil
                     </label>
-                    <input id="urutan" type="number" name="urutan" value="{{ old('urutan', $organisasi->urutan) }}"
+                    <input id="urutan" type="number" name="urutan" value="{{ old('urutan', $kepegawaian->urutan) }}"
                            placeholder="0"
                            class="h-14 w-full rounded-xl border border-slate-200 bg-slate-50 px-5 text-lg focus:border-[#ffdc7c] focus:ring-[#ffdc7c] @error('urutan') border-red-400 @enderror">
                     <p class="mt-2 text-xs text-slate-500">Digunakan untuk mengurutkan tampilan (angka lebih kecil tampil lebih dulu).</p>
@@ -85,7 +85,7 @@
             {{-- Right: Sidebar --}}
             <div class="space-y-6">
                 {{-- Foto Upload --}}
-                <div class="rounded-3xl bg-white p-6 shadow-sm" x-data="imageUpload('{{ $organisasi->foto ? Storage::url($organisasi->foto) : '' }}')">
+                <div class="rounded-3xl bg-white p-6 shadow-sm" x-data="imageUpload('{{ $kepegawaian->foto ? Storage::url($kepegawaian->foto) : '' }}')">
                     <p class="mb-3 text-sm font-bold uppercase tracking-widest text-slate-600">
                         Foto Anggota
                     </p>

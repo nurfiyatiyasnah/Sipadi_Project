@@ -20,7 +20,7 @@
                 <p class="text-xs font-bold uppercase tracking-widest text-emerald-800">Tentang Kami</p>
                 <h1 class="font-serif text-4xl lg:text-5xl font-bold text-[#04241e] mt-2">Profil Perpustakaan</h1>
                 <p class="text-slate-500 mt-3 text-sm lg:text-base max-w-2xl">
-                    Mengenal lebih dekat sejarah, visi, misi, dan struktur organisasi Dinas Perpustakaan dan Kearsipan Kota Bukittinggi.
+                    Mengenal lebih dekat sejarah, visi, misi, dan struktur kepegawaian Dinas Perpustakaan dan Kearsipan Kota Bukittinggi.
                 </p>
             </div>
         </div>
@@ -83,17 +83,17 @@
             </aside>
         </section>
 
-        <!-- Struktur Organisasi -->
+        <!-- Struktur Kepegawaian -->
         <section class="bg-white rounded-3xl p-6 lg:p-10 border border-slate-100 shadow-sm">
             <div class="flex justify-between items-center border-b pb-5">
                 <h2 class="font-serif text-2xl font-bold text-[#04241e] flex items-center gap-2">
-                    <i class="fa-solid fa-sitemap text-emerald-800"></i>Struktur Organisasi
+                    <i class="fa-solid fa-sitemap text-emerald-800"></i>Struktur Kepegawaian
                 </h2>
-                <p class="text-xs font-semibold text-slate-400">Bagan Organisasi Tahun 2026</p>
+                <p class="text-xs font-semibold text-slate-400">Bagan Kepegawaian Tahun 2026</p>
             </div>
 
             <div class="mt-8 flex flex-wrap justify-center gap-8">
-                @forelse($strukturOrganisasi as $org)
+                @forelse($strukturKepegawaian as $org)
                     <div class="w-60 rounded-3xl bg-white p-5 shadow-md text-center border border-slate-100 hover:shadow-lg hover:-translate-y-1 transition duration-200">
                         @if($org->foto)
                             <img src="{{ asset('storage/' . $org->foto) }}" class="mx-auto h-32 w-32 rounded-full border-4 border-emerald-800 object-cover" alt="{{ $org->jabatan }}">
@@ -106,7 +106,7 @@
                         <p class="text-sm text-slate-400 mt-1 font-semibold">{{ $org->jabatan }}</p>
                     </div>
                 @empty
-                    <p class="text-slate-500 text-center w-full py-8">Struktur organisasi belum ditambahkan oleh admin.</p>
+                    <p class="text-slate-500 text-center w-full py-8">Struktur kepegawaian belum ditambahkan oleh admin.</p>
                 @endforelse
             </div>
         </section>

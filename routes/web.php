@@ -23,13 +23,13 @@ use App\Http\Controllers\PublicKatalogController;
 use App\Http\Controllers\PublicLayananController;
 use App\Http\Controllers\PublicPengumumanController;
 use App\Http\Controllers\PublicPrestasiController;
-use App\Http\Controllers\StrukturOrganisasiController;
+use App\Http\Controllers\StrukturKepegawaianController;
 use App\Models\AgendaEvent;
 use App\Models\Anggota;
 use App\Models\Berita;
 use App\Models\Buku;
 use App\Models\EksemplarBuku;
-use App\Models\StrukturOrganisasi;
+use App\Models\StrukturKepegawaian;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -86,9 +86,9 @@ Route::get('/pengumuman/{slug}', [PublicPengumumanController::class, 'show'])->n
 Route::get('/prestasi', [PublicPrestasiController::class, 'index'])->name('prestasi.public.index');
 Route::get('/prestasi/{prestasi:slug}', [PublicPrestasiController::class, 'show'])->name('prestasi.public.show');
 Route::get('/tentang-kami', function () {
-    $strukturOrganisasi = StrukturOrganisasi::orderBy('urutan')->get();
+    $strukturKepegawaian = StrukturKepegawaian::orderBy('urutan')->get();
 
-    return view('landing.tentang', compact('strukturOrganisasi'));
+    return view('landing.tentang', compact('strukturKepegawaian'));
 })->name('tentang');
 Route::get('/fasilitas', [PublicFasilitasController::class, 'index'])->name('fasilitas.public.index');
 Route::get('/fasilitas/{id}', [PublicFasilitasController::class, 'show'])->name('fasilitas.public.show');
@@ -171,9 +171,9 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
     Route::delete('/berita/{berita}', [BeritaController::class, 'destroy'])
         ->name('berita.destroy');
 
-    Route::resource('organisasi', StrukturOrganisasiController::class)->except(['show']);
     Route::get('/prestasi/tambah', [PrestasiController::class, 'create'])->name('prestasi.create');
     Route::resource('prestasi', PrestasiController::class)->except(['create']);
+    Route::resource('kepegawaian', StrukturKepegawaianController::class)->except(['show']);
     Route::resource('fasilitas', FasilitasController::class);
     Route::get('/agenda', [AgendaEventController::class, 'index'])->name('agenda.index');
     Route::get('/agenda/tambah', [AgendaEventController::class, 'create'])->name('agenda.create');

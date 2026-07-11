@@ -14,6 +14,19 @@
     </a>
 </div>
 
+<!-- Success Message -->
+@if (session('success'))
+    <div class="mb-6 flex items-center gap-4 rounded-2xl bg-emerald-50 p-4 text-emerald-700">
+        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
+            <i class="fa-solid fa-check"></i>
+        </span>
+        <div>
+            <p class="font-bold">Berhasil!</p>
+            <p class="text-sm">{{ session('success') }}</p>
+        </div>
+    </div>
+@endif
+
 <!-- Stats -->
 <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
     <!-- Total Ruangan -->
@@ -70,13 +83,31 @@
             <a href="{{ route('petugas.fasilitas.index', ['kategori' => 'Ruangan']) }}" class="rounded-lg {{ $kategori === 'Ruangan' ? 'bg-slate-100 font-semibold text-slate-800' : 'text-slate-600 hover:bg-slate-50' }} px-4 py-2 text-sm transition">Ruangan</a>
             <a href="{{ route('petugas.fasilitas.index', ['kategori' => 'Elektronik']) }}" class="rounded-lg {{ $kategori === 'Elektronik' ? 'bg-slate-100 font-semibold text-slate-800' : 'text-slate-600 hover:bg-slate-50' }} px-4 py-2 text-sm transition">Elektronik</a>
         </div>
-        <div class="flex items-center gap-3">
-            <button class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
-                <i class="fa-solid fa-filter text-slate-400"></i> Filter
-            </button>
-            <button class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
-                <i class="fa-solid fa-download text-slate-400"></i> Export
-            </button>
+        <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+            <form action="{{ route('petugas.fasilitas.index') }}" method="GET" class="relative w-full sm:w-64">
+                @if($kategori !== 'Semua')
+                    <input type="hidden" name="kategori" value="{{ $kategori }}">
+                @endif
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari fasilitas..." class="w-full rounded-lg border border-slate-300 bg-white py-2 pl-4 {{ request('search') ? 'pr-16' : 'pr-10' }} text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition">
+                
+                @if(request('search'))
+                    <a href="{{ route('petugas.fasilitas.index', $kategori !== 'Semua' ? ['kategori' => $kategori] : []) }}" class="absolute right-8 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 hover:text-red-500 transition" title="Hapus pencarian">
+                        <i class="fa-solid fa-xmark text-sm"></i>
+                    </a>
+                @endif
+
+                <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </form>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <button class="inline-flex flex-1 sm:flex-none justify-center items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                    <i class="fa-solid fa-filter text-slate-400"></i> Filter
+                </button>
+                <button class="inline-flex flex-1 sm:flex-none justify-center items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                    <i class="fa-solid fa-download text-slate-400"></i> Export
+                </button>
+            </div>
         </div>
     </div>
 
@@ -144,13 +175,58 @@
                             <a href="{{ route('petugas.fasilitas.edit', $f->id_fasilitas) }}" class="text-slate-400 hover:text-slate-700 transition" title="Edit">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
-                            <form action="{{ route('petugas.fasilitas.destroy', $f->id_fasilitas) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus fasilitas ini?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-slate-400 hover:text-red-600 transition" title="Hapus">
+                            <div x-data="{ showDeleteModal: false }" class="inline">
+                                <button @click="showDeleteModal = true" type="button" class="text-slate-400 hover:text-red-600 transition" title="Hapus">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
-                            </form>
+                                
+                                <!-- Delete Modal -->
+                                <div x-show="showDeleteModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                                    <!-- Background backdrop -->
+                                    <div x-show="showDeleteModal" x-transition.opacity class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
+
+                                    <!-- Modal panel -->
+                                    <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
+                                        <div x-show="showDeleteModal" 
+                                             x-transition:enter="ease-out duration-300" 
+                                             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                                             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+                                             x-transition:leave="ease-in duration-200" 
+                                             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+                                             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                                             @click.away="showDeleteModal = false"
+                                             class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg z-50">
+                                             
+                                            <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                                                <div class="sm:flex sm:items-start">
+                                                    <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                                                        <i class="fa-solid fa-triangle-exclamation text-red-600"></i>
+                                                    </div>
+                                                    <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                                        <h3 class="text-lg font-bold leading-6 text-slate-900" id="modal-title">Hapus Fasilitas</h3>
+                                                        <div class="mt-3 text-sm text-slate-500 space-y-2">
+                                                            <p>Apakah Anda yakin ingin menghapus fasilitas <strong>{{ $f->nama_fasilitas }}</strong>?</p>
+                                                            <p>Data dan foto yang terkait dengan fasilitas ini akan dihapus permanen dan tidak dapat dikembalikan.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="bg-slate-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                                                <form action="{{ route('petugas.fasilitas.destroy', $f->id_fasilitas) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="inline-flex w-full justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto transition">
+                                                        Ya, Hapus
+                                                    </button>
+                                                </form>
+                                                <button @click="showDeleteModal = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:mt-0 sm:w-auto transition">
+                                                    Batal
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </td>
                 </tr>

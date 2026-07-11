@@ -34,6 +34,7 @@ class PrestasiManagementTest extends TestCase
             ->assertSee('Daftar Prestasi')
             ->assertSee('Perpustakaan Digital Terbaik')
             ->assertSee('Tambah Prestasi')
+            ->assertSee('Struktur Kepegawaian')
             ->assertDontSee('Profil Perpustakaan')
             ->assertDontSee('Laporan');
     }
