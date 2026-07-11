@@ -70,13 +70,24 @@
             <a href="{{ route('petugas.fasilitas.index', ['kategori' => 'Ruangan']) }}" class="rounded-lg {{ $kategori === 'Ruangan' ? 'bg-slate-100 font-semibold text-slate-800' : 'text-slate-600 hover:bg-slate-50' }} px-4 py-2 text-sm transition">Ruangan</a>
             <a href="{{ route('petugas.fasilitas.index', ['kategori' => 'Elektronik']) }}" class="rounded-lg {{ $kategori === 'Elektronik' ? 'bg-slate-100 font-semibold text-slate-800' : 'text-slate-600 hover:bg-slate-50' }} px-4 py-2 text-sm transition">Elektronik</a>
         </div>
-        <div class="flex items-center gap-3">
-            <button class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
-                <i class="fa-solid fa-filter text-slate-400"></i> Filter
-            </button>
-            <button class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
-                <i class="fa-solid fa-download text-slate-400"></i> Export
-            </button>
+        <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+            <form action="{{ route('petugas.fasilitas.index') }}" method="GET" class="relative w-full sm:w-64">
+                @if($kategori !== 'Semua')
+                    <input type="hidden" name="kategori" value="{{ $kategori }}">
+                @endif
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari fasilitas..." class="w-full rounded-lg border border-slate-300 bg-white py-2 pl-4 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition">
+                <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </form>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <button class="inline-flex flex-1 sm:flex-none justify-center items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                    <i class="fa-solid fa-filter text-slate-400"></i> Filter
+                </button>
+                <button class="inline-flex flex-1 sm:flex-none justify-center items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                    <i class="fa-solid fa-download text-slate-400"></i> Export
+                </button>
+            </div>
         </div>
     </div>
 
