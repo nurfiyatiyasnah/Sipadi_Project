@@ -26,7 +26,7 @@ class LoginController extends Controller
         $data = $request->only('email', 'password');
 
         if (Auth::attempt($data)) {
-            return redirect('/dashboard');
+            return redirect('/admin/dashboard');
         }
 
         return back()->with('error', 'Login gagal');
