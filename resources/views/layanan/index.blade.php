@@ -35,7 +35,12 @@
             <form method="GET" action="{{ route('petugas.layanan.index') }}" class="flex flex-col gap-3 md:flex-row">
                 <div class="relative flex-1">
                     <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input name="search" value="{{ request('search') }}" placeholder="Cari layanan perpustakaan..." class="h-11 w-full rounded-xl border-slate-200 bg-slate-50 pl-11 text-sm focus:border-[#ffd15c] focus:ring-[#ffd15c]">
+                    <input name="search" value="{{ request('search') }}" placeholder="Cari layanan perpustakaan..." class="h-11 w-full rounded-xl border-slate-200 bg-slate-50 pl-11 pr-11 text-sm focus:border-[#ffd15c] focus:ring-[#ffd15c]">
+                    @if(request('search') || request('status'))
+                        <a href="{{ route('petugas.layanan.index') }}" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-500 transition" title="Reset Pencarian">
+                            <i class="fa-solid fa-xmark"></i>
+                        </a>
+                    @endif
                 </div>
                 <select name="status" class="h-11 rounded-xl border-slate-200 bg-slate-50 text-sm focus:border-[#ffd15c] focus:ring-[#ffd15c]">
                     <option value="">Semua status</option>
@@ -86,13 +91,58 @@
                                     <a href="{{ route('petugas.layanan.edit', $item) }}" class="text-slate-500 hover:text-slate-900" aria-label="Edit {{ $item->nama_layanan }}">
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
-                                    <form method="POST" action="{{ route('petugas.layanan.destroy', $item) }}">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-slate-500 hover:text-red-600" aria-label="Hapus {{ $item->nama_layanan }}">
+                                    <div x-data="{ showDeleteModal: false }" class="inline">
+                                        <button @click="showDeleteModal = true" type="button" class="text-slate-500 hover:text-red-600 transition" aria-label="Hapus {{ $item->nama_layanan }}" title="Hapus">
                                             <i class="fa-regular fa-trash-can"></i>
                                         </button>
-                                    </form>
+                                        
+                                        <!-- Delete Modal -->
+                                        <div x-show="showDeleteModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                                            <!-- Background backdrop -->
+                                            <div x-show="showDeleteModal" x-transition.opacity class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
+
+                                            <!-- Modal panel -->
+                                            <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
+                                                <div x-show="showDeleteModal" 
+                                                     x-transition:enter="ease-out duration-300" 
+                                                     x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                                                     x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+                                                     x-transition:leave="ease-in duration-200" 
+                                                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+                                                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                                                     @click.away="showDeleteModal = false"
+                                                     class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg z-50">
+                                                     
+                                                    <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                                                        <div class="sm:flex sm:items-start">
+                                                            <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                                                                <i class="fa-solid fa-triangle-exclamation text-red-600"></i>
+                                                            </div>
+                                                            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                                                <h3 class="text-lg font-bold leading-6 text-slate-900" id="modal-title">Hapus Layanan</h3>
+                                                                <div class="mt-3 text-sm text-slate-500 space-y-2">
+                                                                    <p>Apakah Anda yakin ingin menghapus layanan <strong>{{ $item->nama_layanan }}</strong>?</p>
+                                                                    <p>Data yang terkait dengan layanan ini akan dihapus permanen dan tidak dapat dikembalikan.</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="bg-slate-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                                                        <form action="{{ route('petugas.layanan.destroy', $item) }}" method="POST" class="inline">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="inline-flex w-full justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto transition">
+                                                                Ya, Hapus
+                                                            </button>
+                                                        </form>
+                                                        <button @click="showDeleteModal = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:mt-0 sm:w-auto transition">
+                                                            Batal
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                         </tr>

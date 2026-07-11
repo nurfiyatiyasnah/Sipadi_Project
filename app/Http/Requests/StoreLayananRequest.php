@@ -21,7 +21,7 @@ class StoreLayananRequest extends FormRequest
         return [
             'nama_layanan' => ['required', 'string', 'max:150'],
             'kategori_layanan' => ['nullable', 'string', 'max:100'],
-            'deskripsi' => ['nullable', 'string'],
+            'deskripsi' => ['required', 'string'],
             'persyaratan' => ['nullable', 'array'],
             'persyaratan.*' => ['nullable', 'string', 'max:255'],
             'prosedur' => ['nullable', 'array'],

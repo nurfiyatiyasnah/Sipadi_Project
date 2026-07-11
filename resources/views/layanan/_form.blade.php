@@ -58,8 +58,8 @@
                     <input id="biaya" name="biaya" value="{{ old('biaya', $layanan->biaya ?? 'Gratis') }}" class="h-12 w-full rounded-xl border-slate-200 bg-slate-50 text-sm focus:border-[#ffd15c] focus:ring-[#ffd15c]">
                 </div>
                 <div class="md:col-span-2">
-                    <label for="deskripsi" class="mb-2 block text-sm font-bold text-slate-700">Deskripsi Singkat</label>
-                    <textarea id="deskripsi" name="deskripsi" rows="5" placeholder="Jelaskan secara ringkas mengenai cakupan layanan ini..." class="w-full resize-none rounded-xl border-slate-200 bg-slate-50 text-sm focus:border-[#ffd15c] focus:ring-[#ffd15c]">{{ old('deskripsi', $layanan->deskripsi ?? '') }}</textarea>
+                    <label for="deskripsi" class="mb-2 block text-sm font-bold text-slate-700">Deskripsi Singkat <span class="text-red-500">*</span></label>
+                    <textarea id="deskripsi" name="deskripsi" rows="5" required placeholder="Jelaskan secara ringkas mengenai cakupan layanan ini..." class="w-full resize-none rounded-xl border-slate-200 bg-slate-50 text-sm focus:border-[#ffd15c] focus:ring-[#ffd15c]">{{ old('deskripsi', $layanan->deskripsi ?? '') }}</textarea>
                 </div>
             </div>
         </section>
