@@ -42,7 +42,14 @@
                 @if($kategori !== 'Semua')
                     <input type="hidden" name="kategori" value="{{ $kategori }}">
                 @endif
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari fasilitas, lokasi..." class="w-full rounded-full border border-slate-200 bg-white py-2.5 pl-5 pr-11 text-sm shadow-sm focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600 transition">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari fasilitas, lokasi..." class="w-full rounded-full border border-slate-200 bg-white py-2.5 pl-5 {{ request('search') ? 'pr-20' : 'pr-11' }} text-sm shadow-sm focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600 transition">
+                
+                @if(request('search'))
+                    <a href="{{ route('fasilitas.public.index', $kategori !== 'Semua' ? ['kategori' => $kategori] : []) }}" class="absolute right-10 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center text-slate-400 hover:text-red-500 transition" title="Hapus pencarian">
+                        <i class="fa-solid fa-xmark text-sm"></i>
+                    </a>
+                @endif
+
                 <button type="submit" class="absolute right-1.5 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 transition hover:bg-emerald-600 hover:text-white">
                     <i class="fa-solid fa-magnifying-glass text-xs"></i>
                 </button>

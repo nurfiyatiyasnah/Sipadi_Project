@@ -75,7 +75,14 @@
                 @if($kategori !== 'Semua')
                     <input type="hidden" name="kategori" value="{{ $kategori }}">
                 @endif
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari fasilitas..." class="w-full rounded-lg border border-slate-300 bg-white py-2 pl-4 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari fasilitas..." class="w-full rounded-lg border border-slate-300 bg-white py-2 pl-4 {{ request('search') ? 'pr-16' : 'pr-10' }} text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition">
+                
+                @if(request('search'))
+                    <a href="{{ route('petugas.fasilitas.index', $kategori !== 'Semua' ? ['kategori' => $kategori] : []) }}" class="absolute right-8 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 hover:text-red-500 transition" title="Hapus pencarian">
+                        <i class="fa-solid fa-xmark text-sm"></i>
+                    </a>
+                @endif
+
                 <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
