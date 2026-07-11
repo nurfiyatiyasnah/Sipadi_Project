@@ -16,6 +16,8 @@ class TambahStokBuku extends Component
 
     public string $sumber_perolehan = '';
 
+    public string $lokasi_rak = '';
+
     public string $tanggal_penerimaan = '';
 
     public string $catatan = '';
@@ -31,6 +33,7 @@ class TambahStokBuku extends Component
         return [
             'jumlah_stok_tambahan' => ['required', 'integer', 'min:1', 'max:500'],
             'sumber_perolehan' => ['required', 'string', 'max:100'],
+            'lokasi_rak' => ['nullable', 'string', 'max:100'],
             'tanggal_penerimaan' => ['required', 'date'],
             'catatan' => ['nullable', 'string'],
         ];
@@ -42,8 +45,9 @@ class TambahStokBuku extends Component
 
         $bookId = $this->bookId;
         $jumlahTambahan = (int) $this->jumlah_stok_tambahan;
+        $lokasiRak = trim($this->lokasi_rak) ?: null;
 
-        DB::transaction(function () use ($bookId, $jumlahTambahan) {
+        DB::transaction(function () use ($bookId, $jumlahTambahan, $lokasiRak) {
             // Lock the book record to prevent concurrency issues
             $book = Buku::where('id_buku', $bookId)->lockForUpdate()->firstOrFail();
 
@@ -69,9 +73,9 @@ class TambahStokBuku extends Component
                 EksemplarBuku::create([
                     'id_buku' => $bookId,
                     'kode_eksemplar' => $kode,
-                    'status_eksemplar' => 'tersedia',
+                    'status_eksemplar' => EksemplarBuku::STATUS_TERSEDIA,
                     'kondisi_eksemplar' => 'Baik',
-                    'lokasi_rak' => 'Rak A-1',
+                    'lokasi_rak' => $lokasiRak,
                     'tanggal_masuk' => $this->tanggal_penerimaan,
                     'sumber_perolehan' => $this->sumber_perolehan,
                     'catatan' => $this->catatan,
@@ -82,7 +86,7 @@ class TambahStokBuku extends Component
             $totalBefore = $copies->count();
             $totalAfter = $totalBefore + $jumlahTambahan;
 
-            $availableBefore = $copies->whereIn('status_eksemplar', ['tersedia', 'Tersedia'])->count();
+            $availableBefore = $copies->whereIn('status_eksemplar', EksemplarBuku::AVAILABLE_COPY_STATUSES)->count();
             $availableAfter = $availableBefore + $jumlahTambahan;
 
             MutasiStokBuku::create([

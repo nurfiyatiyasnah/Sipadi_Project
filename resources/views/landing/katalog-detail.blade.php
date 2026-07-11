@@ -28,43 +28,6 @@
         </nav>
     </div>
 
-    @php
-        // Generate a beautiful, realistic view count dynamically
-        $views = ($buku->id_buku * 148) + 325;
-        $viewsFormatted = $views >= 1000 ? number_format($views / 1000, 1) . 'k' : $views;
-
-        // Generate a simple DDC number based on category or id
-        $ddc = '800';
-        if ($buku->kategori) {
-            $catName = strtolower($buku->kategori->nama_kategori);
-            if (str_contains($catName, 'sejarah') || str_contains($catName, 'budaya')) {
-                $ddc = '390';
-            } elseif (str_contains($catName, 'fiksi') || str_contains($catName, 'sastra')) {
-                $ddc = '813';
-            } elseif (str_contains($catName, 'agama')) {
-                $ddc = '297';
-            } elseif (str_contains($catName, 'sosial')) {
-                $ddc = '300';
-            }
-        }
-        
-        // First 3 letters of author's name in uppercase, ignoring common titles
-        $authorWords = explode(' ', preg_replace('/[^\w\s]/', '', $buku->penulis ?? 'Admin'));
-        $filteredWords = array_filter($authorWords, function($word) {
-            return !in_array(strtolower($word), ['prof', 'dr', 'ir', 'h', 'hj', 'drs', 'dra', 'st', 'm', 'md']);
-        });
-        $authorWord = reset($filteredWords) ?: 'ADM';
-        $authorCode = strtoupper(substr($authorWord, 0, 3));
-        
-        // First letter of title in lowercase
-        $titleClean = preg_replace('/[^\w\s]/', '', $buku->judul);
-        $titleWords = array_filter(explode(' ', $titleClean));
-        $firstTitleWord = reset($titleWords) ?: 'b';
-        $titleCode = strtolower(substr($firstTitleWord, 0, 1));
-        
-        $nomorPanggil = "{$ddc} {$authorCode} {$titleCode}";
-    @endphp
-
     <!-- Main Detail Section -->
     <div class="mx-auto max-w-7xl px-6 lg:px-12 pb-16">
         <div class="grid min-w-0 grid-cols-1 gap-8 lg:grid-cols-[300px_1fr] items-start">
@@ -98,17 +61,24 @@
                     <div>
                         <h4 class="text-xs font-semibold text-slate-400 mb-2">Status Ketersediaan</h4>
                         @php
-                            $tersediaCount = $buku->eksemplar->whereIn('status_eksemplar', ['tersedia', 'Tersedia'])->count();
+                            $availabilityStatus = $buku->statusKetersediaan(false);
+                            $tersediaCount = $buku->availableEksemplarCount();
+                            $canBorrow = $availabilityStatus === 'tersedia';
                         @endphp
-                        @if($tersediaCount > 0)
+                        @if($availabilityStatus === 'tersedia')
                             <div class="flex items-center gap-2 text-sm font-bold text-[#1e463c]">
                                 <span class="h-2.5 w-2.5 rounded-full bg-emerald-500 shrink-0"></span>
                                 Tersedia {{ $tersediaCount }} Eksemplar
                             </div>
-                        @elseif($status === 'Sedang Dipinjam')
+                        @elseif($availabilityStatus === 'dipinjam_semua')
                             <div class="flex items-center gap-2 text-sm font-bold text-orange-600">
                                 <span class="h-2.5 w-2.5 rounded-full bg-orange-500 shrink-0"></span>
-                                Sedang Dipinjam
+                                Dipinjam Semua
+                            </div>
+                        @elseif($availabilityStatus === 'stok_kosong')
+                            <div class="flex items-center gap-2 text-sm font-bold text-slate-600">
+                                <span class="h-2.5 w-2.5 rounded-full bg-slate-500 shrink-0"></span>
+                                Stok Kosong
                             </div>
                         @else
                             <div class="flex items-center gap-2 text-sm font-bold text-rose-600">
@@ -122,22 +92,24 @@
 
                     <!-- Actions -->
                     <div class="space-y-3">
-                        @auth
-                            <a href="{{ route('peminjaman.create', $buku->id_buku) }}" class="w-full bg-[#1e463c] hover:bg-[#15332c] text-white font-bold rounded-xl py-3.5 px-4 flex items-center justify-center gap-2.5 transition duration-200 text-sm shadow-sm">
-                                <i class="fa-solid fa-file-circle-plus text-base"></i>
-                                Ajukan Peminjaman
-                            </a>
+                        @if($canBorrow)
+                            @auth
+                                <a href="{{ route('peminjaman.create', $buku->id_buku) }}" class="w-full bg-[#1e463c] hover:bg-[#15332c] text-white font-bold rounded-xl py-3.5 px-4 flex items-center justify-center gap-2.5 transition duration-200 text-sm shadow-sm">
+                                    <i class="fa-solid fa-file-circle-plus text-base"></i>
+                                    Ajukan Peminjaman
+                                </a>
+                            @else
+                                <a href="{{ route('login') }}" class="w-full bg-[#1e463c] hover:bg-[#15332c] text-white font-bold rounded-xl py-3.5 px-4 flex items-center justify-center gap-2.5 transition duration-200 text-sm shadow-sm">
+                                    <i class="fa-solid fa-file-circle-plus text-base"></i>
+                                    Ajukan Peminjaman
+                                </a>
+                            @endauth
                         @else
-                            <a href="{{ route('login') }}" class="w-full bg-[#1e463c] hover:bg-[#15332c] text-white font-bold rounded-xl py-3.5 px-4 flex items-center justify-center gap-2.5 transition duration-200 text-sm shadow-sm">
-                                <i class="fa-solid fa-file-circle-plus text-base"></i>
-                                Ajukan Peminjaman
-                            </a>
-                        @endauth
-
-                        <button onclick="toggleFavorite(this)" class="w-full bg-white hover:bg-slate-50 text-[#1e463c] border border-[#1e463c] font-bold rounded-xl py-3.5 px-4 flex items-center justify-center gap-2.5 transition duration-200 text-sm">
-                            <i class="fa-regular fa-bookmark text-base"></i>
-                            <span>Simpan ke Koleksi</span>
-                        </button>
+                            <button type="button" disabled class="w-full cursor-not-allowed bg-slate-100 text-slate-400 border border-slate-200 font-bold rounded-xl py-3.5 px-4 flex items-center justify-center gap-2.5 text-sm shadow-sm">
+                                <i class="fa-solid fa-circle-minus text-base"></i>
+                                Tidak Bisa Dipinjam
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -149,9 +121,6 @@
                     <span class="bg-[#e2f0d9] text-[#385723] px-3 py-1.5 text-xs font-semibold rounded-md">
                         {{ $buku->kategori?->nama_kategori ?? 'Umum' }}
                     </span>
-                    <span class="bg-[#deebf7] text-[#1f4e79] px-3 py-1.5 text-xs font-semibold rounded-md">
-                        {{ str_contains(strtolower($buku->kategori?->nama_kategori ?? ''), 'sejarah') ? 'Referensi Lokal' : 'Koleksi Umum' }}
-                    </span>
                 </div>
 
                 <!-- Title & Author -->
@@ -162,22 +131,6 @@
                     <p class="break-words text-slate-600 text-sm font-semibold">
                         Oleh: <span class="text-slate-800">{{ $buku->penulis ?? 'Anonim' }}</span>
                     </p>
-                </div>
-
-                <!-- Rating & Stats Row -->
-                <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-semibold text-slate-500 border-b border-slate-200/60 pb-6">
-                    <div class="flex items-center gap-1.5">
-                        <i class="fa-regular fa-star text-slate-400 text-sm"></i>
-                        <span>{{ $buku->rating }} ({{ ($buku->id_buku * 12) + 28 }} Ulasan)</span>
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                        <i class="fa-regular fa-eye text-slate-400 text-sm"></i>
-                        <span>Dilihat {{ $viewsFormatted }} kali</span>
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                        <i class="fa-regular fa-file-lines text-slate-400 text-sm"></i>
-                        <span>{{ $buku->jumlah_halaman }} Halaman</span>
-                    </div>
                 </div>
 
                 <!-- Synopsis -->
@@ -209,22 +162,10 @@
                             <span class="mt-1 break-all text-sm font-bold text-slate-700">{{ $buku->isbn ?? '-' }}</span>
                         </div>
                         
-                        <!-- Bahasa -->
-                        <div class="flex min-w-0 flex-col justify-center min-h-[72px] rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Bahasa</span>
-                            <span class="text-sm font-bold text-slate-700 mt-1">Indonesia</span>
-                        </div>
-                        
                         <!-- Lokasi Rak -->
                         <div class="flex min-w-0 flex-col justify-center min-h-[72px] rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Lokasi Rak</span>
                             <span class="mt-1 break-words text-sm font-bold text-slate-700">{{ $lokasi_rak }}</span>
-                        </div>
-                        
-                        <!-- Nomor Panggil -->
-                        <div class="flex min-w-0 flex-col justify-center min-h-[72px] rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nomor Panggil</span>
-                            <span class="text-sm font-bold text-slate-700 mt-1">{{ $nomorPanggil }}</span>
                         </div>
                     </div>
                 </div>
@@ -275,56 +216,6 @@
             </div>
         @endif
     </div>
-
-    <!-- JS Bookmark Toggle Function & Toast System -->
-    <script>
-        function toggleFavorite(btn) {
-            const icon = btn.querySelector('i');
-            const label = btn.querySelector('span');
-            
-            if (icon.classList.contains('fa-regular')) {
-                icon.classList.remove('fa-regular');
-                icon.classList.add('fa-solid');
-                label.innerText = 'Tersimpan di Koleksi';
-                showToast('Buku berhasil disimpan ke koleksi Anda');
-            } else {
-                icon.classList.remove('fa-solid');
-                icon.classList.add('fa-regular');
-                label.innerText = 'Simpan ke Koleksi';
-                showToast('Buku dihapus dari koleksi Anda');
-            }
-        }
-
-        function showToast(message) {
-            // Check if toast container exists
-            let container = document.getElementById('toast-container');
-            if (!container) {
-                container = document.createElement('div');
-                container.id = 'toast-container';
-                container.className = 'fixed bottom-5 right-5 z-[9999] flex flex-col gap-2';
-                document.body.appendChild(container);
-            }
-            
-            const toast = document.createElement('div');
-            toast.className = 'bg-[#1e463c] text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 text-sm font-semibold transition-all duration-300 transform translate-y-5 opacity-0';
-            toast.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> ${message}`;
-            
-            container.appendChild(toast);
-            
-            // Animate in
-            setTimeout(() => {
-                toast.classList.remove('translate-y-5', 'opacity-0');
-            }, 10);
-            
-            // Animate out & remove
-            setTimeout(() => {
-                toast.classList.add('translate-y-5', 'opacity-0');
-                setTimeout(() => {
-                    toast.remove();
-                }, 300);
-            }, 3000);
-        }
-    </script>
 
     <!-- Footer -->
     <footer class="bg-white border-t border-slate-200/60 py-12">

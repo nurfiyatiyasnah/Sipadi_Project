@@ -170,22 +170,15 @@
                             </td>
                             <td class="px-6 py-4 text-center">
                                 @php
-                                    $statusText = 'Tersedia';
-                                    $badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
-                                    
-                                    if (strtolower($book->status_katalog ?? '') === 'nonaktif') {
-                                        $statusText = 'Nonaktif';
-                                        $badgeClass = 'bg-slate-100 text-slate-600 border-slate-300';
-                                    } elseif ($book->eksemplar_count === 0) {
-                                        $statusText = 'Stok Kosong';
-                                        $badgeClass = 'bg-slate-50 text-slate-500 border-slate-200';
-                                    } elseif ($book->eksemplar_tersedia_count === 0) {
-                                        $statusText = 'Dipinjam Semua';
-                                        $badgeClass = 'bg-rose-50 text-rose-700 border-rose-200';
-                                    } elseif ($book->eksemplar_tersedia_count < 3) {
-                                        $statusText = 'Stok Menipis';
-                                        $badgeClass = 'bg-amber-50 text-amber-700 border-amber-200';
-                                    }
+                                    $statusText = $book->statusKetersediaanLabel();
+                                    $badgeClass = match ($book->statusKetersediaan()) {
+                                        'nonaktif' => 'bg-slate-100 text-slate-600 border-slate-300',
+                                        'stok_kosong' => 'bg-slate-50 text-slate-500 border-slate-200',
+                                        'stok_menipis' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                        'dipinjam_semua' => 'bg-rose-50 text-rose-700 border-rose-200',
+                                        'tidak_tersedia' => 'bg-red-50 text-red-700 border-red-200',
+                                        default => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                    };
                                 @endphp
                                 <span class="inline-block rounded-full border px-3 py-0.5 text-xs font-bold {{ $badgeClass }}">
                                     {{ $statusText }}

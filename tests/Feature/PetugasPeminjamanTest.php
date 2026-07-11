@@ -230,6 +230,51 @@ class PetugasPeminjamanTest extends TestCase
         $response->assertSessionHas('error', 'Anda tidak dapat mengajukan peminjaman karena sedang dalam masa sanksi.');
     }
 
+    public function test_anggota_tidak_dapat_membuka_form_pengajuan_untuk_buku_nonaktif(): void
+    {
+        $anggota = $this->createAnggotaUser('Ahmad Rifai');
+        $kategori = KategoriBuku::factory()->create();
+        $buku = Buku::factory()->for($kategori, 'kategori')->create([
+            'status_katalog' => 'nonaktif',
+        ]);
+
+        $response = $this->actingAs($anggota)
+            ->get(route('peminjaman.create', $buku->id_buku));
+
+        $response->assertRedirect(route('katalog'));
+        $response->assertSessionHas('error', 'Buku ini tidak tersedia di katalog.');
+    }
+
+    public function test_anggota_tidak_dapat_mengirim_pengajuan_untuk_buku_nonaktif(): void
+    {
+        $anggota = $this->createAnggotaUser('Ahmad Rifai');
+        $kategori = KategoriBuku::factory()->create();
+        $buku = Buku::factory()->for($kategori, 'kategori')->create([
+            'status_katalog' => 'nonaktif',
+        ]);
+        EksemplarBuku::factory()->create([
+            'id_buku' => $buku->id_buku,
+            'status_eksemplar' => 'tersedia',
+        ]);
+        AturanPeminjaman::create([
+            'nama_aturan' => 'Aturan Default',
+            'lama_pinjam_hari' => 14,
+            'status_aktif' => true,
+        ]);
+
+        $response = $this->actingAs($anggota)
+            ->post(route('peminjaman.store', $buku->id_buku), [
+                'catatan_pengajuan' => 'Ingin meminjam buku ini.',
+                'setuju_syarat' => '1',
+            ]);
+
+        $response->assertRedirect(route('katalog'));
+        $response->assertSessionHas('error', 'Buku ini tidak tersedia di katalog.');
+        $this->assertDatabaseMissing('detail_peminjaman', [
+            'id_buku' => $buku->id_buku,
+        ]);
+    }
+
     public function test_petugas_dapat_menyetujui_dan_mengatur_jadwal_pengambilan(): void
     {
         $petugas = $this->createPetugasUser();
@@ -240,7 +285,7 @@ class PetugasPeminjamanTest extends TestCase
 
         $eksemplar = EksemplarBuku::factory()->create([
             'id_buku' => $buku->id_buku,
-            'status_eksemplar' => 'tersedia',
+            'status_eksemplar' => 'Tersedia',
         ]);
 
         $aturan = AturanPeminjaman::create([
@@ -278,7 +323,7 @@ class PetugasPeminjamanTest extends TestCase
 
         // Verify exemplar status is set to dipesan
         $eksemplar->refresh();
-        $this->assertEquals('dipesan', $eksemplar->status_eksemplar);
+        $this->assertEquals(EksemplarBuku::STATUS_DIPESAN, $eksemplar->status_eksemplar);
 
         // Verify detail_peminjaman has exemplar and status_detail is dipesan
         $detail = $peminjaman->detailPeminjaman->first();

@@ -22,7 +22,7 @@ class EksemplarBukuFactory extends Factory
         return [
             'id_buku' => Buku::factory(),
             'kode_eksemplar' => 'EKS-'.Str::upper(fake()->unique()->bothify('??####')),
-            'status_eksemplar' => 'tersedia',
+            'status_eksemplar' => EksemplarBuku::STATUS_TERSEDIA,
             'kondisi_eksemplar' => 'baik',
             'lokasi_rak' => 'Rak '.fake()->randomLetter(),
             'tanggal_masuk' => fake()->dateTimeBetween('-5 years', 'now'),

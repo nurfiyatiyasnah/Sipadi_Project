@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Buku;
+use App\Models\EksemplarBuku;
 use App\Models\KategoriBuku;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,12 +18,9 @@ class PublicKatalogController extends Controller
 
         // 3. Build query
         $query = Buku::query()
+            ->aktif()
             ->with('kategori')
-            ->withCount('eksemplar')
-            ->withCount([
-                'eksemplar as eksemplar_tersedia_count' => fn ($q) => $q
-                    ->whereIn('status_eksemplar', ['tersedia', 'Tersedia', 'aktif', 'Aktif']),
-            ]);
+            ->withKetersediaanCounts();
 
         // Search Filter
         if ($request->filled('search')) {
@@ -50,12 +48,14 @@ class PublicKatalogController extends Controller
             $status = $request->query('status');
             if ($status === 'tersedia') {
                 $query->whereHas('eksemplar', function ($q) {
-                    $q->whereIn('status_eksemplar', ['tersedia', 'Tersedia']);
+                    $q->whereIn('status_eksemplar', EksemplarBuku::AVAILABLE_COPY_STATUSES);
                 });
             } elseif ($status === 'dipinjam') {
                 $query->whereDoesntHave('eksemplar', function ($q) {
-                    $q->whereIn('status_eksemplar', ['tersedia', 'Tersedia']);
-                })->whereHas('eksemplar');
+                    $q->whereIn('status_eksemplar', EksemplarBuku::AVAILABLE_COPY_STATUSES);
+                })->whereHas('eksemplar', function ($q) {
+                    $q->whereIn('status_eksemplar', EksemplarBuku::BORROWED_COPY_STATUSES);
+                });
             }
         }
 
@@ -87,27 +87,21 @@ class PublicKatalogController extends Controller
 
     public function show(Buku $buku): View
     {
+        abort_unless($buku->isKatalogAktif(), 404);
+
         $buku->load(['kategori', 'eksemplar']);
 
-        // Retrieve physical location from any copy
-        $lokasi_rak = $buku->eksemplar->first()?->lokasi_rak ?? 'Lantai 2 - Rak A-12';
-
-        // Calculate availability status
-        $totalEksemplar = $buku->eksemplar->count();
-        $tersediaCount = $buku->eksemplar->whereIn('status_eksemplar', ['tersedia', 'Tersedia'])->count();
-        $status = $tersediaCount > 0 ? 'Tersedia' : ($totalEksemplar > 0 ? 'Sedang Dipinjam' : 'Tidak Tersedia');
+        $lokasi_rak = $buku->lokasiRakEksemplarLabel();
 
         // Related recommendations from same category, excluding current book
-        $recommendations = Buku::where('id_kategori', $buku->id_kategori)
+        $recommendations = Buku::query()
+            ->aktif()
+            ->where('id_kategori', $buku->id_kategori)
             ->where('id_buku', '!=', $buku->id_buku)
-            ->withCount('eksemplar')
-            ->withCount([
-                'eksemplar as eksemplar_tersedia_count' => fn ($q) => $q
-                    ->whereIn('status_eksemplar', ['tersedia', 'Tersedia']),
-            ])
+            ->withKetersediaanCounts()
             ->limit(5)
             ->get();
 
-        return view('landing.katalog-detail', compact('buku', 'lokasi_rak', 'status', 'recommendations'));
+        return view('landing.katalog-detail', compact('buku', 'lokasi_rak', 'recommendations'));
     }
 }

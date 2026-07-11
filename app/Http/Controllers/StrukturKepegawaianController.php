@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\StrukturKepegawaian;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class StrukturKepegawaianController extends Controller
 {
@@ -35,7 +36,7 @@ class StrukturKepegawaianController extends Controller
             $validated['foto'] = $request->file('foto')->store('kepegawaian', 'public');
         }
 
-        if (!isset($validated['urutan'])) {
+        if (! isset($validated['urutan'])) {
             $validated['urutan'] = 0;
         }
 
@@ -60,12 +61,12 @@ class StrukturKepegawaianController extends Controller
 
         if ($request->hasFile('foto')) {
             if ($kepegawaian->foto) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($kepegawaian->foto);
+                Storage::disk('public')->delete($kepegawaian->foto);
             }
             $validated['foto'] = $request->file('foto')->store('kepegawaian', 'public');
         }
 
-        if (!isset($validated['urutan'])) {
+        if (! isset($validated['urutan'])) {
             $validated['urutan'] = 0;
         }
 
@@ -77,9 +78,9 @@ class StrukturKepegawaianController extends Controller
     public function destroy(StrukturKepegawaian $kepegawaian)
     {
         if ($kepegawaian->foto) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($kepegawaian->foto);
+            Storage::disk('public')->delete($kepegawaian->foto);
         }
-        
+
         $kepegawaian->delete();
 
         return redirect()->route('petugas.kepegawaian.index')->with('success', 'Anggota kepegawaian berhasil dihapus.');

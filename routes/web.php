@@ -5,7 +5,6 @@ use App\Http\Controllers\AgendaEventController;
 use App\Http\Controllers\AnggotaController;
 use App\Http\Controllers\AnggotaDashboardController;
 use App\Http\Controllers\BeritaController;
-use App\Http\Controllers\BookController;
 use App\Http\Controllers\BukuController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EKartuController;
@@ -15,6 +14,7 @@ use App\Http\Controllers\PengajuanPeminjamanController;
 use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\PetugasPeminjamanController;
 use App\Http\Controllers\PetugasPengembalianController;
+use App\Http\Controllers\PrestasiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicAgendaController;
 use App\Http\Controllers\PublicBeritaController;
@@ -22,6 +22,7 @@ use App\Http\Controllers\PublicFasilitasController;
 use App\Http\Controllers\PublicKatalogController;
 use App\Http\Controllers\PublicLayananController;
 use App\Http\Controllers\PublicPengumumanController;
+use App\Http\Controllers\PublicPrestasiController;
 use App\Http\Controllers\StrukturKepegawaianController;
 use App\Models\AgendaEvent;
 use App\Models\Anggota;
@@ -54,12 +55,9 @@ Route::get('/', function () {
 
     // Pilihan buku dari database (3 buku terbaru)
     $pilihanBuku = Buku::query()
+        ->aktif()
         ->with('kategori')
-        ->withCount('eksemplar')
-        ->withCount([
-            'eksemplar as eksemplar_tersedia_count' => fn ($q) => $q
-                ->whereIn('status_eksemplar', ['tersedia', 'Tersedia']),
-        ])
+        ->withKetersediaanCounts()
         ->latest('id_buku')
         ->limit(3)
         ->get();
@@ -85,6 +83,8 @@ Route::get('/layanan', [PublicLayananController::class, 'index'])->name('layanan
 Route::get('/layanan/{layanan:slug}', [PublicLayananController::class, 'show'])->name('layanan.show');
 Route::get('/pengumuman', [PublicPengumumanController::class, 'index'])->name('pengumuman.public.index');
 Route::get('/pengumuman/{slug}', [PublicPengumumanController::class, 'show'])->name('pengumuman.public.show');
+Route::get('/prestasi', [PublicPrestasiController::class, 'index'])->name('prestasi.public.index');
+Route::get('/prestasi/{prestasi:slug}', [PublicPrestasiController::class, 'show'])->name('prestasi.public.show');
 Route::get('/tentang-kami', function () {
     $strukturKepegawaian = StrukturKepegawaian::orderBy('urutan')->get();
 
@@ -171,6 +171,8 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
     Route::delete('/berita/{berita}', [BeritaController::class, 'destroy'])
         ->name('berita.destroy');
 
+    Route::get('/prestasi/tambah', [PrestasiController::class, 'create'])->name('prestasi.create');
+    Route::resource('prestasi', PrestasiController::class)->except(['create']);
     Route::resource('kepegawaian', StrukturKepegawaianController::class)->except(['show']);
     Route::resource('fasilitas', FasilitasController::class);
     Route::get('/agenda', [AgendaEventController::class, 'index'])->name('agenda.index');
@@ -220,11 +222,6 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/dashboard/koleksi', [DashboardController::class, 'koleksi'])->name('admin.dashboard.koleksi');
     Route::get('/dashboard/koleksi/export', [DashboardController::class, 'export'])->name('admin.dashboard.koleksi.export');
-
-    Route::get('/books/create', [BookController::class, 'create'])->name('books.create');
-    Route::post('/books', [BookController::class, 'store'])->name('books.store');
-    Route::get('/books/{buku}', [BookController::class, 'show'])->name('books.show');
-
 });
 
 Route::middleware('auth')->group(function () {

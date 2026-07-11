@@ -145,7 +145,7 @@ class PetugasPeminjamanController extends Controller
 
                 // Choose available exemplar using lockForUpdate()
                 $eksemplar = EksemplarBuku::where('id_buku', $detail->id_buku)
-                    ->where('status_eksemplar', 'tersedia')
+                    ->whereIn('status_eksemplar', EksemplarBuku::AVAILABLE_COPY_STATUSES)
                     ->lockForUpdate()
                     ->first();
 
@@ -155,7 +155,7 @@ class PetugasPeminjamanController extends Controller
 
                 // Update exemplar status to 'dipesan'
                 $eksemplar->update([
-                    'status_eksemplar' => 'dipesan',
+                    'status_eksemplar' => EksemplarBuku::STATUS_DIPESAN,
                 ]);
 
                 // Save exemplar reference and update detail status to 'dipesan'
@@ -248,7 +248,7 @@ class PetugasPeminjamanController extends Controller
 
                 if ($detail->id_eksemplar_buku) {
                     EksemplarBuku::where('id_eksemplar_buku', $detail->id_eksemplar_buku)->update([
-                        'status_eksemplar' => 'dipinjam',
+                        'status_eksemplar' => EksemplarBuku::STATUS_DIPINJAM,
                     ]);
                 }
             }

@@ -245,17 +245,17 @@ class PetugasPengembalianController extends Controller
                     if ($eksemplar) {
                         if ($keadaanBuku === 'Baik') {
                             $eksemplar->update([
-                                'status_eksemplar' => 'tersedia',
+                                'status_eksemplar' => EksemplarBuku::STATUS_TERSEDIA,
                                 'kondisi_eksemplar' => 'Baik',
                             ]);
                         } elseif (in_array($keadaanBuku, ['Rusak Ringan', 'Rusak Berat'])) {
                             $eksemplar->update([
-                                'status_eksemplar' => 'rusak',
+                                'status_eksemplar' => EksemplarBuku::STATUS_RUSAK,
                                 'kondisi_eksemplar' => 'Rusak',
                             ]);
                         } elseif ($keadaanBuku === 'Hilang') {
                             $eksemplar->update([
-                                'status_eksemplar' => 'hilang',
+                                'status_eksemplar' => EksemplarBuku::STATUS_HILANG,
                                 'kondisi_eksemplar' => 'Hilang',
                             ]);
                         }

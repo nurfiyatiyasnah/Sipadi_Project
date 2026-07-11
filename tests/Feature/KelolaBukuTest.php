@@ -16,6 +16,7 @@ use App\Models\Peminjaman;
 use App\Models\Petugas;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -88,6 +89,7 @@ class KelolaBukuTest extends TestCase
             ->set('id_kategori', $kategori->id_kategori)
             ->set('tahun_terbit', '2023')
             ->set('deskripsi', 'Deskripsi buku baru')
+            ->set('lokasi_rak', 'Lantai 2 - Rak A-12')
             ->set('cover_file', $cover)
             ->set('stok_awal', 3)
             ->call('save')
@@ -110,6 +112,37 @@ class KelolaBukuTest extends TestCase
         $this->assertTrue($book->eksemplar()->where('kode_eksemplar', $expectedCode1)->exists());
         $this->assertTrue($book->eksemplar()->where('kode_eksemplar', $expectedCode2)->exists());
         $this->assertTrue($book->eksemplar()->where('kode_eksemplar', $expectedCode3)->exists());
+        $this->assertEquals(3, $book->eksemplar()->where('lokasi_rak', 'Lantai 2 - Rak A-12')->count());
+        $this->assertFalse($book->eksemplar()->where('lokasi_rak', 'Rak A-1')->exists());
+    }
+
+    public function test_tambah_buku_tanpa_lokasi_rak_menyimpan_lokasi_null(): void
+    {
+        Storage::fake('public');
+        $petugas = $this->createPetugasUser();
+        $kategori = KategoriBuku::factory()->create();
+        $cover = UploadedFile::fake()->create('cover.jpg', 100, 'image/jpeg');
+
+        $this->actingAs($petugas);
+
+        Livewire::test(BukuCreate::class)
+            ->set('judul', 'Buku Tanpa Lokasi Rak')
+            ->set('isbn', '978-602-7777-77-7')
+            ->set('penulis', 'Penulis Test')
+            ->set('penerbit', 'Penerbit Test')
+            ->set('id_kategori', $kategori->id_kategori)
+            ->set('tahun_terbit', '2023')
+            ->set('cover_file', $cover)
+            ->set('stok_awal', 1)
+            ->call('save')
+            ->assertHasNoErrors()
+            ->assertRedirect(route('petugas.koleksi'));
+
+        $book = Buku::where('isbn', '978-602-7777-77-7')->firstOrFail();
+        $copy = $book->eksemplar()->firstOrFail();
+
+        $this->assertNull($copy->lokasi_rak);
+        $this->assertFalse($book->eksemplar()->where('lokasi_rak', 'Rak A-1')->exists());
     }
 
     /**
@@ -168,6 +201,7 @@ class KelolaBukuTest extends TestCase
         Livewire::test(TambahStokBuku::class, ['id' => $book->id_buku])
             ->set('jumlah_stok_tambahan', 3)
             ->set('sumber_perolehan', 'Pembelian Dinas')
+            ->set('lokasi_rak', 'Lantai 1 - Rak B-02')
             ->set('tanggal_penerimaan', '2026-06-29')
             ->set('catatan', 'Catatan penambahan')
             ->call('save')
@@ -184,10 +218,149 @@ class KelolaBukuTest extends TestCase
         $this->assertTrue($book->eksemplar()->where('kode_eksemplar', $expectedCode3)->exists());
         $this->assertTrue($book->eksemplar()->where('kode_eksemplar', $expectedCode4)->exists());
         $this->assertTrue($book->eksemplar()->where('kode_eksemplar', $expectedCode5)->exists());
+        $this->assertEquals(3, $book->eksemplar()->whereIn('kode_eksemplar', [$expectedCode3, $expectedCode4, $expectedCode5])->where('lokasi_rak', 'Lantai 1 - Rak B-02')->count());
+        $this->assertFalse($book->eksemplar()->whereIn('kode_eksemplar', [$expectedCode3, $expectedCode4, $expectedCode5])->where('lokasi_rak', 'Rak A-1')->exists());
 
         // Validate uniqueness
         $uniqueCodesCount = $book->eksemplar()->distinct()->count('kode_eksemplar');
         $this->assertEquals(5, $uniqueCodesCount);
+    }
+
+    public function test_tambah_stok_tanpa_lokasi_rak_menyimpan_lokasi_null(): void
+    {
+        $petugas = $this->createPetugasUser();
+        $kategori = KategoriBuku::factory()->create();
+        $book = Buku::factory()->create(['id_kategori' => $kategori->id_kategori]);
+
+        $this->actingAs($petugas);
+
+        Livewire::test(TambahStokBuku::class, ['id' => $book->id_buku])
+            ->set('jumlah_stok_tambahan', 1)
+            ->set('sumber_perolehan', 'Pembelian')
+            ->set('tanggal_penerimaan', '2026-06-29')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $copy = $book->eksemplar()->firstOrFail();
+
+        $this->assertNull($copy->lokasi_rak);
+        $this->assertFalse($book->eksemplar()->where('lokasi_rak', 'Rak A-1')->exists());
+    }
+
+    public function test_detail_buku_nonaktif_menampilkan_status_nonaktif_meski_eksemplar_tersedia(): void
+    {
+        $petugas = $this->createPetugasUser();
+        $kategori = KategoriBuku::factory()->create();
+        $book = Buku::factory()->create([
+            'id_kategori' => $kategori->id_kategori,
+            'status_katalog' => 'nonaktif',
+        ]);
+        EksemplarBuku::create([
+            'id_buku' => $book->id_buku,
+            'kode_eksemplar' => 'BK-4444-001',
+            'status_eksemplar' => 'tersedia',
+        ]);
+
+        $this->actingAs($petugas);
+
+        Livewire::test(BukuDetail::class, ['id' => $book->id_buku])
+            ->assertSee('Nonaktif')
+            ->assertSee('bg-slate-100 text-slate-600 border-slate-300', false);
+    }
+
+    public function test_buku_dengan_semua_eksemplar_bermasalah_tidak_ditandai_dipinjam_semua(): void
+    {
+        $petugas = $this->createPetugasUser();
+        $kategori = KategoriBuku::factory()->create();
+        $book = Buku::factory()->create([
+            'id_kategori' => $kategori->id_kategori,
+            'judul' => 'Buku Semua Eksemplar Bermasalah',
+            'status_katalog' => 'aktif',
+        ]);
+
+        foreach (['rusak', 'hilang', 'nonaktif'] as $index => $status) {
+            EksemplarBuku::create([
+                'id_buku' => $book->id_buku,
+                'kode_eksemplar' => sprintf('BK-3333-%03d', $index + 1),
+                'status_eksemplar' => $status,
+            ]);
+        }
+
+        $this->actingAs($petugas);
+
+        Livewire::test(KoleksiBukuIndex::class)
+            ->assertSee('Buku Semua Eksemplar Bermasalah')
+            ->assertSee('Tidak Tersedia')
+            ->assertDontSee('Dipinjam Semua');
+
+        Livewire::test(BukuDetail::class, ['id' => $book->id_buku])
+            ->assertSee('Tidak Tersedia')
+            ->assertDontSee('Dipinjam Semua');
+    }
+
+    public function test_status_eksemplar_dinormalisasi_menjadi_lowercase(): void
+    {
+        $kategori = KategoriBuku::factory()->create();
+        $book = Buku::factory()->create(['id_kategori' => $kategori->id_kategori]);
+
+        $copy = EksemplarBuku::create([
+            'id_buku' => $book->id_buku,
+            'kode_eksemplar' => 'BK-3333-100',
+            'status_eksemplar' => 'Tersedia',
+        ]);
+
+        $this->assertSame(EksemplarBuku::STATUS_TERSEDIA, $copy->refresh()->status_eksemplar);
+    }
+
+    public function test_detail_buku_tidak_menampilkan_metadata_hardcoded_yang_tidak_ada_di_tabel_buku(): void
+    {
+        $petugas = $this->createPetugasUser();
+        $kategori = KategoriBuku::factory()->create(['nama_kategori' => 'Kategori Test']);
+        $book = Buku::factory()->create([
+            'id_kategori' => $kategori->id_kategori,
+            'judul' => 'Buku Tanpa Metadata Palsu',
+            'penulis' => 'Penulis Test',
+            'penerbit' => 'Penerbit Test',
+            'tahun_terbit' => 2024,
+            'isbn' => '978-602-0000-00-1',
+            'deskripsi' => 'Deskripsi netral untuk pengujian detail buku.',
+        ]);
+
+        $this->actingAs($petugas);
+
+        Livewire::test(BukuDetail::class, ['id' => $book->id_buku])
+            ->assertDontSee('Bahasa')
+            ->assertDontSee('Indonesia')
+            ->assertDontSee('Edisi / Keterangan')
+            ->assertDontSee('Edisi Standar');
+    }
+
+    public function test_detail_buku_menampilkan_lokasi_rak_terisi_dari_semua_eksemplar(): void
+    {
+        $petugas = $this->createPetugasUser();
+        $kategori = KategoriBuku::factory()->create();
+        $book = Buku::factory()->create(['id_kategori' => $kategori->id_kategori]);
+        EksemplarBuku::factory()->create([
+            'id_buku' => $book->id_buku,
+            'lokasi_rak' => null,
+        ]);
+        EksemplarBuku::factory()->create([
+            'id_buku' => $book->id_buku,
+            'lokasi_rak' => 'Lantai 1 - Rak B-02',
+        ]);
+        EksemplarBuku::factory()->create([
+            'id_buku' => $book->id_buku,
+            'lokasi_rak' => 'Lantai 2 - Rak C-01',
+        ]);
+
+        $this->actingAs($petugas);
+
+        Livewire::test(BukuDetail::class, ['id' => $book->id_buku])
+            ->assertSee('Lokasi Rak Eksemplar')
+            ->assertSee('Lantai 1 - Rak B-02')
+            ->assertSee('Lantai 2 - Rak C-01')
+            ->assertDontSee('Lokasi Rak Utama')
+            ->assertDontSee('Belum diatur');
     }
 
     /**
@@ -215,11 +388,7 @@ class KelolaBukuTest extends TestCase
         $this->actingAs($petugas);
 
         $bookWithCounts = Buku::query()
-            ->withCount('eksemplar')
-            ->withCount([
-                'eksemplar as eksemplar_tersedia_count' => fn ($q) => $q
-                    ->whereIn('status_eksemplar', ['tersedia', 'Tersedia']),
-            ])
+            ->withKetersediaanCounts()
             ->findOrFail($book->id_buku);
 
         $this->assertEquals(3, $bookWithCounts->eksemplar_count);
@@ -286,6 +455,91 @@ class KelolaBukuTest extends TestCase
         ]);
     }
 
+    public function test_admin_tidak_dapat_menghapus_eksemplar_dipesan(): void
+    {
+        $petugas = $this->createPetugasUser();
+        $kategori = KategoriBuku::factory()->create();
+        $book = Buku::factory()->create(['id_kategori' => $kategori->id_kategori]);
+        $copy = EksemplarBuku::create([
+            'id_buku' => $book->id_buku,
+            'kode_eksemplar' => 'BK-9999-003',
+            'status_eksemplar' => 'dipesan',
+        ]);
+
+        $this->actingAs($petugas);
+
+        Livewire::test(BukuDetail::class, ['id' => $book->id_buku])
+            ->call('deleteCopy', $copy->id_eksemplar_buku)
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('eksemplar_buku', [
+            'id_eksemplar_buku' => $copy->id_eksemplar_buku,
+        ]);
+    }
+
+    public function test_admin_tidak_dapat_menghapus_eksemplar_dengan_peminjaman_aktif_meski_status_tersedia(): void
+    {
+        $petugas = $this->createPetugasUser();
+        $anggota = Anggota::factory()->create();
+        $kategori = KategoriBuku::factory()->create();
+        $book = Buku::factory()->create(['id_kategori' => $kategori->id_kategori]);
+        $copy = EksemplarBuku::create([
+            'id_buku' => $book->id_buku,
+            'kode_eksemplar' => 'BK-9999-004',
+            'status_eksemplar' => 'tersedia',
+        ]);
+        $peminjaman = Peminjaman::create([
+            'kode_peminjaman' => 'PMJ-202607-999',
+            'id_anggota' => $anggota->id_anggota,
+            'status_peminjaman' => 'siap_diambil',
+        ]);
+        DetailPeminjaman::create([
+            'id_peminjaman' => $peminjaman->id_peminjaman,
+            'id_buku' => $book->id_buku,
+            'id_eksemplar_buku' => $copy->id_eksemplar_buku,
+            'jumlah' => 1,
+            'status_detail' => 'dipesan',
+        ]);
+
+        $this->actingAs($petugas);
+
+        Livewire::test(BukuDetail::class, ['id' => $book->id_buku])
+            ->call('deleteCopy', $copy->id_eksemplar_buku)
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('eksemplar_buku', [
+            'id_eksemplar_buku' => $copy->id_eksemplar_buku,
+        ]);
+    }
+
+    public function test_admin_tidak_dapat_menghapus_eksemplar_dari_buku_lain_melalui_detail_buku_ini(): void
+    {
+        $petugas = $this->createPetugasUser();
+        $kategori = KategoriBuku::factory()->create();
+        $currentBook = Buku::factory()->create(['id_kategori' => $kategori->id_kategori]);
+        $otherBook = Buku::factory()->create(['id_kategori' => $kategori->id_kategori]);
+        $otherCopy = EksemplarBuku::create([
+            'id_buku' => $otherBook->id_buku,
+            'kode_eksemplar' => 'BK-9999-005',
+            'status_eksemplar' => 'tersedia',
+        ]);
+
+        $this->actingAs($petugas);
+
+        try {
+            Livewire::test(BukuDetail::class, ['id' => $currentBook->id_buku])
+                ->call('deleteCopy', $otherCopy->id_eksemplar_buku);
+
+            $this->fail('Eksemplar dari buku lain tidak boleh bisa dihapus melalui detail buku ini.');
+        } catch (ModelNotFoundException $exception) {
+            $this->assertSame(EksemplarBuku::class, $exception->getModel());
+        }
+
+        $this->assertDatabaseHas('eksemplar_buku', [
+            'id_eksemplar_buku' => $otherCopy->id_eksemplar_buku,
+        ]);
+    }
+
     public function test_admin_dapat_mengubah_eksemplar_dipinjam_tanpa_peminjaman_aktif_menjadi_tersedia(): void
     {
         $petugas = $this->createPetugasUser();
@@ -342,6 +596,105 @@ class KelolaBukuTest extends TestCase
         $this->assertDatabaseHas('eksemplar_buku', [
             'id_eksemplar_buku' => $copy->id_eksemplar_buku,
             'status_eksemplar' => 'dipinjam',
+        ]);
+    }
+
+    public function test_admin_tidak_dapat_menonaktifkan_buku_dengan_eksemplar_dipesan(): void
+    {
+        $petugas = $this->createPetugasUser();
+        $kategori = KategoriBuku::factory()->create();
+        $book = Buku::factory()->create([
+            'id_kategori' => $kategori->id_kategori,
+            'status_katalog' => 'aktif',
+        ]);
+
+        EksemplarBuku::create([
+            'id_buku' => $book->id_buku,
+            'kode_eksemplar' => 'BK-6666-001',
+            'status_eksemplar' => 'dipesan',
+        ]);
+
+        $this->actingAs($petugas);
+
+        Livewire::test(KoleksiBukuIndex::class)
+            ->call('deleteBook', $book->id_buku)
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('buku', [
+            'id_buku' => $book->id_buku,
+            'status_katalog' => 'aktif',
+        ]);
+    }
+
+    public function test_admin_tidak_dapat_menonaktifkan_buku_dengan_peminjaman_siap_diambil(): void
+    {
+        $petugas = $this->createPetugasUser();
+        $anggota = Anggota::factory()->create();
+        $kategori = KategoriBuku::factory()->create();
+        $book = Buku::factory()->create([
+            'id_kategori' => $kategori->id_kategori,
+            'status_katalog' => 'aktif',
+        ]);
+        $copy = EksemplarBuku::create([
+            'id_buku' => $book->id_buku,
+            'kode_eksemplar' => 'BK-5555-001',
+            'status_eksemplar' => 'tersedia',
+        ]);
+        $peminjaman = Peminjaman::create([
+            'kode_peminjaman' => 'PMJ-202607-555',
+            'id_anggota' => $anggota->id_anggota,
+            'status_peminjaman' => 'siap_diambil',
+        ]);
+        DetailPeminjaman::create([
+            'id_peminjaman' => $peminjaman->id_peminjaman,
+            'id_buku' => $book->id_buku,
+            'id_eksemplar_buku' => $copy->id_eksemplar_buku,
+            'jumlah' => 1,
+            'status_detail' => 'dipesan',
+        ]);
+
+        $this->actingAs($petugas);
+
+        Livewire::test(KoleksiBukuIndex::class)
+            ->call('deleteBook', $book->id_buku)
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('buku', [
+            'id_buku' => $book->id_buku,
+            'status_katalog' => 'aktif',
+        ]);
+    }
+
+    public function test_admin_tidak_dapat_menonaktifkan_buku_dengan_pengajuan_diajukan(): void
+    {
+        $petugas = $this->createPetugasUser();
+        $anggota = Anggota::factory()->create();
+        $kategori = KategoriBuku::factory()->create();
+        $book = Buku::factory()->create([
+            'id_kategori' => $kategori->id_kategori,
+            'status_katalog' => 'aktif',
+        ]);
+        $peminjaman = Peminjaman::create([
+            'kode_peminjaman' => 'PMJ-202607-444',
+            'id_anggota' => $anggota->id_anggota,
+            'status_peminjaman' => 'diajukan',
+        ]);
+        DetailPeminjaman::create([
+            'id_peminjaman' => $peminjaman->id_peminjaman,
+            'id_buku' => $book->id_buku,
+            'jumlah' => 1,
+            'status_detail' => 'diajukan',
+        ]);
+
+        $this->actingAs($petugas);
+
+        Livewire::test(KoleksiBukuIndex::class)
+            ->call('deleteBook', $book->id_buku)
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('buku', [
+            'id_buku' => $book->id_buku,
+            'status_katalog' => 'aktif',
         ]);
     }
 

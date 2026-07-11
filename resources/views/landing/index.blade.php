@@ -252,7 +252,14 @@
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             @forelse($pilihanBuku as $buku)
                 @php
-                    $tersedia = $buku->eksemplar_tersedia_count > 0;
+                    $availabilityStatus = $buku->statusKetersediaan(false);
+                    $availabilityLabel = $buku->statusKetersediaanLabel(false);
+                    $availabilityBadgeClass = match ($availabilityStatus) {
+                        'tersedia' => 'bg-emerald-500/90',
+                        'dipinjam_semua' => 'bg-orange-500/90',
+                        'stok_kosong' => 'bg-slate-500/90',
+                        default => 'bg-rose-500/90',
+                    };
                     $coverClasses = ['bg-[#2e4031]', 'bg-[#8c6d58]', 'bg-[#3f5b7a]', 'bg-[#5b3a5e]', 'bg-[#4a6741]', 'bg-[#6b4c3b]'];
                     $textColors = ['text-emerald-200', 'text-amber-200', 'text-blue-200', 'text-purple-200', 'text-lime-200', 'text-orange-200'];
                     $colorIndex = $loop->index % count($coverClasses);
@@ -279,8 +286,8 @@
                             @endif
 
                             <!-- Status Badge -->
-                            <div class="absolute top-3 right-3 {{ $tersedia ? 'bg-emerald-500/90' : 'bg-slate-500/90' }} backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                                {{ $tersedia ? 'Tersedia' : 'Dipinjam' }}
+                            <div class="absolute top-3 right-3 {{ $availabilityBadgeClass }} backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                                {{ $availabilityLabel }}
                             </div>
                         </div>
 

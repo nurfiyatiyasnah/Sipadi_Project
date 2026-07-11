@@ -11,17 +11,17 @@ class PublicFasilitasController extends Controller
     {
         $kategori = $request->get('kategori', 'Semua');
         $search = $request->get('search');
-        
+
         $query = Fasilitas::query()->where('tampilkan_publik', true);
-        
+
         if ($kategori !== 'Semua') {
             $query->where('kategori', $kategori);
         }
-        
+
         if ($search) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('nama_fasilitas', 'like', "%{$search}%")
-                  ->orWhere('lokasi', 'like', "%{$search}%");
+                    ->orWhere('lokasi', 'like', "%{$search}%");
             });
         }
 
@@ -33,7 +33,7 @@ class PublicFasilitasController extends Controller
     public function show($id)
     {
         $fasilita = Fasilitas::where('tampilkan_publik', true)->findOrFail($id);
-        
+
         return view('landing.fasilitas_detail', compact('fasilita'));
     }
 }

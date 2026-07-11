@@ -142,7 +142,7 @@
                             </div>
                             <div>
                                 <span class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400">RAK</span>
-                                <span class="block text-sm font-semibold text-slate-700 mt-0.5">{{ $firstEksemplar?->lokasi_rak ?? 'Lantai 2, Rak C4' }}</span>
+                                <span class="block text-sm font-semibold text-slate-700 mt-0.5">{{ $firstEksemplar?->lokasi_rak ?: '-' }}</span>
                             </div>
                         </div>
                     </div>

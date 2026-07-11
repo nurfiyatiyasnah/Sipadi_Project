@@ -114,6 +114,14 @@
                     </div>
                     @error('stok_awal') <span class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</span> @enderror
                 </div>
+
+                {{-- Lokasi Rak --}}
+                <div>
+                    <label for="lokasi_rak" class="block text-sm font-bold text-slate-700">Lokasi Rak</label>
+                    <input type="text" id="lokasi_rak" wire:model="lokasi_rak" placeholder="Contoh: Lantai 2 - Rak A-12"
+                           class="mt-2 h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm focus:border-[#ffdc7c] focus:ring-[#ffdc7c] outline-none">
+                    @error('lokasi_rak') <span class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</span> @enderror
+                </div>
             </div>
 
             {{-- Upload Cover Card --}}
