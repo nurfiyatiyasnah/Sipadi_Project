@@ -32,12 +32,10 @@
                 ['Pengumuman', 'fa-solid fa-bullhorn', 'petugas.pengumuman.index', 'petugas.pengumuman.*'],
                 ['Aduan', 'fa-solid fa-triangle-exclamation', 'petugas.aduan.index', 'petugas.aduan.*'],
                 ['divider', '', null, null],
-                ['Profil Perpustakaan', 'fa-solid fa-building-columns', null, null],
                 ['Struktur Organisasi', 'fa-solid fa-sitemap', 'petugas.organisasi.index', 'petugas.organisasi.*'],
-                ['Prestasi', 'fa-solid fa-trophy', null, null],
+                ['Prestasi', 'fa-solid fa-trophy', 'petugas.prestasi.index', 'petugas.prestasi.*'],
                 ['Layanan', 'fa-solid fa-handshake-angle', 'petugas.layanan.index', 'petugas.layanan.*'],
                 ['Fasilitas', 'fa-solid fa-couch', 'petugas.fasilitas.index', 'petugas.fasilitas.*'],
-                ['Laporan', 'fa-solid fa-chart-column', null, null],
             ];
         @endphp
 

@@ -2,7 +2,7 @@
     $isBeranda = request()->routeIs('landing') || request()->routeIs('anggota.dashboard');
     $isKatalog = request()->routeIs('katalog') || request()->routeIs('katalog.show');
     $isLayanan = request()->routeIs('layanan.*') || request()->routeIs('fasilitas.public.*') || request()->routeIs('aduan.*');
-    $isInformasiActive = request()->routeIs('berita.*') || request()->routeIs('agenda.*') || request()->routeIs('pengumuman.public.*');
+    $isInformasiActive = request()->routeIs('berita.*') || request()->routeIs('agenda.*') || request()->routeIs('pengumuman.public.*') || request()->routeIs('prestasi.public.*');
     $isTentang = request()->routeIs('tentang');
 
     $desktopLinkClass = 'text-slate-300 hover:text-white transition';
@@ -49,6 +49,7 @@
                      <a href="{{ route('berita.public.index') }}" class="block rounded-lg px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition">Berita</a>
                      <a href="{{ route('agenda.index') }}" class="block rounded-lg px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition">Agenda</a>
                      <a href="{{ route('pengumuman.public.index') }}" class="block rounded-lg px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition">Pengumuman</a>
+                     <a href="{{ route('prestasi.public.index') }}" class="block rounded-lg px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition">Prestasi</a>
                 </div>
             </div>
 
@@ -268,6 +269,7 @@
             <a href="{{ route('berita.public.index') }}" @click="mobileOpen = false" class="{{ request()->routeIs('berita.*') ? $mobileActiveClass : $mobileLinkClass }}">Berita</a>
             <a href="{{ route('agenda.index') }}" @click="mobileOpen = false" class="{{ request()->routeIs('agenda.*') ? $mobileActiveClass : $mobileLinkClass }}">Agenda</a>
             <a href="{{ route('pengumuman.public.index') }}" @click="mobileOpen = false" class="{{ request()->routeIs('pengumuman.public.*') ? $mobileActiveClass : $mobileLinkClass }}">Pengumuman</a>
+            <a href="{{ route('prestasi.public.index') }}" @click="mobileOpen = false" class="{{ request()->routeIs('prestasi.public.*') ? $mobileActiveClass : $mobileLinkClass }}">Prestasi</a>
 
             <div class="px-4 pb-1 pt-4 text-[11px] font-bold uppercase tracking-widest text-slate-500">Layanan</div>
             <a href="{{ route('layanan.index') }}" @click="mobileOpen = false" class="{{ request()->routeIs('layanan.*') ? $mobileActiveClass : $mobileLinkClass }}">Layanan Perpustakaan</a>

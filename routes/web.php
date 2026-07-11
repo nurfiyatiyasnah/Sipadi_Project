@@ -14,6 +14,7 @@ use App\Http\Controllers\PengajuanPeminjamanController;
 use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\PetugasPeminjamanController;
 use App\Http\Controllers\PetugasPengembalianController;
+use App\Http\Controllers\PrestasiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicAgendaController;
 use App\Http\Controllers\PublicBeritaController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\PublicFasilitasController;
 use App\Http\Controllers\PublicKatalogController;
 use App\Http\Controllers\PublicLayananController;
 use App\Http\Controllers\PublicPengumumanController;
+use App\Http\Controllers\PublicPrestasiController;
 use App\Http\Controllers\StrukturOrganisasiController;
 use App\Models\AgendaEvent;
 use App\Models\Anggota;
@@ -81,6 +83,8 @@ Route::get('/layanan', [PublicLayananController::class, 'index'])->name('layanan
 Route::get('/layanan/{layanan:slug}', [PublicLayananController::class, 'show'])->name('layanan.show');
 Route::get('/pengumuman', [PublicPengumumanController::class, 'index'])->name('pengumuman.public.index');
 Route::get('/pengumuman/{slug}', [PublicPengumumanController::class, 'show'])->name('pengumuman.public.show');
+Route::get('/prestasi', [PublicPrestasiController::class, 'index'])->name('prestasi.public.index');
+Route::get('/prestasi/{prestasi:slug}', [PublicPrestasiController::class, 'show'])->name('prestasi.public.show');
 Route::get('/tentang-kami', function () {
     $strukturOrganisasi = StrukturOrganisasi::orderBy('urutan')->get();
 
@@ -168,6 +172,8 @@ Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->name('petugas.')
         ->name('berita.destroy');
 
     Route::resource('organisasi', StrukturOrganisasiController::class)->except(['show']);
+    Route::get('/prestasi/tambah', [PrestasiController::class, 'create'])->name('prestasi.create');
+    Route::resource('prestasi', PrestasiController::class)->except(['create']);
     Route::resource('fasilitas', FasilitasController::class);
     Route::get('/agenda', [AgendaEventController::class, 'index'])->name('agenda.index');
     Route::get('/agenda/tambah', [AgendaEventController::class, 'create'])->name('agenda.create');
