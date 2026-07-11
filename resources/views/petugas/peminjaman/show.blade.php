@@ -229,12 +229,58 @@
             <!-- Actions Section -->
             <div class="flex items-center justify-end gap-4 border-t border-slate-100 pt-6">
                 <!-- Reject Action -->
-                <form action="{{ route('petugas.peminjaman.tolak', $peminjaman->id_peminjaman) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menolak pengajuan ini?')">
-                    @csrf
-                    <button type="submit" class="px-5 py-3 border border-rose-200 text-rose-600 hover:bg-rose-50 font-bold text-sm rounded-xl transition">
+                <div x-data="{ showRejectModalDetail: false }" class="inline">
+                    <button @click="showRejectModalDetail = true" type="button" class="px-5 py-3 border border-rose-200 text-rose-600 hover:bg-rose-50 font-bold text-sm rounded-xl transition">
                         <i class="fa-solid fa-xmark mr-2"></i> Tolak Pengajuan
                     </button>
-                </form>
+                    
+                    <!-- Reject Modal -->
+                    <div x-show="showRejectModalDetail" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                        <div x-show="showRejectModalDetail" x-transition.opacity class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
+                        <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
+                            <div x-show="showRejectModalDetail" 
+                                 x-transition:enter="ease-out duration-300" 
+                                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+                                 x-transition:leave="ease-in duration-200" 
+                                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+                                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                                 @click.away="showRejectModalDetail = false"
+                                 class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg z-50">
+                                 
+                                <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                                    <div class="sm:flex sm:items-start">
+                                        <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-rose-100 sm:mx-0 sm:h-10 sm:w-10">
+                                            <i class="fa-solid fa-triangle-exclamation text-rose-600"></i>
+                                        </div>
+                                        <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                            <h3 class="text-lg font-bold leading-6 text-slate-900" id="modal-title">Tolak Pengajuan</h3>
+                                            <div class="mt-3 text-sm text-slate-500 space-y-2">
+                                                <p>Apakah Anda yakin ingin menolak pengajuan peminjaman untuk <strong>{{ $peminjaman->buku?->judul }}</strong> oleh <strong>{{ $peminjaman->anggota?->nama_anggota }}</strong>?</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <form action="{{ route('petugas.peminjaman.tolak', $peminjaman->id_peminjaman) }}" method="POST" id="form-reject-detail">
+                                        @csrf
+                                        <div class="mt-4">
+                                            <label for="catatan_admin" class="block text-sm font-semibold text-slate-700 text-left mb-2">Alasan Penolakan (Opsional)</label>
+                                            <textarea name="catatan_admin" id="catatan_admin" rows="3" class="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm focus:border-rose-500 focus:ring-rose-500 outline-none" placeholder="Tuliskan alasan mengapa pengajuan ini ditolak..."></textarea>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="bg-slate-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                                    <button type="submit" form="form-reject-detail" class="inline-flex w-full justify-center rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-rose-500 sm:ml-3 sm:w-auto transition">
+                                        Ya, Tolak
+                                    </button>
+                                    <button @click="showRejectModalDetail = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:mt-0 sm:w-auto transition">
+                                        Batal
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Approve Schedule -->
                 <a href="{{ route('petugas.peminjaman.approve-form', $peminjaman->id_peminjaman) }}" class="px-5 py-3 bg-[#0e1f30] text-white hover:bg-[#122b42] font-bold text-sm rounded-xl transition shadow-sm flex items-center justify-center gap-2">
@@ -247,20 +293,101 @@
             <!-- Actions Section for Ready to Pick Up -->
             <div class="flex flex-col items-stretch justify-end gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:items-center">
                 <!-- Cancel Pickup Action -->
-                <form action="{{ route('petugas.peminjaman.batalkan-pengambilan', $peminjaman->id_peminjaman) }}" method="POST" class="inline" onsubmit="return confirm('Batalkan pengambilan buku ini? Eksemplar akan dikembalikan menjadi tersedia.')">
-                    @csrf
-                    <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl border border-rose-200 px-5 py-3 text-sm font-bold text-rose-600 transition hover:bg-rose-50 sm:w-auto">
+                <div x-data="{ showCancelPickupModal: false }" class="inline">
+                    <button @click="showCancelPickupModal = true" type="button" class="flex w-full items-center justify-center gap-2 rounded-xl border border-rose-200 px-5 py-3 text-sm font-bold text-rose-600 transition hover:bg-rose-50 sm:w-auto">
                         <i class="fa-solid fa-ban"></i> Batalkan Pengambilan
                     </button>
-                </form>
+                    
+                    <div x-show="showCancelPickupModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                        <div x-show="showCancelPickupModal" x-transition.opacity class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
+                        <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
+                            <div x-show="showCancelPickupModal" 
+                                 x-transition:enter="ease-out duration-300" 
+                                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+                                 x-transition:leave="ease-in duration-200" 
+                                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+                                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                                 @click.away="showCancelPickupModal = false"
+                                 class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg z-50">
+                                 
+                                <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                                    <div class="sm:flex sm:items-start">
+                                        <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-rose-100 sm:mx-0 sm:h-10 sm:w-10">
+                                            <i class="fa-solid fa-triangle-exclamation text-rose-600"></i>
+                                        </div>
+                                        <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                            <h3 class="text-lg font-bold leading-6 text-slate-900" id="modal-title">Batalkan Pengambilan</h3>
+                                            <div class="mt-3 text-sm text-slate-500 space-y-2">
+                                                <p>Batalkan pengambilan buku ini? Eksemplar akan dikembalikan menjadi tersedia.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                                    <form action="{{ route('petugas.peminjaman.batalkan-pengambilan', $peminjaman->id_peminjaman) }}" method="POST" class="inline">
+                                        @csrf
+                                        <button type="submit" class="inline-flex w-full justify-center rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-rose-500 sm:ml-3 sm:w-auto transition">
+                                            Ya, Batalkan
+                                        </button>
+                                    </form>
+                                    <button @click="showCancelPickupModal = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:mt-0 sm:w-auto transition">
+                                        Kembali
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Mark as Picked Up Action -->
-                <form action="{{ route('petugas.peminjaman.ambil', $peminjaman->id_peminjaman) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menandai buku ini telah diambil oleh anggota?')">
-                    @csrf
-                    <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-700 sm:w-auto">
+                <div x-data="{ showPickupModal: false }" class="inline">
+                    <button @click="showPickupModal = true" type="button" class="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-700 sm:w-auto">
                         <i class="fa-solid fa-hand-holding-hand"></i> Tandai Diambil (Serahkan Buku)
                     </button>
-                </form>
+                    
+                    <div x-show="showPickupModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                        <div x-show="showPickupModal" x-transition.opacity class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
+                        <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
+                            <div x-show="showPickupModal" 
+                                 x-transition:enter="ease-out duration-300" 
+                                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+                                 x-transition:leave="ease-in duration-200" 
+                                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+                                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                                 @click.away="showPickupModal = false"
+                                 class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg z-50">
+                                 
+                                <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                                    <div class="sm:flex sm:items-start">
+                                        <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 sm:mx-0 sm:h-10 sm:w-10">
+                                            <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                                        </div>
+                                        <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                            <h3 class="text-lg font-bold leading-6 text-slate-900" id="modal-title">Tandai Buku Diambil</h3>
+                                            <div class="mt-3 text-sm text-slate-500 space-y-2">
+                                                <p>Apakah Anda yakin ingin menandai buku ini telah diambil oleh <strong>{{ $peminjaman->anggota?->nama_anggota }}</strong>?</p>
+                                                <p>Pastikan Anda sudah menyerahkan buku fisik secara langsung kepada anggota tersebut.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                                    <form action="{{ route('petugas.peminjaman.ambil', $peminjaman->id_peminjaman) }}" method="POST" class="inline">
+                                        @csrf
+                                        <button type="submit" class="inline-flex w-full justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 sm:ml-3 sm:w-auto transition">
+                                            Ya, Tandai Diambil
+                                        </button>
+                                    </form>
+                                    <button @click="showPickupModal = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:mt-0 sm:w-auto transition">
+                                        Batal
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         @endif
 

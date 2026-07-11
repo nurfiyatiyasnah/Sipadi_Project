@@ -77,16 +77,23 @@ class PetugasPeminjamanController extends Controller
     /**
      * Reject the specified loan application.
      */
-    public function reject(Peminjaman $peminjaman): RedirectResponse
+    public function reject(\Illuminate\Http\Request $request, Peminjaman $peminjaman): RedirectResponse
     {
         /** @var User $user */
         $user = Auth::user();
         $petugas = $user->petugas;
+        
+        $request->validate([
+            'catatan_admin' => 'nullable|string|max:500'
+        ]);
+        
+        $catatan = $request->input('catatan_admin');
 
-        DB::transaction(function () use ($peminjaman, $petugas) {
+        DB::transaction(function () use ($peminjaman, $petugas, $catatan) {
             $peminjaman->update([
                 'status_peminjaman' => 'ditolak',
                 'id_petugas' => $petugas?->id_petugas,
+                'catatan_admin' => $catatan
             ]);
 
             foreach ($peminjaman->detailPeminjaman as $detail) {
@@ -97,11 +104,16 @@ class PetugasPeminjamanController extends Controller
 
             // Create notification for member
             if ($peminjaman->anggota?->user) {
+                $isiNotif = 'Pengajuan peminjaman Anda dengan kode '.$peminjaman->kode_peminjaman.' telah ditolak oleh petugas.';
+                if (!empty($catatan)) {
+                    $isiNotif .= "\n\nAlasan: " . $catatan;
+                }
+                
                 Notifikasi::create([
                     'id_user' => $peminjaman->anggota->user->id_user,
                     'id_peminjaman' => $peminjaman->id_peminjaman,
                     'judul' => 'Peminjaman Ditolak',
-                    'isi' => 'Pengajuan peminjaman Anda dengan kode '.$peminjaman->kode_peminjaman.' telah ditolak oleh petugas.',
+                    'isi' => $isiNotif,
                     'jenis_notifikasi' => 'peminjaman_ditolak',
                     'status_notifikasi' => 'terkirim',
                     'status_baca' => 'belum_dibaca',
