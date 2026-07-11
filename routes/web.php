@@ -5,7 +5,6 @@ use App\Http\Controllers\AgendaEventController;
 use App\Http\Controllers\AnggotaController;
 use App\Http\Controllers\AnggotaDashboardController;
 use App\Http\Controllers\BeritaController;
-use App\Http\Controllers\BookController;
 use App\Http\Controllers\BukuController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EKartuController;
@@ -54,12 +53,9 @@ Route::get('/', function () {
 
     // Pilihan buku dari database (3 buku terbaru)
     $pilihanBuku = Buku::query()
+        ->aktif()
         ->with('kategori')
-        ->withCount('eksemplar')
-        ->withCount([
-            'eksemplar as eksemplar_tersedia_count' => fn ($q) => $q
-                ->whereIn('status_eksemplar', ['tersedia', 'Tersedia']),
-        ])
+        ->withKetersediaanCounts()
         ->latest('id_buku')
         ->limit(3)
         ->get();
@@ -220,11 +216,6 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/dashboard/koleksi', [DashboardController::class, 'koleksi'])->name('admin.dashboard.koleksi');
     Route::get('/dashboard/koleksi/export', [DashboardController::class, 'export'])->name('admin.dashboard.koleksi.export');
-
-    Route::get('/books/create', [BookController::class, 'create'])->name('books.create');
-    Route::post('/books', [BookController::class, 'store'])->name('books.store');
-    Route::get('/books/{buku}', [BookController::class, 'show'])->name('books.show');
-
 });
 
 Route::middleware('auth')->group(function () {

@@ -185,7 +185,14 @@
                         <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
                             @foreach($books as $book)
                                 @php
-                                    $isTersedia = $book->eksemplar_tersedia_count > 0;
+                                    $availabilityStatus = $book->statusKetersediaan(false);
+                                    $availabilityLabel = strtoupper($book->statusKetersediaanLabel(false));
+                                    $availabilityBadgeClass = match ($availabilityStatus) {
+                                        'tersedia' => 'bg-emerald-500/90 text-white',
+                                        'dipinjam_semua' => 'bg-orange-500/90 text-white',
+                                        'stok_kosong' => 'bg-slate-500/90 text-white',
+                                        default => 'bg-rose-500/90 text-white',
+                                    };
                                 @endphp
                                 <div class="group bg-white rounded-3xl p-4 border border-slate-100 shadow-sm hover:shadow-md hover:scale-[1.01] transition duration-200 flex flex-col justify-between">
                                     <a href="{{ route('katalog.show', $book->id_buku) }}" class="block">
@@ -209,8 +216,8 @@
                                             @endif
 
                                             <!-- Status Badge -->
-                                            <div class="absolute top-3 right-3 {{ $isTersedia ? 'bg-emerald-500/90 text-white' : 'bg-orange-500/90 text-white' }} backdrop-blur-sm text-[9px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                                                {{ $isTersedia ? 'TERSEDIA' : 'DIPINJAM' }}
+                                            <div class="absolute top-3 right-3 {{ $availabilityBadgeClass }} backdrop-blur-sm text-[9px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                                                {{ $availabilityLabel }}
                                             </div>
                                         </div>
 

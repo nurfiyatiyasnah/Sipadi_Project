@@ -86,20 +86,19 @@ class AnggotaDashboardController extends Controller
             ->get();
 
         // Book recommendations (latest active books)
-        $rekomendasi = Buku::whereIn('status_katalog', ['aktif', 'Aktif'])
+        $rekomendasi = Buku::query()
+            ->aktif()
+            ->withKetersediaanCounts()
             ->latest('created_at')
             ->take(5)
             ->get()
             ->map(function ($buku) {
-                $totalEksemplar = $buku->eksemplar()->count();
-                $tersedia = $buku->eksemplar()->where('status_eksemplar', 'tersedia')->count();
-
                 return (object) [
                     'id_buku' => $buku->id_buku,
                     'judul' => $buku->judul,
                     'penulis' => $buku->penulis,
                     'gambar_cover' => $buku->gambar_cover,
-                    'status' => $tersedia > 0 ? 'Tersedia' : ($totalEksemplar > 0 ? 'Dipinjam' : 'Tidak Tersedia'),
+                    'status' => $buku->statusKetersediaanLabel(false),
                 ];
             });
 

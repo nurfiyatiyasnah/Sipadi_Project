@@ -100,12 +100,22 @@
                     </div>
                 </div>
 
-                {{-- Tanggal Penerimaan --}}
-                <div>
-                    <label for="tanggal_penerimaan" class="block text-sm font-bold text-slate-700">Tanggal Penerimaan <span class="text-rose-500">*</span></label>
-                    <input type="date" id="tanggal_penerimaan" wire:model="tanggal_penerimaan"
-                           class="mt-2 h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm focus:border-[#ffdc7c] focus:ring-[#ffdc7c] outline-none">
-                    @error('tanggal_penerimaan') <span class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</span> @enderror
+                <div class="grid gap-4 sm:grid-cols-2">
+                    {{-- Lokasi Rak --}}
+                    <div>
+                        <label for="lokasi_rak" class="block text-sm font-bold text-slate-700">Lokasi Rak</label>
+                        <input type="text" id="lokasi_rak" wire:model="lokasi_rak" placeholder="Contoh: Lantai 2 - Rak A-12"
+                               class="mt-2 h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm focus:border-[#ffdc7c] focus:ring-[#ffdc7c] outline-none">
+                        @error('lokasi_rak') <span class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</span> @enderror
+                    </div>
+
+                    {{-- Tanggal Penerimaan --}}
+                    <div>
+                        <label for="tanggal_penerimaan" class="block text-sm font-bold text-slate-700">Tanggal Penerimaan <span class="text-rose-500">*</span></label>
+                        <input type="date" id="tanggal_penerimaan" wire:model="tanggal_penerimaan"
+                               class="mt-2 h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm focus:border-[#ffdc7c] focus:ring-[#ffdc7c] outline-none">
+                        @error('tanggal_penerimaan') <span class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</span> @enderror
+                    </div>
                 </div>
 
                 {{-- Catatan Tambahan (Opsional) --}}

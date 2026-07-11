@@ -68,19 +68,15 @@
 
                 <div class="mt-5 w-full text-center">
                     @php
-                        $statusText = 'Tersedia';
-                        $badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
-                        
-                        if ($book->eksemplar_count === 0) {
-                            $statusText = 'Stok Kosong';
-                            $badgeClass = 'bg-slate-50 text-slate-500 border-slate-200';
-                        } elseif ($book->eksemplar_tersedia_count === 0) {
-                            $statusText = 'Dipinjam Semua';
-                            $badgeClass = 'bg-rose-50 text-rose-700 border-rose-200';
-                        } elseif ($book->eksemplar_tersedia_count < 3) {
-                            $statusText = 'Stok Menipis';
-                            $badgeClass = 'bg-amber-50 text-amber-700 border-amber-200';
-                        }
+                        $statusText = $book->statusKetersediaanLabel();
+                        $badgeClass = match ($book->statusKetersediaan()) {
+                            'nonaktif' => 'bg-slate-100 text-slate-600 border-slate-300',
+                            'stok_kosong' => 'bg-slate-50 text-slate-500 border-slate-200',
+                            'stok_menipis' => 'bg-amber-50 text-amber-700 border-amber-200',
+                            'dipinjam_semua' => 'bg-rose-50 text-rose-700 border-rose-200',
+                            'tidak_tersedia' => 'bg-red-50 text-red-700 border-red-200',
+                            default => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                        };
                     @endphp
                     <span class="inline-block rounded-full border px-4 py-1 text-sm font-bold {{ $badgeClass }}">
                         {{ $statusText }}
@@ -130,18 +126,10 @@
                     <p class="mt-1 font-bold font-mono text-slate-800">{{ $book->isbn ?: '-' }}</p>
                 </div>
                 <div>
-                    <p class="text-slate-400 font-semibold">Bahasa</p>
-                    <p class="mt-1 font-bold text-slate-800">Indonesia</p>
-                </div>
-                <div>
-                    <p class="text-slate-400 font-semibold">Lokasi Rak Utama</p>
+                    <p class="text-slate-400 font-semibold">Lokasi Rak Eksemplar</p>
                     <p class="mt-1 font-bold text-slate-800">
-                        {{ $copies->first()?->lokasi_rak ?: 'Belum diatur' }}
+                        {{ $lokasiRak }}
                     </p>
-                </div>
-                <div>
-                    <p class="text-slate-400 font-semibold">Edisi / Keterangan</p>
-                    <p class="mt-1 font-bold text-slate-800">Edisi Standar</p>
                 </div>
             </div>
 
@@ -221,7 +209,7 @@
                                     </select>
                                     <button type="button" wire:click="deleteCopy({{ $copy->id_eksemplar_buku }})"
                                             wire:confirm="Apakah Anda yakin ingin menghapus eksemplar ini?"
-                                            @disabled($copy->status_eksemplar === 'dipinjam')
+                                            @disabled($copy->has_active_borrowing || $copy->hasActiveCopyStatus())
                                             title="Hapus Eksemplar" class="flex h-7 w-7 items-center justify-center rounded-lg bg-red-50 text-red-600 border border-red-200 transition hover:bg-red-100 disabled:opacity-50">
                                         <i class="fa-regular fa-trash-can text-xs"></i>
                                     </button>

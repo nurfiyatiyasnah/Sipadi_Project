@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AturanPeminjaman;
 use App\Models\Buku;
 use App\Models\DetailPeminjaman;
+use App\Models\EksemplarBuku;
 use App\Models\Peminjaman;
 use App\Models\SanksiAnggota;
 use App\Models\User;
@@ -19,6 +20,10 @@ class PengajuanPeminjamanController extends Controller
      */
     public function create(Buku $buku)
     {
+        if (! $buku->isKatalogAktif()) {
+            return redirect()->route('katalog')->with('error', 'Buku ini tidak tersedia di katalog.');
+        }
+
         /** @var User $user */
         $user = Auth::user();
         $anggota = $user?->anggota;
@@ -70,9 +75,8 @@ class PengajuanPeminjamanController extends Controller
 
         $buku->load(['kategori', 'eksemplar']);
 
-        // Count available copies (using lowercase status_eksemplar)
         $tersediaCount = $buku->eksemplar
-            ->where('status_eksemplar', 'tersedia')
+            ->whereIn('status_eksemplar', EksemplarBuku::AVAILABLE_COPY_STATUSES)
             ->count();
 
         if ($tersediaCount <= 0) {
@@ -93,6 +97,10 @@ class PengajuanPeminjamanController extends Controller
      */
     public function store(Request $request, Buku $buku)
     {
+        if (! $buku->isKatalogAktif()) {
+            return redirect()->route('katalog')->with('error', 'Buku ini tidak tersedia di katalog.');
+        }
+
         $request->validate([
             'catatan_pengajuan' => 'nullable|string',
             'setuju_syarat' => 'accepted',
@@ -150,7 +158,7 @@ class PengajuanPeminjamanController extends Controller
         // Verify there is an available copy
         $buku->load('eksemplar');
         $tersediaCount = $buku->eksemplar
-            ->where('status_eksemplar', 'tersedia')
+            ->whereIn('status_eksemplar', EksemplarBuku::AVAILABLE_COPY_STATUSES)
             ->count();
 
         if ($tersediaCount <= 0) {

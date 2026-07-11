@@ -29,6 +29,8 @@ class BukuCreate extends Component
 
     public string $deskripsi = '';
 
+    public string $lokasi_rak = '';
+
     public $cover_file;
 
     public $stok_awal = 1;
@@ -43,6 +45,7 @@ class BukuCreate extends Component
             'id_kategori' => ['required', 'exists:kategori_buku,id_kategori'],
             'tahun_terbit' => ['required', 'integer', 'digits:4', 'min:1800', 'max:'.date('Y')],
             'deskripsi' => ['nullable', 'string'],
+            'lokasi_rak' => ['nullable', 'string', 'max:100'],
             'cover_file' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
             'stok_awal' => ['required', 'integer', 'min:0', 'max:100'],
         ];
@@ -59,8 +62,9 @@ class BukuCreate extends Component
         } while (Buku::where('kode_buku', $kode_buku)->exists());
 
         $stokAwal = (int) $this->stok_awal;
+        $lokasiRak = trim($this->lokasi_rak) ?: null;
 
-        DB::transaction(function () use ($kode_buku, $coverPath, $stokAwal) {
+        DB::transaction(function () use ($kode_buku, $coverPath, $stokAwal, $lokasiRak) {
             $book = Buku::create([
                 'id_kategori' => $this->id_kategori,
                 'kode_buku' => $kode_buku,
@@ -80,9 +84,9 @@ class BukuCreate extends Component
                     EksemplarBuku::create([
                         'id_buku' => $book->id_buku,
                         'kode_eksemplar' => sprintf('BK-%04d-%03d', $book->id_buku, $i + 1),
-                        'status_eksemplar' => 'tersedia',
+                        'status_eksemplar' => EksemplarBuku::STATUS_TERSEDIA,
                         'kondisi_eksemplar' => 'Baik',
-                        'lokasi_rak' => 'Rak A-1',
+                        'lokasi_rak' => $lokasiRak,
                         'tanggal_masuk' => now(),
                         'sumber_perolehan' => 'Pengadaan Awal',
                         'catatan' => 'Eksemplar awal saat input buku baru.',
