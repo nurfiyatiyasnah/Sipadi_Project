@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Fasilitas;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class FasilitasController extends Controller
 {
@@ -22,7 +22,7 @@ class FasilitasController extends Controller
         // Search
         if ($search = $request->get('search')) {
             $query->where('nama_fasilitas', 'like', "%{$search}%")
-                  ->orWhere('lokasi', 'like', "%{$search}%");
+                ->orWhere('lokasi', 'like', "%{$search}%");
         }
 
         $fasilitas = $query->latest('id_fasilitas')->paginate(12);
@@ -62,7 +62,7 @@ class FasilitasController extends Controller
         ]);
 
         $validated['slug'] = Str::slug($validated['nama_fasilitas']);
-        $validated['created_by'] = auth()->user()->id_petugas ?? auth()->id();
+        $validated['created_by'] = auth()->user()->petugas?->id_petugas;
         $validated['tampilkan_publik'] = $request->has('tampilkan_publik');
         $validated['aktifkan_reservasi'] = $request->has('aktifkan_reservasi');
 
@@ -107,8 +107,8 @@ class FasilitasController extends Controller
         $validated['slug'] = Str::slug($validated['nama_fasilitas']);
         $validated['tampilkan_publik'] = $request->has('tampilkan_publik');
         $validated['aktifkan_reservasi'] = $request->has('aktifkan_reservasi');
-        
-        if (!$request->has('kelengkapan')) {
+
+        if (! $request->has('kelengkapan')) {
             $validated['kelengkapan'] = [];
         }
 

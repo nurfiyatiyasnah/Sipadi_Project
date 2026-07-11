@@ -158,14 +158,14 @@
                     <div class="flex items-center justify-between">
                         <span class="text-sm font-medium text-slate-700">Tampilkan di Website</span>
                         <label class="relative inline-flex cursor-pointer items-center">
-                            <input type="checkbox" name="tampilkan_publik" class="peer sr-only" checked>
+                            <input type="checkbox" name="tampilkan_publik" value="1" class="peer sr-only" checked>
                             <div class="peer h-6 w-11 rounded-full bg-slate-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-[#0e1f30] peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none"></div>
                         </label>
                     </div>
                     <div class="flex items-center justify-between">
                         <span class="text-sm font-medium text-slate-700">Aktifkan Reservasi</span>
                         <label class="relative inline-flex cursor-pointer items-center">
-                            <input type="checkbox" name="aktifkan_reservasi" x-model="reservasiAktif" class="peer sr-only">
+                            <input type="checkbox" name="aktifkan_reservasi" value="1" x-model="reservasiAktif" class="peer sr-only">
                             <div class="peer h-6 w-11 rounded-full bg-slate-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-[#0e1f30] peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none"></div>
                         </label>
                     </div>
