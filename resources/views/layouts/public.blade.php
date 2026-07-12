@@ -21,6 +21,34 @@
         @yield('content')
     </main>
  
+    <!-- Toast Notifications -->
+    @if(session('success') || session('error'))
+    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-4"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 translate-y-4"
+         class="fixed bottom-6 right-6 z-50 flex max-w-sm w-full shadow-lg rounded-2xl overflow-hidden border {{ session('success') ? 'bg-emerald-50 border-emerald-200' : 'bg-rose-50 border-rose-200' }}">
+        
+        <div class="flex items-center justify-center w-12 {{ session('success') ? 'bg-emerald-500' : 'bg-rose-500' }}">
+            <i class="fa-solid {{ session('success') ? 'fa-check' : 'fa-triangle-exclamation' }} text-white text-lg"></i>
+        </div>
+        
+        <div class="px-4 py-3 flex-1 flex items-center justify-between">
+            <div class="mx-2">
+                <p class="text-sm font-semibold {{ session('success') ? 'text-emerald-800' : 'text-rose-800' }}">
+                    {{ session('success') ?? session('error') }}
+                </p>
+            </div>
+            <button @click="show = false" class="text-slate-400 hover:text-slate-600 focus:outline-none">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
+    @endif
+
     <!-- Footer -->
     <footer class="bg-white border-t border-slate-200/80">
         <div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
