@@ -96,7 +96,7 @@
         <a href="{{ route('petugas.agenda.create') }}" class="flex items-center justify-center px-6 py-3 rounded-xl bg-[#7c6312] text-white font-semibold text-sm hover:bg-[#66510c] transition shadow-sm">
             <i class="fa-regular fa-calendar mr-2.5"></i> Tambah Agenda
         </a>
-        <a href="#" class="flex items-center justify-center px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition shadow-sm">
+        <a href="{{ route('petugas.peminjaman.index') }}" class="flex items-center justify-center px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition shadow-sm">
             <i class="fa-regular fa-eye mr-2.5"></i> Lihat Pengajuan
         </a>
         <a href="{{ route('petugas.aduan.index') }}" class="flex items-center justify-center px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition shadow-sm">
@@ -129,16 +129,29 @@
                                 <td class="py-4 text-sm text-slate-500">{{ $peminjaman['tanggal_pinjam'] }}</td>
                                 <td class="py-4 text-sm">
                                     @php
-                                        $status = strtolower($peminjaman['status']);
-                                        $badgeClass = 'bg-emerald-50 text-emerald-700'; // Aktif / default
-                                        if (in_array($status, ['pending', 'pengajuan'])) {
+                                        $status = strtolower((string) $peminjaman['status']);
+                                        $statusLabel = ucwords(str_replace('_', ' ', (string) $peminjaman['status']));
+                                        $badgeClass = 'bg-slate-50 text-slate-600';
+
+                                        if (in_array($status, ['diajukan', 'pending', 'pengajuan'])) {
                                             $badgeClass = 'bg-amber-50 text-amber-600';
-                                        } elseif (in_array($status, ['terlambat', 'denda'])) {
-                                            $badgeClass = 'bg-red-50 text-red-600';
+                                            $statusLabel = 'Diajukan';
+                                        } elseif ($status === 'siap_diambil') {
+                                            $badgeClass = 'bg-blue-50 text-blue-600';
+                                            $statusLabel = 'Siap Diambil';
+                                        } elseif (in_array($status, ['aktif', 'terlambat'])) {
+                                            $badgeClass = 'bg-emerald-50 text-emerald-600';
+                                            $statusLabel = $status === 'aktif' ? 'Aktif' : 'Terlambat';
+                                        } elseif ($status === 'selesai') {
+                                            $badgeClass = 'bg-slate-100 text-slate-650';
+                                            $statusLabel = 'Selesai';
+                                        } elseif (in_array($status, ['ditolak', 'dibatalkan'])) {
+                                            $badgeClass = 'bg-rose-50 text-rose-600';
+                                            $statusLabel = $status === 'ditolak' ? 'Ditolak' : 'Dibatalkan';
                                         }
                                     @endphp
-                                    <span class="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-semibold capitalize {{ $badgeClass }}">
-                                        {{ $peminjaman['status'] }}
+                                    <span class="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-semibold {{ $badgeClass }}">
+                                        {{ $statusLabel }}
                                     </span>
                                 </td>
                             </tr>

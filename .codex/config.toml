@@ -1,4 +1,4 @@
 [mcp_servers.laravel-boost]
 command = "php"
 args = ["artisan", "boost:mcp"]
-cwd = "D:\\sipadi"
+cwd = "C:\\Kuliah\\Pembelajaran Semester 4\\Sipadi_Project"

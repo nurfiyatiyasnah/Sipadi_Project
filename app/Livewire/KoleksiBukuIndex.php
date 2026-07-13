@@ -5,7 +5,9 @@ namespace App\Livewire;
 use App\Models\Buku;
 use App\Models\EksemplarBuku;
 use App\Models\KategoriBuku;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -51,11 +53,19 @@ class KoleksiBukuIndex extends Component
     {
         $book = Buku::with('eksemplar')->findOrFail($id);
 
-        // Check if there is any active borrowing (copy status is 'dipinjam')
-        $hasActiveBorrowing = $book->eksemplar()->where('status_eksemplar', 'dipinjam')->exists();
+        $hasActiveBorrowing = $book->detailPeminjaman()
+            ->whereIn('status_detail', EksemplarBuku::ACTIVE_DETAIL_STATUSES)
+            ->whereHas('peminjaman', function (Builder $query): void {
+                $query->whereIn('status_peminjaman', EksemplarBuku::ACTIVE_BORROWING_STATUSES);
+            })
+            ->exists();
 
-        if ($hasActiveBorrowing) {
-            session()->flash('error', 'Buku "'.$book->judul.'" tidak dapat dihapus atau dinonaktifkan karena sedang dipinjam.');
+        $hasActiveCopyStatus = $book->eksemplar()
+            ->whereIn('status_eksemplar', EksemplarBuku::ACTIVE_COPY_STATUSES)
+            ->exists();
+
+        if ($hasActiveBorrowing || $hasActiveCopyStatus) {
+            session()->flash('error', 'Buku "'.$book->judul.'" tidak dapat dihapus atau dinonaktifkan karena sedang dipinjam atau dipesan.');
 
             return;
         }
@@ -78,15 +88,12 @@ class KoleksiBukuIndex extends Component
         }
     }
 
+    #[Layout('layouts.petugas')]
     public function render()
     {
         $query = Buku::query()
             ->with('kategori')
-            ->withCount('eksemplar')
-            ->withCount([
-                'eksemplar as eksemplar_tersedia_count' => fn ($q) => $q
-                    ->whereIn('status_eksemplar', ['tersedia', 'Tersedia']),
-            ]);
+            ->withKetersediaanCounts();
 
         if (! empty($this->search)) {
             $query->where(function ($q) {
@@ -116,12 +123,11 @@ class KoleksiBukuIndex extends Component
         $stats = [
             'judul' => Buku::count(),
             'eksemplar' => EksemplarBuku::count(),
-            'dipinjam' => EksemplarBuku::whereIn('status_eksemplar', ['dipinjam', 'Dipinjam'])->count(),
-            'tersedia' => EksemplarBuku::whereIn('status_eksemplar', ['tersedia', 'Tersedia'])->count(),
+            'dipinjam' => EksemplarBuku::where('status_eksemplar', EksemplarBuku::STATUS_DIPINJAM)->count(),
+            'tersedia' => EksemplarBuku::where('status_eksemplar', EksemplarBuku::STATUS_TERSEDIA)->count(),
         ];
         $stats['persen'] = round($stats['tersedia'] / max($stats['eksemplar'], 1) * 100, 1);
 
-        return view('livewire.koleksi-buku-index', compact('books', 'categories', 'stats'))
-            ->layout('layouts.petugas');
+        return view('livewire.koleksi-buku-index', compact('books', 'categories', 'stats'));
     }
 }

@@ -6,169 +6,201 @@
     <title>{{ $layanan->nama_layanan }} - SIPADI Bukittinggi</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700|playfair-display:600,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-[#f3f8fc] font-sans text-[#1e2f3f] antialiased">
+<body class="min-h-screen bg-[#f6f5e9] font-sans text-[#061b3a] antialiased">
     @include('layouts.public_navbar')
 
-    <main class="mx-auto max-w-7xl px-5 py-6 lg:px-6">
-        <nav class="flex flex-wrap items-center gap-2 text-xs font-semibold text-[#526879]">
-            <a href="{{ route('layanan.index') }}" class="inline-flex items-center gap-2 hover:text-[#004238]">
-                <i class="fa-solid fa-arrow-left text-[10px]"></i>
-                Kembali ke Daftar Layanan
-            </a>
-            <span>/</span>
-            <span class="text-[#30475a]">{{ $layanan->nama_layanan }}</span>
+    <!-- Breadcrumb Area -->
+    <div class="mx-auto max-w-7xl px-6 lg:px-12 pt-10">
+        <nav class="flex items-center gap-2 text-xs font-semibold text-slate-500">
+            <a href="{{ route('landing') }}" class="hover:text-[#04241e] transition">Beranda</a>
+            <i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
+            <a href="{{ route('layanan.index') }}" class="hover:text-[#04241e] transition">Layanan</a>
+            <i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
+            <span class="text-slate-700 truncate max-w-[200px] sm:max-w-xs md:max-w-md">{{ $layanan->nama_layanan }}</span>
         </nav>
+    </div>
 
-        <section class="mt-5 grid gap-6 lg:grid-cols-[1fr_390px]">
-            <div class="rounded-lg border border-[#d5e0e8] bg-white p-8 shadow-sm">
-                <div class="flex items-start gap-4">
-                    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#dcefdc] text-[#2e8a57]">
-                        <i class="fa-solid fa-book-open text-base"></i>
-                    </span>
-                    <div>
-                        <h1 class="text-3xl font-extrabold tracking-tight text-[#23384b]">{{ $layanan->nama_layanan }}</h1>
-                        <p class="mt-4 max-w-3xl text-sm leading-6 text-[#4d6172]">
-                            {{ $layanan->deskripsi ?: 'Informasi detail layanan Perpustakaan Umum Kota Bukittinggi.' }}
-                        </p>
+    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 py-8 lg:grid-cols-[1fr_390px] lg:px-12">
+        <!-- Left Column: Layanan Detail -->
+        <main class="min-w-0">
+            <article class="min-w-0 space-y-8 overflow-hidden rounded-3xl border border-slate-100 bg-white p-6 shadow-sm lg:p-10">
+                <!-- Header / Title -->
+                <div class="space-y-4">
+                    <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500">
+                        <span class="bg-[#04241e] text-[#ffdc7c] text-[10px] font-bold px-3 py-1 rounded-md uppercase tracking-wider">
+                            Layanan
+                        </span>
                     </div>
+                    
+                    <h1 class="break-words font-serif text-3xl lg:text-4xl font-bold leading-tight text-[#04241e]">
+                        {{ $layanan->nama_layanan }}
+                    </h1>
                 </div>
 
-                <div class="mt-7 grid gap-4 md:grid-cols-3">
-                    <div class="rounded-md border border-[#d5e0e8] bg-[#f4f9fd] p-5">
-                        <div class="flex items-center gap-2 text-[#55758a]">
-                            <i class="fa-regular fa-clock text-sm"></i>
+                <!-- Description -->
+                <div class="break-words text-[#061b3a] text-sm lg:text-base leading-relaxed pt-6 border-t border-slate-100/60 font-sans">
+                    <p>{{ $layanan->deskripsi ?: 'Informasi detail layanan Perpustakaan Umum Kota Bukittinggi.' }}</p>
+                </div>
+
+                <!-- Key Parameters Row -->
+                <div class="grid gap-4 md:grid-cols-3 pt-4">
+                    <div class="min-w-0 rounded-2xl border border-slate-100 bg-[#fbfbfa] p-5">
+                        <div class="flex items-center gap-2 text-slate-500">
+                            <i class="fa-regular fa-clock text-sm text-[#04241e]"></i>
                             <span class="text-xs font-semibold">Jam Layanan</span>
                         </div>
-                        <p class="mt-2 text-lg font-extrabold text-[#23384b]">{{ $layanan->jam_layanan ?: 'Menyesuaikan jadwal' }}</p>
+                        <p class="mt-2 break-words text-lg font-bold text-[#04241e] leading-snug">{{ $layanan->jam_layanan ?: 'Menyesuaikan jadwal' }}</p>
                     </div>
-                    <div class="rounded-md border border-[#d5e0e8] bg-[#f4f9fd] p-5">
-                        <div class="flex items-center gap-2 text-[#55758a]">
-                            <i class="fa-solid fa-headset text-sm"></i>
+                    <div class="min-w-0 rounded-2xl border border-slate-100 bg-[#fbfbfa] p-5">
+                        <div class="flex items-center gap-2 text-slate-500">
+                            <i class="fa-solid fa-headset text-sm text-[#04241e]"></i>
                             <span class="text-xs font-semibold">Kontak</span>
                         </div>
-                        <p class="mt-2 text-lg font-extrabold text-[#23384b]">{{ $layanan->kontak_layanan ?: 'Petugas layanan' }}</p>
+                        <p class="mt-2 break-words text-lg font-bold text-[#04241e] leading-snug">{{ $layanan->kontak_layanan ?: 'Petugas layanan' }}</p>
                     </div>
-                    <div class="rounded-md border border-[#d5e0e8] bg-[#f4f9fd] p-5">
-                        <div class="flex items-center gap-2 text-[#55758a]">
-                            <i class="fa-solid fa-money-bill-wave text-sm"></i>
+                    <div class="min-w-0 rounded-2xl border border-slate-100 bg-[#fbfbfa] p-5">
+                        <div class="flex items-center gap-2 text-slate-500">
+                            <i class="fa-solid fa-money-bill-wave text-sm text-[#04241e]"></i>
                             <span class="text-xs font-semibold">Biaya</span>
                         </div>
-                        <p class="mt-2 text-lg font-extrabold text-[#23384b]">{{ $layanan->biaya ?: 'Gratis' }}</p>
+                        <p class="mt-2 break-words text-lg font-bold text-[#04241e] leading-snug">{{ $layanan->biaya ?: 'Gratis' }}</p>
                     </div>
                 </div>
 
-                <div class="mt-8">
-                    <h2 class="text-xl font-extrabold text-[#23384b]">Alur Layanan</h2>
-                    <div class="mt-4 space-y-4">
+                <!-- Alur Layanan -->
+                <div class="pt-6 border-t border-slate-100/60">
+                    <h2 class="font-serif text-xl font-bold text-[#04241e] mb-6">Alur Layanan</h2>
+                    <div class="space-y-4">
                         @forelse ($procedures as $procedure)
-                            <div class="relative flex gap-4">
-                                <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#004238] text-sm font-extrabold text-white">{{ $loop->iteration }}</span>
-                                <div class="flex-1 rounded-md border border-[#d5e0e8] bg-[#f4f9fd] px-5 py-4">
-                                    <h3 class="font-extrabold text-[#23384b]">Langkah {{ $loop->iteration }}</h3>
-                                    <p class="mt-1 text-sm leading-5 text-[#526879]">{{ $procedure }}</p>
+                            <div class="relative flex min-w-0 gap-4">
+                                <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#04241e] text-sm font-bold text-[#ffdc7c]">{{ $loop->iteration }}</span>
+                                <div class="min-w-0 flex-1 rounded-2xl border border-slate-100 bg-slate-50/50 px-5 py-4">
+                                    <h3 class="break-words font-bold text-[#04241e]">Langkah {{ $loop->iteration }}</h3>
+                                    <p class="mt-1 break-words text-sm leading-relaxed text-slate-600">{{ $procedure }}</p>
                                 </div>
                             </div>
                         @empty
-                            <div class="relative flex gap-4">
-                                <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#004238] text-sm font-extrabold text-white">1</span>
-                                <div class="flex-1 rounded-md border border-[#d5e0e8] bg-[#f4f9fd] px-5 py-4">
-                                    <h3 class="font-extrabold text-[#23384b]">Hubungi Petugas</h3>
-                                    <p class="mt-1 text-sm leading-5 text-[#526879]">Silakan hubungi petugas untuk mendapatkan arahan penggunaan layanan ini.</p>
+                            <div class="relative flex min-w-0 gap-4">
+                                <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#04241e] text-sm font-bold text-[#ffdc7c]">1</span>
+                                <div class="min-w-0 flex-1 rounded-2xl border border-slate-100 bg-slate-50/50 px-5 py-4">
+                                    <h3 class="font-bold text-[#04241e]">Hubungi Petugas</h3>
+                                    <p class="mt-1 text-sm leading-relaxed text-slate-600">Silakan hubungi petugas untuk mendapatkan arahan penggunaan layanan ini.</p>
                                 </div>
                             </div>
                         @endforelse
                     </div>
                 </div>
+            </article>
+        </main>
+
+        <!-- Right Column: Sidebar -->
+        <aside class="min-w-0 space-y-6">
+            <!-- Action / Cover Box -->
+            <div class="rounded-3xl border border-slate-100 bg-white p-6 text-center shadow-sm">
+                <div class="mx-auto flex h-32 w-32 items-center justify-center overflow-hidden bg-slate-50 rounded-2xl border border-slate-100">
+                    @if ($layanan->gambar)
+                        <img src="{{ Storage::url($layanan->gambar) }}" alt="{{ $layanan->nama_layanan }}" class="h-full w-full object-cover">
+                    @else
+                        <div class="flex items-center justify-center h-full w-full bg-emerald-50 text-emerald-800 text-5xl">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                    @endif
+                </div>
+                <h2 class="mt-5 break-words font-serif text-lg font-bold text-[#04241e]">Ingin Menggunakan Layanan?</h2>
+                <p class="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-slate-500">Anda dapat masuk sebagai anggota aktif untuk menggunakan layanan ini secara online.</p>
+                <div class="mt-6 space-y-3">
+                    <a href="{{ route('login') }}" class="block rounded-2xl bg-[#04241e] py-3 text-sm font-bold text-white hover:bg-opacity-90 transition duration-200">Masuk ke Akun</a>
+                    <a href="{{ route('register') }}" class="block rounded-2xl border border-[#04241e] py-3 text-sm font-bold text-[#04241e] hover:bg-emerald-50 transition duration-200">Daftar Anggota Baru</a>
+                </div>
             </div>
 
-            <aside class="space-y-6">
-                <section class="rounded-lg border border-[#d5e0e8] bg-white p-6 text-center shadow-sm">
-                    <div class="mx-auto flex h-32 w-32 items-center justify-center overflow-hidden bg-[#f4e3c7]">
-                        @if ($layanan->gambar)
-                            <img src="{{ Storage::url($layanan->gambar) }}" alt="{{ $layanan->nama_layanan }}" class="h-full w-full object-cover">
-                        @else
-                            <div class="relative h-24 w-24 rotate-[-10deg] rounded-sm bg-[#073d3a] shadow-xl">
-                                <div class="absolute left-2 top-0 h-full w-2 bg-black/20"></div>
-                                <div class="absolute left-8 top-8 h-2 w-10 rounded-full bg-[#b6a56f]/70"></div>
-                                <div class="absolute left-9 top-12 h-1.5 w-8 rounded-full bg-[#b6a56f]/50"></div>
-                            </div>
-                        @endif
-                    </div>
-                    <h2 class="mt-5 text-xl font-extrabold text-[#23384b]">Ingin Menggunakan Layanan?</h2>
-                    <p class="mx-auto mt-2 max-w-xs text-sm leading-5 text-[#526879]">Anda dapat masuk sebagai anggota aktif untuk menggunakan layanan ini secara online.</p>
-                    <div class="mt-6 space-y-3">
-                        <a href="{{ route('login') }}" class="block rounded-md bg-[#004238] px-4 py-3 text-sm font-extrabold text-white hover:bg-[#06382f]">Masuk ke Akun</a>
-                        <a href="{{ route('register') }}" class="block rounded-md border border-[#004238] px-4 py-3 text-sm font-extrabold text-[#004238] hover:bg-[#eef7f2]">Daftar Anggota Baru</a>
-                    </div>
-                </section>
-
-                <section id="syarat-ketentuan" class="rounded-lg border border-[#d5e0e8] bg-white p-6 shadow-sm">
-                    <h2 class="flex items-center gap-2 text-base font-extrabold text-[#23384b]">
-                        <i class="fa-solid fa-list-check text-sm text-[#004238]"></i>
-                        Syarat & Ketentuan
-                    </h2>
-                    <ul class="mt-4 space-y-3 text-sm leading-5 text-[#526879]">
-                        @forelse ($requirements as $requirement)
-                            <li>{{ $requirement }}</li>
-                        @empty
-                            <li>Memiliki akun atau kartu anggota perpustakaan yang masih aktif.</li>
-                            <li>Mengikuti ketentuan yang berlaku pada layanan ini.</li>
-                        @endforelse
-                    </ul>
-                </section>
-
-                <section id="jadwal-layanan" class="rounded-lg border border-[#d5e0e8] bg-white p-6 shadow-sm">
-                    <h2 class="flex items-center gap-2 text-base font-extrabold text-[#23384b]">
-                        <i class="fa-regular fa-clock text-sm text-[#004238]"></i>
-                        Jam Layanan
-                    </h2>
-                    <dl class="mt-4 space-y-3 text-sm font-semibold text-[#526879]">
-                        <div class="flex items-center justify-between gap-4">
-                            <dt>Waktu Layanan</dt>
-                            <dd class="text-right text-[#23384b]">{{ $layanan->jam_layanan ?: 'Mengikuti jam operasional perpustakaan' }}</dd>
-                        </div>
-                        @if ($layanan->kontak_layanan)
-                            <div class="flex items-center justify-between gap-4">
-                                <dt>Kontak</dt>
-                                <dd class="text-right text-[#23384b]">{{ $layanan->kontak_layanan }}</dd>
-                            </div>
-                        @endif
-                    </dl>
-                </section>
-
-                @if ($relatedLayanan->isNotEmpty())
-                    <section class="rounded-lg border border-[#d5e0e8] bg-white p-6 shadow-sm">
-                        <h2 class="text-base font-extrabold text-[#23384b]">Layanan Lainnya</h2>
-                        <div class="mt-4 space-y-3">
-                            @foreach ($relatedLayanan as $item)
-                                <a href="{{ route('layanan.show', $item->slug) }}" class="block rounded-md border border-[#d5e0e8] px-4 py-3 text-sm font-bold text-[#004238] hover:bg-[#f4f9fd]">
-                                    {{ $item->nama_layanan }}
-                                </a>
-                            @endforeach
-                        </div>
-                    </section>
-                @endif
-            </aside>
-        </section>
-    </main>
-
-    <footer class="mt-12 border-t border-[#d5e0e8] bg-[#f3f8fc]">
-        <div class="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-9 text-xs text-[#30475a] lg:flex-row lg:items-end lg:justify-between lg:px-6">
-            <div>
-                <p class="text-lg font-extrabold leading-tight text-[#004238]">SIPADI Bukittinggi</p>
-                <p class="mt-4 max-w-md leading-5">&copy; 2024 Dinas Perpustakaan dan Kearsipan Kota Bukittinggi. Seluruh Hak Cipta Dilindungi.</p>
+            <!-- Syarat & Ketentuan -->
+            <div id="syarat-ketentuan" class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+                <h2 class="flex items-center gap-2 font-serif text-base font-bold text-[#04241e] border-b pb-4 mb-4">
+                    <i class="fa-solid fa-list-check text-sm text-emerald-800"></i>
+                    Syarat & Ketentuan
+                </h2>
+                <ul class="space-y-3 break-words text-sm leading-relaxed text-slate-500 list-disc list-inside">
+                    @forelse ($requirements as $requirement)
+                        <li>{{ $requirement }}</li>
+                    @empty
+                        <li>Memiliki akun atau kartu anggota perpustakaan yang masih aktif.</li>
+                        <li>Mengikuti ketentuan yang berlaku pada layanan ini.</li>
+                    @endforelse
+                </ul>
             </div>
-            <nav class="flex flex-wrap gap-x-7 gap-y-3 font-semibold">
-                <a href="{{ route('landing') }}#kontak" class="hover:text-[#004238]">Tentang Kami</a>
-                <a href="#" class="hover:text-[#004238]">Kebijakan Privasi</a>
-                <a href="#syarat-ketentuan" class="hover:text-[#004238]">Syarat & Ketentuan</a>
-                <a href="#" class="hover:text-[#004238]">Peta Situs</a>
-                <a href="{{ route('landing') }}#kontak" class="hover:text-[#004238]">Hubungi Kami</a>
-            </nav>
+
+            <!-- Jam Layanan Sidebar -->
+            <div id="jadwal-layanan" class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+                <h2 class="flex items-center gap-2 font-serif text-base font-bold text-[#04241e] border-b pb-4 mb-4">
+                    <i class="fa-regular fa-clock text-sm text-emerald-800"></i>
+                    Jam Layanan
+                </h2>
+                <dl class="space-y-3 text-sm text-slate-500">
+                    <div class="flex min-w-0 items-center justify-between gap-4">
+                        <dt class="font-semibold">Waktu Layanan</dt>
+                        <dd class="min-w-0 break-words text-right font-bold text-[#04241e]">{{ $layanan->jam_layanan ?: 'Mengikuti jam operasional' }}</dd>
+                    </div>
+                    @if ($layanan->kontak_layanan)
+                        <div class="flex min-w-0 items-center justify-between gap-4">
+                            <dt class="font-semibold">Kontak</dt>
+                            <dd class="min-w-0 break-words text-right font-bold text-[#04241e]">{{ $layanan->kontak_layanan }}</dd>
+                        </div>
+                    @endif
+                </dl>
+            </div>
+
+            <!-- Related Layanan -->
+            @if ($relatedLayanan->isNotEmpty())
+                <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+                    <h2 class="font-serif text-base font-bold text-[#04241e] border-b pb-4 mb-4">Layanan Lainnya</h2>
+                    <div class="space-y-3">
+                        @foreach ($relatedLayanan as $item)
+                            <a href="{{ route('layanan.show', $item->slug) }}" class="block rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold text-[#04241e] hover:bg-emerald-50 hover:border-emerald-200 transition duration-200 break-words">
+                                {{ $item->nama_layanan }}
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+        </aside>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200/80 mt-12">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
+            <div class="flex flex-col lg:flex-row justify-between items-start gap-8">
+                <!-- Branding -->
+                <div>
+                    <a href="{{ route('landing') }}" class="flex items-center gap-3 hover:opacity-90 transition">
+                        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#04241e] text-[#ffdc7c]">
+                            <i class="fa-solid fa-building-columns text-sm"></i>
+                        </span>
+                        <span class="font-serif font-bold text-lg text-[#04241e] tracking-tight">SIPADI</span>
+                    </a>
+                    <p class="mt-4 text-sm text-slate-500 max-w-sm leading-relaxed">
+                        Sistem Informasi Perpustakaan dan Arsip Digital Terintegrasi Kota Bukittinggi. Menghubungkan masyarakat dengan sumber pengetahuan tanpa batas.
+                    </p>
+                </div>
+
+                <!-- Footer Navigation -->
+                <div class="flex flex-wrap gap-x-8 gap-y-4 text-sm font-semibold text-slate-600">
+                    <a href="{{ route('tentang') }}" class="hover:text-[#04241e] transition">Tentang Kami</a>
+                    <a href="#" class="hover:text-[#04241e] transition">Kebijakan Privasi</a>
+                    <a href="{{ route('layanan.index') }}" class="hover:text-[#04241e] transition">Syarat & Ketentuan</a>
+                    <a href="#" class="hover:text-[#04241e] transition">Peta Situs</a>
+                    <a href="{{ route('landing') }}#kontak" class="hover:text-[#04241e] transition">Hubungi Kami</a>
+                </div>
+            </div>
+
+            <!-- Copyright Area -->
+            <div class="border-t border-slate-100 mt-8 pt-8 flex flex-col sm:flex-row justify-between text-xs text-slate-400">
+                <p>&copy; {{ date('Y') }} Dinas Perpustakaan dan Kearsipan Kota Bukittinggi. Seluruh Hak Cipta Dilindungi.</p>
+            </div>
         </div>
     </footer>
 </body>

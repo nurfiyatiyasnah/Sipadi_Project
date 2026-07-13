@@ -1,11 +1,25 @@
-@extends('layouts.anggota')
+@extends('layouts.public')
 @section('title', 'Dashboard - SIPADI Bukittinggi')
 
 @push('styles')
 <style>
+    :root {
+        --sipadi-green-dark: #04241e;
+        --sipadi-green: #0f4c3a;
+        --sipadi-green-light: #1a6b50;
+        --sipadi-green-accent: #22c55e;
+        --sipadi-bg: #f6f5e9;
+        --sipadi-card: #ffffff;
+        --sipadi-text: #061b3a;
+        --sipadi-text-muted: #6b7280;
+        --sipadi-border: #e5e7eb;
+    }
+
     /* ===== Dashboard Page Styles ===== */
 
     .dashboard-container {
+        width: 100%;
+        min-width: 0;
         max-width: 1200px;
         margin: 0 auto;
         padding: 2rem 1.5rem;
@@ -14,6 +28,8 @@
     /* Hero Section */
     .hero-section {
         display: flex;
+        min-width: 0;
+        gap: 1.5rem;
         justify-content: space-between;
         align-items: flex-start;
         margin-bottom: 2rem;
@@ -21,6 +37,7 @@
 
     .hero-greeting {
         flex: 1;
+        min-width: 0;
     }
 
     .hero-greeting .greeting-label {
@@ -44,6 +61,7 @@
         color: #111827;
         margin: 0 0 0.5rem;
         line-height: 1.2;
+        overflow-wrap: anywhere;
     }
 
     .hero-greeting p {
@@ -51,6 +69,7 @@
         font-size: 0.9rem;
         line-height: 1.6;
         max-width: 520px;
+        overflow-wrap: anywhere;
     }
 
     .hero-action {
@@ -85,7 +104,7 @@
     /* Main Grid */
     .dashboard-grid {
         display: grid;
-        grid-template-columns: 1fr 340px;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
         gap: 1.25rem;
         margin-bottom: 2.5rem;
     }
@@ -96,12 +115,15 @@
         border: 1px solid #e5e7eb;
         border-radius: 0.75rem;
         overflow: hidden;
+        min-width: 0;
     }
 
     .card-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
         padding: 1rem 1.25rem;
         border-bottom: 1px solid #f3f4f6;
     }
@@ -142,6 +164,7 @@
     /* Borrowed Book Card */
     .book-borrowed {
         display: flex;
+        min-width: 0;
         gap: 1rem;
         align-items: flex-start;
     }
@@ -219,6 +242,7 @@
         color: #111827;
         margin: 0 0 0.25rem;
         line-height: 1.3;
+        overflow-wrap: anywhere;
     }
 
     .book-info .book-author {
@@ -226,6 +250,7 @@
         color: #6b7280;
         margin-bottom: 0.75rem;
         line-height: 1.4;
+        overflow-wrap: anywhere;
     }
 
     .book-dates {
@@ -279,23 +304,27 @@
         font-weight: 700;
         color: #111827;
         margin-bottom: 0.15rem;
+        overflow-wrap: anywhere;
     }
 
     .pickup-card-subtitle {
         font-size: 0.8rem;
         color: #6b7280;
         margin-bottom: 0.75rem;
+        overflow-wrap: anywhere;
     }
 
     .pickup-location {
         display: flex;
         align-items: center;
+        min-width: 0;
         gap: 0.4rem;
         font-size: 0.75rem;
         color: #9ca3af;
         background: #f9fafb;
         padding: 0.5rem 0.75rem;
         border-radius: 0.5rem;
+        overflow-wrap: anywhere;
     }
 
     .pickup-location i {
@@ -375,6 +404,7 @@
         font-weight: 600;
         color: #111827;
         margin: 0 0 0.2rem;
+        overflow-wrap: anywhere;
     }
 
     .pesan-content p {
@@ -382,6 +412,7 @@
         color: #6b7280;
         margin: 0;
         line-height: 1.4;
+        overflow-wrap: anywhere;
     }
 
     .pesan-footer {
@@ -444,7 +475,7 @@
     /* Book Grid */
     .book-grid {
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(5, minmax(0, 1fr));
         gap: 1.25rem;
     }
 
@@ -453,6 +484,7 @@
         border: 1px solid #e5e7eb;
         border-radius: 0.75rem;
         overflow: hidden;
+        min-width: 0;
         transition: all 0.25s ease;
         cursor: pointer;
         text-decoration: none;
@@ -528,6 +560,7 @@
         color: #111827;
         margin: 0 0 0.2rem;
         line-height: 1.3;
+        overflow-wrap: anywhere;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -538,6 +571,7 @@
         font-size: 0.72rem;
         color: #9ca3af;
         margin: 0;
+        overflow-wrap: anywhere;
     }
 
     /* Responsive */
@@ -573,6 +607,12 @@
             grid-template-columns: repeat(2, 1fr);
         }
 
+        .rekomendasi-header {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
         .book-borrowed {
             flex-direction: column;
             align-items: center;
@@ -582,6 +622,12 @@
         .book-dates {
             flex-direction: column;
             gap: 0.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .book-grid {
+            grid-template-columns: 1fr;
         }
     }
 </style>

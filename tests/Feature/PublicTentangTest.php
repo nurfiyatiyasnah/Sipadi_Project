@@ -20,8 +20,8 @@ class PublicTentangTest extends TestCase
         $response->assertSee('Sejarah');
         $response->assertSee('Visi');
         $response->assertSee('Misi');
-        $response->assertSee('Struktur Organisasi');
-        $response->assertSee('Bagan Organisasi Tahun 2026');
+        $response->assertSee('Struktur Kepegawaian');
+        $response->assertSee('Bagan Kepegawaian Tahun 2026');
     }
 
     public function test_public_navbar_links_to_tentang_page(): void

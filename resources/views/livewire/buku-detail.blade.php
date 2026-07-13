@@ -55,32 +55,27 @@
         {{-- Left side: Cover & Basic Stats --}}
         <div class="space-y-6">
             <div class="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 flex flex-col items-center">
-                <div class="h-64 w-48 overflow-hidden rounded-2xl bg-slate-100 border border-slate-200 shadow-md">
-                    @if ($book->gambar_cover)
-                        <img src="{{ Str::startsWith($book->gambar_cover, 'http') ? $book->gambar_cover : Storage::url($book->gambar_cover) }}"
-                             alt="{{ $book->judul }}" class="h-full w-full object-cover">
-                    @else
-                        <div class="flex h-full w-full items-center justify-center bg-slate-200 text-slate-400 text-5xl">
-                            <i class="fa-solid fa-book"></i>
-                        </div>
+                <div class="relative h-64 w-48 overflow-hidden rounded-2xl bg-slate-200 border border-slate-200 shadow-md">
+                    <div class="absolute inset-0 flex items-center justify-center text-slate-400 text-5xl">
+                        <i class="fa-solid fa-book"></i>
+                    </div>
+                    @if ($coverUrl = $book->coverUrl())
+                        <img src="{{ $coverUrl }}" alt="{{ $book->judul }}"
+                             class="relative h-full w-full object-cover" onerror="this.remove()">
                     @endif
                 </div>
 
                 <div class="mt-5 w-full text-center">
                     @php
-                        $statusText = 'Tersedia';
-                        $badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
-                        
-                        if ($book->eksemplar_count === 0) {
-                            $statusText = 'Stok Kosong';
-                            $badgeClass = 'bg-slate-50 text-slate-500 border-slate-200';
-                        } elseif ($book->eksemplar_tersedia_count === 0) {
-                            $statusText = 'Dipinjam Semua';
-                            $badgeClass = 'bg-rose-50 text-rose-700 border-rose-200';
-                        } elseif ($book->eksemplar_tersedia_count < 3) {
-                            $statusText = 'Stok Menipis';
-                            $badgeClass = 'bg-amber-50 text-amber-700 border-amber-200';
-                        }
+                        $statusText = $book->statusKetersediaanLabel();
+                        $badgeClass = match ($book->statusKetersediaan()) {
+                            'nonaktif' => 'bg-slate-100 text-slate-600 border-slate-300',
+                            'stok_kosong' => 'bg-slate-50 text-slate-500 border-slate-200',
+                            'stok_menipis' => 'bg-amber-50 text-amber-700 border-amber-200',
+                            'dipinjam_semua' => 'bg-rose-50 text-rose-700 border-rose-200',
+                            'tidak_tersedia' => 'bg-red-50 text-red-700 border-red-200',
+                            default => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                        };
                     @endphp
                     <span class="inline-block rounded-full border px-4 py-1 text-sm font-bold {{ $badgeClass }}">
                         {{ $statusText }}
@@ -130,18 +125,10 @@
                     <p class="mt-1 font-bold font-mono text-slate-800">{{ $book->isbn ?: '-' }}</p>
                 </div>
                 <div>
-                    <p class="text-slate-400 font-semibold">Bahasa</p>
-                    <p class="mt-1 font-bold text-slate-800">Indonesia</p>
-                </div>
-                <div>
-                    <p class="text-slate-400 font-semibold">Lokasi Rak Utama</p>
+                    <p class="text-slate-400 font-semibold">Lokasi Rak Eksemplar</p>
                     <p class="mt-1 font-bold text-slate-800">
-                        {{ $copies->first()?->lokasi_rak ?: 'Belum diatur' }}
+                        {{ $lokasiRak }}
                     </p>
-                </div>
-                <div>
-                    <p class="text-slate-400 font-semibold">Edisi / Keterangan</p>
-                    <p class="mt-1 font-bold text-slate-800">Edisi Standar</p>
                 </div>
             </div>
 
@@ -211,7 +198,7 @@
                             <td class="px-6 py-4 text-center">
                                 <div class="flex items-center justify-center gap-2">
                                     <select wire:change="updateCopyStatus({{ $copy->id_eksemplar_buku }}, $event.target.value)"
-                                            @disabled($copy->status_eksemplar === 'dipinjam')
+                                            @disabled($copy->has_active_borrowing)
                                             class="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold focus:border-[#ffdc7c] focus:ring-[#ffdc7c] outline-none disabled:opacity-50 transition">
                                         <option value="tersedia" @selected($copy->status_eksemplar === 'tersedia')>Set Tersedia</option>
                                         <option value="dipinjam" @selected($copy->status_eksemplar === 'dipinjam') disabled>Dipinjam</option>
@@ -221,7 +208,7 @@
                                     </select>
                                     <button type="button" wire:click="deleteCopy({{ $copy->id_eksemplar_buku }})"
                                             wire:confirm="Apakah Anda yakin ingin menghapus eksemplar ini?"
-                                            @disabled($copy->status_eksemplar === 'dipinjam')
+                                            @disabled($copy->has_active_borrowing || $copy->hasActiveCopyStatus())
                                             title="Hapus Eksemplar" class="flex h-7 w-7 items-center justify-center rounded-lg bg-red-50 text-red-600 border border-red-200 transition hover:bg-red-100 disabled:opacity-50">
                                         <i class="fa-regular fa-trash-can text-xs"></i>
                                     </button>

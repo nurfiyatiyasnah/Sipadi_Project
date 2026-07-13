@@ -185,32 +185,35 @@
                         <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
                             @foreach($books as $book)
                                 @php
-                                    $isTersedia = $book->eksemplar_tersedia_count > 0;
+                                    $availabilityStatus = $book->statusKetersediaan(false);
+                                    $availabilityLabel = strtoupper($book->statusKetersediaanLabel(false));
+                                    $availabilityBadgeClass = match ($availabilityStatus) {
+                                        'tersedia' => 'bg-emerald-500/90 text-white',
+                                        'dipinjam_semua' => 'bg-orange-500/90 text-white',
+                                        'stok_kosong' => 'bg-slate-500/90 text-white',
+                                        default => 'bg-rose-500/90 text-white',
+                                    };
                                 @endphp
                                 <div class="group bg-white rounded-3xl p-4 border border-slate-100 shadow-sm hover:shadow-md hover:scale-[1.01] transition duration-200 flex flex-col justify-between">
                                     <a href="{{ route('katalog.show', $book->id_buku) }}" class="block">
                                         <!-- Styled Cover Wrap -->
                                         <div class="relative w-full h-[240px] rounded-2xl bg-slate-100 flex flex-col items-center justify-center shadow-sm overflow-hidden mb-4">
-                                            <!-- Cover image background or custom placeholder -->
-                                            @if($book->gambar_cover)
-                                                @php
-                                                    $imageUrl = str_starts_with($book->gambar_cover, 'http') ? $book->gambar_cover : asset('storage/' . $book->gambar_cover);
-                                                @endphp
-                                                <img src="{{ $imageUrl }}" alt="{{ $book->judul }}" class="w-full h-full object-cover">
-                                            @else
-                                                <!-- Dynamic Fallback Cover -->
-                                                <div class="absolute inset-0 bg-gradient-to-br from-[#04241e] to-[#0a4b3f] p-5 text-white flex flex-col justify-between">
-                                                    <div class="absolute left-0 top-0 bottom-0 w-3.5 bg-gradient-to-r from-black/20 to-transparent"></div>
-                                                    <div class="mt-4 pl-3">
-                                                        <h4 class="font-serif font-bold text-base leading-snug">{{ $book->judul }}</h4>
-                                                    </div>
-                                                    <p class="text-xs text-slate-300 pl-3">{{ $book->penulis }}</p>
+                                            <!-- Dynamic Fallback Cover -->
+                                            <div class="absolute inset-0 bg-gradient-to-br from-[#04241e] to-[#0a4b3f] p-5 text-white flex flex-col justify-between">
+                                                <div class="absolute left-0 top-0 bottom-0 w-3.5 bg-gradient-to-r from-black/20 to-transparent"></div>
+                                                <div class="mt-4 pl-3">
+                                                    <h4 class="font-serif font-bold text-base leading-snug">{{ $book->judul }}</h4>
                                                 </div>
+                                                <p class="text-xs text-slate-300 pl-3">{{ $book->penulis }}</p>
+                                            </div>
+                                            @if($imageUrl = $book->coverUrl())
+                                                <img src="{{ $imageUrl }}" alt="{{ $book->judul }}"
+                                                     class="relative w-full h-full object-cover" onerror="this.remove()">
                                             @endif
 
                                             <!-- Status Badge -->
-                                            <div class="absolute top-3 right-3 {{ $isTersedia ? 'bg-emerald-500/90 text-white' : 'bg-orange-500/90 text-white' }} backdrop-blur-sm text-[9px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                                                {{ $isTersedia ? 'TERSEDIA' : 'DIPINJAM' }}
+                                            <div class="absolute top-3 right-3 {{ $availabilityBadgeClass }} backdrop-blur-sm text-[9px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                                                {{ $availabilityLabel }}
                                             </div>
                                         </div>
 

@@ -13,14 +13,11 @@
     </div>
 
     <!-- Header Section -->
-    <div class="flex justify-between items-start mb-8">
+    <div class="mb-8">
         <div>
             <h2 class="text-3xl font-extrabold text-slate-850">Daftar Anggota</h2>
-            <p class="text-sm text-slate-500 mt-1">Kelola data anggota perpustakaan, pantau status akun, dan berikan sanksi jika diperlukan.</p>
+            <p class="text-sm text-slate-500 mt-1">Kelola data anggota perpustakaan serta pantau status akun dan sanksi anggota.</p>
         </div>
-        <button type="button" class="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#ffd56b] hover:bg-[#ffc83b] text-[#5c4609] font-bold text-sm transition shadow-sm">
-            <span class="text-lg font-black leading-none">+</span> Tambah Anggota
-        </button>
     </div>
 
     <!-- Filter Card -->
@@ -41,7 +38,7 @@
             <div>
                 <label for="status" class="block text-xs font-bold text-slate-450 uppercase tracking-wider mb-2">Status Anggota</label>
                 <div class="relative">
-                    <select name="status" id="status" onchange="this.form.submit()" class="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50/50 py-3 px-4 text-sm outline-none transition focus:border-slate-300 focus:bg-white pr-10">
+                    <select name="status" id="status" onchange="this.form.submit()" class="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50/50 bg-none py-3 px-4 text-sm outline-none transition focus:border-slate-300 focus:bg-white pr-10">
                         <option value="all" {{ request('status') === 'all' ? 'selected' : '' }}>Semua Status</option>
                         <option value="aktif" {{ request('status') === 'aktif' ? 'selected' : '' }}>Aktif</option>
                         <option value="nonaktif" {{ request('status') === 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
@@ -57,7 +54,7 @@
                 <div class="flex-1">
                     <label for="sanksi" class="block text-xs font-bold text-slate-450 uppercase tracking-wider mb-2">Status Sanksi</label>
                     <div class="relative">
-                        <select name="sanksi" id="sanksi" onchange="this.form.submit()" class="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50/50 py-3 px-4 text-sm outline-none transition focus:border-slate-300 focus:bg-white pr-10">
+                        <select name="sanksi" id="sanksi" onchange="this.form.submit()" class="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50/50 bg-none py-3 px-4 text-sm outline-none transition focus:border-slate-300 focus:bg-white pr-10">
                             <option value="all" {{ request('sanksi') === 'all' ? 'selected' : '' }}>Semua</option>
                             <option value="Bebas" {{ request('sanksi') === 'Bebas' ? 'selected' : '' }}>Bebas</option>
                             <option value="Sanksi" {{ request('sanksi') === 'Sanksi' ? 'selected' : '' }}>Sanksi</option>
@@ -93,16 +90,17 @@
                         <th class="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-455">NIK</th>
                         <th class="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-455">Status</th>
                         <th class="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-455">Sanksi</th>
-                        <th class="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-455 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     @forelse ($anggota as $item)
                         @php
-                            // Active sanksi check
-                            $activeSanksi = $item->sanksi->where('status_sanksi', 'aktif')->first();
+                            $activeSanksi = $item->sanksi->first(
+                                fn ($sanksi) => stripos((string) $sanksi->jenis_sanksi, 'Blokir') !== false
+                            ) ?? $item->sanksi->first();
                             $sanksiText = 'Bebas';
                             $sanksiClass = 'bg-slate-100 text-slate-600';
+
                             if ($activeSanksi) {
                                 if (stripos($activeSanksi->jenis_sanksi, 'Blokir') !== false) {
                                     $sanksiText = 'Diblokir';
@@ -113,7 +111,13 @@
                                 }
                             }
                         @endphp
-                        <tr class="hover:bg-slate-50/40 transition">
+                        <tr
+                            onclick="window.location='{{ route('petugas.anggota.show', $item->id_anggota) }}'"
+                            onkeydown="if (event.key === 'Enter' || event.key === ' ') window.location='{{ route('petugas.anggota.show', $item->id_anggota) }}'"
+                            role="link"
+                            tabindex="0"
+                            class="cursor-pointer hover:bg-slate-50/80 focus:bg-slate-50 focus:outline-none transition"
+                        >
                             <td class="py-4 px-6">
                                 @if ($item->foto)
                                     <img src="{{ asset('storage/' . $item->foto) }}" alt="{{ $item->nama_lengkap }}" class="h-10 w-10 rounded-full object-cover border border-slate-200 shadow-sm">
@@ -124,8 +128,8 @@
                                 @endif
                             </td>
                             <td class="py-4 px-6">
-                                <div class="font-bold text-slate-800 text-sm hover:text-[#7c6312] transition">
-                                    <a href="{{ route('petugas.anggota.show', $item->id_anggota) }}">{{ $item->nama_lengkap }}</a>
+                                <div class="font-bold text-slate-800 text-sm">
+                                    {{ $item->nama_lengkap }}
                                 </div>
                                 <div class="text-xs text-slate-400 mt-0.5">{{ $item->user?->email }}</div>
                             </td>
@@ -151,52 +155,10 @@
                                     {{ $sanksiText }}
                                 </span>
                             </td>
-                            <td class="py-4 px-6">
-                                <div class="flex items-center justify-center gap-2">
-                                    <!-- Eye / View Details -->
-                                    <a href="{{ route('petugas.anggota.show', $item->id_anggota) }}" class="h-9 w-9 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition" title="Lihat Detail">
-                                        <i class="fa-regular fa-eye text-sm"></i>
-                                    </a>
-                                    <!-- Edit (Pencil) -> Also goes to Detail page according to flow -->
-                                    <a href="{{ route('petugas.anggota.show', $item->id_anggota) }}" class="h-9 w-9 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition" title="Edit Anggota">
-                                        <i class="fa-solid fa-pencil text-sm"></i>
-                                    </a>
-                                    <!-- Action Button (Block/Unblock) -->
-                                    @if ($sanksiText === 'Diblokir')
-                                        <form method="POST" action="{{ route('petugas.anggota.update', $item->id_anggota) }}" class="inline">
-                                            @csrf
-                                            @method('PUT')
-                                            <input type="hidden" name="nama_lengkap" value="{{ $item->nama_lengkap }}">
-                                            <input type="hidden" name="email" value="{{ $item->user?->email }}">
-                                            <input type="hidden" name="no_telepon" value="{{ $item->no_telepon ?? '-' }}">
-                                            <input type="hidden" name="status_anggota" value="aktif">
-                                            <input type="hidden" name="status_sanksi" value="Bersih">
-                                            <input type="hidden" name="redirect_to" value="index">
-                                            <button type="submit" class="h-9 w-9 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-emerald-600 hover:bg-emerald-50 hover:border-emerald-200 transition" title="Buka Blokir">
-                                                <i class="fa-solid fa-arrows-rotate text-sm"></i>
-                                            </button>
-                                        </form>
-                                    @else
-                                        <form method="POST" action="{{ route('petugas.anggota.update', $item->id_anggota) }}" class="inline">
-                                            @csrf
-                                            @method('PUT')
-                                            <input type="hidden" name="nama_lengkap" value="{{ $item->nama_lengkap }}">
-                                            <input type="hidden" name="email" value="{{ $item->user?->email }}">
-                                            <input type="hidden" name="no_telepon" value="{{ $item->no_telepon ?? '-' }}">
-                                            <input type="hidden" name="status_anggota" value="nonaktif">
-                                            <input type="hidden" name="status_sanksi" value="Diblokir">
-                                            <input type="hidden" name="redirect_to" value="index">
-                                            <button type="submit" class="h-9 w-9 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-rose-500 hover:bg-rose-50 hover:border-rose-200 transition" title="Blokir Anggota">
-                                                <i class="fa-solid fa-ban text-sm"></i>
-                                            </button>
-                                        </form>
-                                    @endif
-                                </div>
-                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="py-12 text-center text-slate-400 text-sm">
+                            <td colspan="5" class="py-12 text-center text-slate-400 text-sm">
                                 <i class="fa-solid fa-users-slash text-3xl mb-3 block"></i>
                                 Tidak ada data anggota ditemukan.
                             </td>

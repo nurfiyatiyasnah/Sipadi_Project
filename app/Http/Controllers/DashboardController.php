@@ -46,7 +46,7 @@ class DashboardController extends Controller
      */
     private function dashboardStats(): array
     {
-        $pengajuanStatuses = ['menunggu', 'Menunggu', 'pending', 'Pending', 'pengajuan', 'Pengajuan'];
+        $pengajuanStatuses = ['menunggu', 'Menunggu', 'pending', 'Pending', 'pengajuan', 'Pengajuan', 'diajukan', 'Diajukan'];
         $peminjamanAktifStatuses = ['aktif', 'Aktif', 'dipinjam', 'Dipinjam'];
 
         return [
@@ -347,11 +347,7 @@ class DashboardController extends Controller
     {
         $query = Buku::query()
             ->with('kategori')
-            ->withCount('eksemplar')
-            ->withCount([
-                'eksemplar as eksemplar_tersedia_count' => fn ($query) => $query
-                    ->whereIn('status_eksemplar', ['tersedia', 'Tersedia']),
-            ]);
+            ->withKetersediaanCounts();
 
         if ($request->filled('kategori')) {
             $query->where('id_kategori', $request->kategori);
@@ -362,14 +358,11 @@ class DashboardController extends Controller
             $query->whereIn('status_katalog', [$statusValue, ucfirst($statusValue)]);
         }
 
-        $totalBuku = Buku::count();
-        $tersedia = Buku::where('status_katalog', 'Tersedia')->count();
-
         $stats = [
             'judul' => Buku::count(),
             'eksemplar' => EksemplarBuku::count(),
-            'dipinjam' => EksemplarBuku::whereIn('status_eksemplar', ['dipinjam', 'Dipinjam'])->count(),
-            'tersedia' => EksemplarBuku::whereIn('status_eksemplar', ['tersedia', 'Tersedia'])->count(),
+            'dipinjam' => EksemplarBuku::where('status_eksemplar', EksemplarBuku::STATUS_DIPINJAM)->count(),
+            'tersedia' => EksemplarBuku::where('status_eksemplar', EksemplarBuku::STATUS_TERSEDIA)->count(),
         ];
         $stats['persen'] = round($stats['tersedia'] / max($stats['eksemplar'], 1) * 100, 1);
 
@@ -389,11 +382,7 @@ class DashboardController extends Controller
 
             $query = Buku::query()
                 ->with('kategori')
-                ->withCount('eksemplar')
-                ->withCount([
-                    'eksemplar as eksemplar_tersedia_count' => fn ($query) => $query
-                        ->whereIn('status_eksemplar', ['tersedia', 'Tersedia']),
-                ])
+                ->withKetersediaanCounts()
                 ->orderBy('id_buku');
 
             if ($request->filled('kategori')) {

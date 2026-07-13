@@ -25,22 +25,22 @@
                 ['Dashboard', 'fa-solid fa-table-cells-large', 'petugas.dashboard', 'petugas.dashboard'],
                 ['Anggota', 'fa-solid fa-user-group', 'petugas.anggota.index', 'petugas.anggota.*'],
                 ['Buku', 'fa-solid fa-book', 'petugas.koleksi', ['petugas.koleksi', 'petugas.buku.*']],
-                ['Peminjaman', 'fa-solid fa-right-left', null, null],
+                ['Peminjaman', 'fa-solid fa-right-left', 'petugas.peminjaman.index', 'petugas.peminjaman.*'],
+                ['Pengembalian', 'fa-solid fa-right-left', 'petugas.pengembalian.index', 'petugas.pengembalian.*'],
                 ['Agenda', 'fa-regular fa-calendar', 'petugas.agenda.index', 'petugas.agenda.*'],
                 ['Berita', 'fa-regular fa-newspaper', 'petugas.berita.index', 'petugas.berita.*'],
                 ['Pengumuman', 'fa-solid fa-bullhorn', 'petugas.pengumuman.index', 'petugas.pengumuman.*'],
                 ['Aduan', 'fa-solid fa-triangle-exclamation', 'petugas.aduan.index', 'petugas.aduan.*'],
                 ['divider', '', null, null],
-                ['Profil Perpustakaan', 'fa-solid fa-building-columns', null, null],
-                ['Struktur Organisasi', 'fa-solid fa-sitemap', null, null],
-                ['Prestasi', 'fa-solid fa-trophy', null, null],
+                ['Struktur Kepegawaian', 'fa-solid fa-sitemap', 'petugas.kepegawaian.index', 'petugas.kepegawaian.*'],
+                ['Prestasi', 'fa-solid fa-trophy', 'petugas.prestasi.index', 'petugas.prestasi.*'],
                 ['Layanan', 'fa-solid fa-handshake-angle', 'petugas.layanan.index', 'petugas.layanan.*'],
-                ['Fasilitas', 'fa-solid fa-couch', null, null],
+                ['Fasilitas', 'fa-solid fa-couch', 'petugas.fasilitas.index', 'petugas.fasilitas.*'],
             ];
         @endphp
 
         <!-- Navigation Menu -->
-        <nav class="flex-1 space-y-1 overflow-y-auto px-4 py-6">
+        <nav class="sipadi-sidebar-scrollbar flex-1 space-y-1 overflow-y-auto px-4 py-6">
             @foreach ($navigationItems as [$label, $icon, $routeName, $activePattern])
                 @if ($label === 'divider')
                     <hr class="my-4 border-slate-800/60">

@@ -51,4 +51,17 @@ class KatalogSeederTest extends TestCase
         $this->assertEquals($booksCount, Buku::count());
         $this->assertEquals($copiesCount, EksemplarBuku::count());
     }
+
+    public function test_katalog_seeder_tidak_membuat_buku_terlihat_dipinjam_tanpa_transaksi(): void
+    {
+        $this->seed(KatalogSeeder::class);
+
+        $this->assertSame(0, EksemplarBuku::query()
+            ->whereIn('status_eksemplar', EksemplarBuku::BORROWED_COPY_STATUSES)
+            ->count());
+
+        $this->get(route('katalog'))
+            ->assertOk()
+            ->assertDontSee('DIPINJAM SEMUA');
+    }
 }

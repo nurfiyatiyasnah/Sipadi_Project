@@ -127,6 +127,8 @@ class PengumumanController extends Controller
                 Storage::disk('public')->delete($pengumuman->gambar);
             }
             $data['gambar'] = $request->file('gambar')->store('pengumuman', 'public');
+        } else {
+            unset($data['gambar']);
         }
 
         if ($request->hasFile('file_lampiran')) {
@@ -146,6 +148,8 @@ class PengumumanController extends Controller
                 ];
             }
             $data['file_lampiran'] = $lampiran;
+        } else {
+            unset($data['file_lampiran']);
         }
 
         $pengumuman->update($data);

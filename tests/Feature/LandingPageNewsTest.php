@@ -130,5 +130,9 @@ class LandingPageNewsTest extends TestCase
         // Also check that going to dashboard redirects to landing page
         $responseRedirect = $this->actingAs($user)->get(route('anggota.dashboard'));
         $responseRedirect->assertRedirect(route('landing'));
+
+        $responseLanding = $this->actingAs($user)->get(route('landing'));
+        $responseLanding->assertStatus(200);
+        $responseLanding->assertSee('Budi Santoso');
     }
 }

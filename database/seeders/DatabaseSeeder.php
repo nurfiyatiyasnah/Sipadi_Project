@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\AgendaEvent;
+use App\Models\AturanPeminjaman;
 use App\Models\Berita;
 use App\Models\KategoriBerita;
 use App\Models\Petugas;
@@ -15,6 +16,17 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        AturanPeminjaman::updateOrCreate(
+            ['status_aktif' => true],
+            [
+                'nama_aturan' => 'Aturan Peminjaman Default',
+                'lama_pinjam_hari' => 14,
+                'maksimal_buku_per_peminjaman' => 5,
+                'maksimal_peminjaman_aktif' => 3,
+                'masa_suspend_per_hari_terlambat' => 1,
+            ]
+        );
+
         $roleAnggota = Role::updateOrCreate(
             ['nama_role' => 'Anggota'],
             ['deskripsi' => 'Pengguna umum yang dapat mengakses layanan perpustakaan']

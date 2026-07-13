@@ -23,7 +23,28 @@ class Fasilitas extends Model
         'gambar',
         'status_fasilitas',
         'created_by',
+        'kategori',
+        'satuan_kapasitas',
+        'kelengkapan',
+        'tampilkan_publik',
+        'aktifkan_reservasi',
+        'metode_peminjaman',
+        'durasi_maksimal',
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'kelengkapan' => 'array',
+            'tampilkan_publik' => 'boolean',
+            'aktifkan_reservasi' => 'boolean',
+        ];
+    }
 
     public function createdBy(): BelongsTo
     {

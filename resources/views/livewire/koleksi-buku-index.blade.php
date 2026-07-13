@@ -134,14 +134,13 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-4">
-                                    <div class="h-16 w-12 shrink-0 overflow-hidden rounded-lg bg-slate-100 border border-slate-200">
-                                        @if ($book->gambar_cover)
-                                            <img src="{{ Str::startsWith($book->gambar_cover, 'http') ? $book->gambar_cover : Storage::url($book->gambar_cover) }}"
-                                                 alt="{{ $book->judul }}" class="h-full w-full object-cover">
-                                        @else
-                                            <div class="flex h-full w-full items-center justify-center bg-slate-200 text-slate-400">
-                                                <i class="fa-solid fa-book"></i>
-                                            </div>
+                                    <div class="relative h-16 w-12 shrink-0 overflow-hidden rounded-lg bg-slate-200 border border-slate-200">
+                                        <div class="absolute inset-0 flex items-center justify-center text-slate-400">
+                                            <i class="fa-solid fa-book"></i>
+                                        </div>
+                                        @if ($coverUrl = $book->coverUrl())
+                                            <img src="{{ $coverUrl }}" alt="{{ $book->judul }}"
+                                                 class="relative h-full w-full object-cover" onerror="this.remove()">
                                         @endif
                                     </div>
                                     <div>
@@ -170,22 +169,15 @@
                             </td>
                             <td class="px-6 py-4 text-center">
                                 @php
-                                    $statusText = 'Tersedia';
-                                    $badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
-                                    
-                                    if (strtolower($book->status_katalog ?? '') === 'nonaktif') {
-                                        $statusText = 'Nonaktif';
-                                        $badgeClass = 'bg-slate-100 text-slate-600 border-slate-300';
-                                    } elseif ($book->eksemplar_count === 0) {
-                                        $statusText = 'Stok Kosong';
-                                        $badgeClass = 'bg-slate-50 text-slate-500 border-slate-200';
-                                    } elseif ($book->eksemplar_tersedia_count === 0) {
-                                        $statusText = 'Dipinjam Semua';
-                                        $badgeClass = 'bg-rose-50 text-rose-700 border-rose-200';
-                                    } elseif ($book->eksemplar_tersedia_count < 3) {
-                                        $statusText = 'Stok Menipis';
-                                        $badgeClass = 'bg-amber-50 text-amber-700 border-amber-200';
-                                    }
+                                    $statusText = $book->statusKetersediaanLabel();
+                                    $badgeClass = match ($book->statusKetersediaan()) {
+                                        'nonaktif' => 'bg-slate-100 text-slate-600 border-slate-300',
+                                        'stok_kosong' => 'bg-slate-50 text-slate-500 border-slate-200',
+                                        'stok_menipis' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                        'dipinjam_semua' => 'bg-rose-50 text-rose-700 border-rose-200',
+                                        'tidak_tersedia' => 'bg-red-50 text-red-700 border-red-200',
+                                        default => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                    };
                                 @endphp
                                 <span class="inline-block rounded-full border px-3 py-0.5 text-xs font-bold {{ $badgeClass }}">
                                     {{ $statusText }}

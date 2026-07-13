@@ -4,8 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\Anggota;
 use App\Models\Buku;
+use App\Models\DetailPeminjaman;
 use App\Models\EksemplarBuku;
 use App\Models\KategoriBuku;
+use App\Models\Peminjaman;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -39,6 +41,58 @@ class DashboardPetugasTest extends TestCase
                 && $stats['koleksi_buku'] === 1)
             ->assertViewHas('status_layanan')
             ->assertViewHas('prioritas_hari_ini');
+    }
+
+    public function test_dashboard_menampilkan_badge_status_peminjaman_dengan_label_rapi(): void
+    {
+        $petugas = $this->createUserWithRole('Petugas');
+        $anggota = Anggota::factory()->create(['nama_lengkap' => 'Stenly Rizalevan']);
+        $kategori = KategoriBuku::factory()->create();
+        $buku = Buku::factory()->for($kategori, 'kategori')->create(['judul' => 'Arsitektur Tradisional Minangkabau']);
+
+        $peminjaman = Peminjaman::create([
+            'kode_peminjaman' => 'PMJ-20260712-0001',
+            'id_anggota' => $anggota->id_anggota,
+            'status_peminjaman' => 'siap_diambil',
+            'tanggal_pengajuan' => now(),
+        ]);
+
+        DetailPeminjaman::create([
+            'id_peminjaman' => $peminjaman->id_peminjaman,
+            'id_buku' => $buku->id_buku,
+            'jumlah' => 1,
+            'status_detail' => 'siap_diambil',
+        ]);
+
+        $response = $this->actingAs($petugas)
+            ->get(route('petugas.dashboard'));
+
+        $response
+            ->assertOk()
+            ->assertSee('Siap Diambil')
+            ->assertSee('bg-blue-50 text-blue-600', false)
+            ->assertDontSee('siap_diambil')
+            ->assertDontSee('Siap_diambil');
+    }
+
+    public function test_dashboard_menghitung_status_diajukan_sebagai_pengajuan_peminjaman(): void
+    {
+        $petugas = $this->createUserWithRole('Petugas');
+        $anggota = Anggota::factory()->create();
+
+        Peminjaman::create([
+            'kode_peminjaman' => 'PMJ-20260712-0002',
+            'id_anggota' => $anggota->id_anggota,
+            'status_peminjaman' => 'diajukan',
+            'tanggal_pengajuan' => now(),
+        ]);
+
+        $response = $this->actingAs($petugas)
+            ->get(route('petugas.dashboard'));
+
+        $response
+            ->assertOk()
+            ->assertViewHas('stats', fn (array $stats): bool => $stats['pengajuan_peminjaman'] === 1);
     }
 
     public function test_petugas_dapat_melihat_koleksi_dengan_statistik_eksemplar(): void

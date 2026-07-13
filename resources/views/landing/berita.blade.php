@@ -22,9 +22,9 @@
     </div>
 
     <!-- Main Content Area -->
-    <div class="mx-auto max-w-7xl px-6 lg:px-12 pb-16 grid gap-8 lg:grid-cols-[300px_1fr]">
+    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 pb-16 lg:grid-cols-[300px_1fr] lg:px-12">
         <!-- Left Sidebar -->
-        <aside class="space-y-6">
+        <aside class="min-w-0 space-y-6">
             <!-- Cari Berita Card -->
             <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
                 <h3 class="font-serif font-bold text-lg text-[#04241e] mb-4">Cari Berita</h3>
@@ -81,11 +81,11 @@
         </aside>
 
         <!-- Right Content -->
-        <main class="space-y-8">
+        <main class="min-w-0 space-y-8">
             <!-- Featured Card (Only on Page 1 if there's a featured news) -->
             @if($featured)
-                <article class="bg-white rounded-[2.5rem] p-6 border border-slate-100 shadow-sm transition duration-300 hover:scale-[1.01] grid gap-6 md:grid-cols-[1.2fr_1fr] items-center">
-                    <div class="overflow-hidden rounded-3xl h-[280px]">
+                <article class="grid min-w-0 gap-6 overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white p-6 shadow-sm transition duration-300 hover:scale-[1.01] md:grid-cols-[1.2fr_1fr] items-center">
+                    <div class="min-w-0 overflow-hidden rounded-3xl h-[280px]">
                         @if($featured->gambar)
                             <img src="{{ Storage::url($featured->gambar) }}" alt="{{ $featured->judul }}" class="h-full w-full object-cover">
                         @else
@@ -94,7 +94,7 @@
                             </div>
                         @endif
                     </div>
-                    <div class="flex flex-col justify-between h-full py-2">
+                    <div class="flex min-w-0 flex-col justify-between h-full py-2">
                         <div class="space-y-4">
                             <div class="flex items-center gap-3 text-xs text-slate-500">
                                 <span class="bg-[#04241e] text-[#ffdc7c] text-[10px] font-bold px-3 py-1 rounded-md uppercase tracking-wider">
@@ -105,10 +105,10 @@
                                     {{ ($featured->tanggal_terbit ?? $featured->created_at)->locale('id')->translatedFormat('d M Y') }}
                                 </span>
                             </div>
-                            <h2 class="font-serif text-2xl lg:text-3xl font-bold leading-tight text-[#04241e] hover:text-[#ffdc7c] transition">
+                            <h2 class="break-words font-serif text-2xl lg:text-3xl font-bold leading-tight text-[#04241e] hover:text-[#ffdc7c] transition">
                                 <a href="{{ route('berita.public.show', $featured->slug) }}">{{ $featured->judul }}</a>
                             </h2>
-                            <p class="text-slate-500 text-sm leading-relaxed line-clamp-3">
+                            <p class="break-words text-slate-500 text-sm leading-relaxed line-clamp-3">
                                 {{ Str::limit(strip_tags($featured->isi), 180) }}
                             </p>
                         </div>
@@ -126,9 +126,9 @@
             @if($beritaList->isNotEmpty())
                 <div class="grid gap-6 md:grid-cols-2">
                     @foreach($beritaList as $item)
-                        <article class="bg-white rounded-[2.5rem] p-5 border border-slate-100 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between">
+                        <article class="flex min-w-0 flex-col justify-between overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white p-5 shadow-sm transition duration-200 hover:shadow-md">
                             <div class="space-y-4">
-                                <div class="overflow-hidden rounded-3xl h-[200px] relative bg-slate-50">
+                                <div class="relative min-w-0 overflow-hidden rounded-3xl h-[200px] bg-slate-50">
                                     @if($item->gambar)
                                         <img src="{{ Storage::url($item->gambar) }}" alt="{{ $item->judul }}" class="h-full w-full object-cover">
                                     @else
@@ -146,10 +146,10 @@
                                     <i class="fa-regular fa-calendar mr-1.5"></i>
                                     {{ ($item->tanggal_terbit ?? $item->created_at)->locale('id')->translatedFormat('d M Y') }}
                                 </div>
-                                <h3 class="font-serif text-lg font-bold leading-snug text-[#04241e] line-clamp-2 hover:text-[#ffdc7c] transition">
+                                <h3 class="break-words font-serif text-lg font-bold leading-snug text-[#04241e] line-clamp-2 hover:text-[#ffdc7c] transition">
                                     <a href="{{ route('berita.public.show', $item->slug) }}">{{ $item->judul }}</a>
                                 </h3>
-                                <p class="text-slate-500 text-xs leading-relaxed line-clamp-3">
+                                <p class="break-words text-slate-500 text-xs leading-relaxed line-clamp-3">
                                     {{ Str::limit(strip_tags($item->isi), 120) }}
                                 </p>
                             </div>
